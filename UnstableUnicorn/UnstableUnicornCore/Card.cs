@@ -54,7 +54,7 @@ namespace UnstableUnicornCore {
 
             // spells
             foreach (var effect in oneTimeEffects)
-                Player.GameController.AddNewEffectToLink(effect);
+                Player.GameController.AddNewEffectToChainLink(effect);
 
             foreach (var effect in triggerEffects)
                 effect.SubscribeToEvent(Player.GameController);

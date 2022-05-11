@@ -63,9 +63,7 @@ namespace UnstableUnicornCore {
             }
         }
 
-        public void AddNewEffectToLink(AEffect effect) {
-            // TODO: enque to queue
-        }
+        public void AddNewEffectToChainLink(AEffect effect) => _nextChainLink.Add(effect);
 
         private void ResolveChainLink() {
             while (_nextChainLink.Count > 0) {
@@ -119,16 +117,17 @@ namespace UnstableUnicornCore {
         private void OnBeginTurn(APlayer player) {
             PlayerDrawCard(player);
 
+            // Trigger on begin turn effects
             PublishEvent(ETriggerSource.BeginningTurn);
-            // --> Trigger on begin turn effects
 
             // resolve chain link
             ResolveChainLink();
         }
 
         private void OnEndTurn(APlayer player) {
-            PublishEvent(ETriggerSource.EndTurn);
             // Trigger on end turn effects
+            PublishEvent(ETriggerSource.EndTurn);
+
             // resolve chain link
             ResolveChainLink();
 
@@ -140,23 +139,22 @@ namespace UnstableUnicornCore {
             if (!EventsPool.TryGetValue(_event, out List<TriggerEffect>? triggerList))
                 return;
             foreach (var trigger in triggerList) {
-                // TODO: co predavat
                 trigger.InvokeEffect(_event, effect, this);
             }
-        }
-
-        public void SubscribeEvent(ETriggerSource _event, TriggerEffect effect) {
-            if(!EventsPool.TryGetValue(_event, out List<TriggerEffect>? triggerList)) {
-                triggerList = new List<TriggerEffect> {};
-                EventsPool.Add(_event, triggerList);
-            }
-            triggerList.Add(effect);
         }
 
         public void AddContinuousEffect(ContinuousEffect effect) => ContinuousEffects.Add(effect);
 
         // TODO: maybe throw error on remove non-existent effect
         public void RemoveContinuousEffect(ContinuousEffect effect) => ContinuousEffects.Remove(effect);
+
+        public void SubscribeEvent(ETriggerSource _event, TriggerEffect effect) {
+            if (!EventsPool.TryGetValue(_event, out List<TriggerEffect>? triggerList)) {
+                triggerList = new List<TriggerEffect> { };
+                EventsPool.Add(_event, triggerList);
+            }
+            triggerList.Add(effect);
+        }
 
         public void UnsubscribeEvent(ETriggerSource _event, TriggerEffect effect) {
             if (!EventsPool.TryGetValue(_event, out List<TriggerEffect>? triggerList))

@@ -53,7 +53,7 @@ namespace UnstableUnicornCore {
                     effectToTrigger.InvokeEffect(triggerSource, effect, gameController);
                 else
                     // TOD: add info about effect to effectToTrigger
-                    gameController.AddNewEffectToLink(effectToTrigger);
+                    gameController.AddNewEffectToChainLink(effectToTrigger);
             }
         }
     }
