@@ -21,7 +21,7 @@ namespace UnstableUnicornCore {
         public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
             APlayer player = OwningCard.Player;
             for (int i = 0; i < _cardCount; i++) {
-                Card card = player.WhichCardDiscard(_allowedCardTypes);
+                Card card = player.WhichCardToDiscard(_allowedCardTypes);
                 if (card == null)
                     throw new InvalidOperationException($"Card was not selected");
                 if (_allowedCardTypes.Contains(card.CardType))

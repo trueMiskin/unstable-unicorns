@@ -22,10 +22,10 @@ namespace UnstableUnicornCore {
         /// </summary>
         /// <returns>Card to play or null</returns>
         public abstract Card? WhichCardToPlay();
-        public abstract Card SacrificeCard();
-        public abstract Card WhichCardDestroy();
+        public abstract Card WhichCardToSacrifice();
+        public abstract Card WhichCardToDestroy();
         public abstract Card StealCard();
-        public abstract Card WhichCardDiscard(List<ECardType> allowedCardTypes);
+        public abstract Card WhichCardToDiscard(List<ECardType> allowedCardTypes);
 
         /// <summary>
         /// Add card type transformer into list of transformers

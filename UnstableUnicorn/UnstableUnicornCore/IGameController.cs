@@ -108,7 +108,7 @@ namespace UnstableUnicornCore {
         }
 
         public void PlayerDiscardCard(APlayer player) {
-            Card card = player.WhichCardDiscard( Enum.GetValues(typeof(ECardType)).Cast<ECardType>().ToList() );
+            Card card = player.WhichCardToDiscard( Enum.GetValues(typeof(ECardType)).Cast<ECardType>().ToList() );
             if (!player.Hand.Remove(card))
                 throw new InvalidOperationException($"Card {card.Name} not in player hand!");
             card.MoveCard(this, null, CardLocation.DiscardPile);

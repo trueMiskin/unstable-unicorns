@@ -11,7 +11,7 @@ namespace UnstableUnicornCore {
             OwningCard = owningCard;
 
             // choosing card as target
-            Card card = owningCard.Player.WhichCardDestroy();
+            Card card = owningCard.Player.WhichCardToDestroy();
             if (card.Player == owningCard.Player || card.Location != CardLocation.OnTable)
                 throw new InvalidOperationException("Selected own card or card which is not on table");
 
