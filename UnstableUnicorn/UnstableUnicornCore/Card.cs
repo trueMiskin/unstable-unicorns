@@ -25,7 +25,7 @@ namespace UnstableUnicornCore {
         private List<AEffect> oneTimeEffects;
         private List<TriggerEffect> triggerEffects;
         private List<ContinuousEffect> continuousEffects;
-        public CardLocation Location { get; set; }
+        public CardLocation Location { get; private set; }
         public string Name { get; init; }
 
 
@@ -48,10 +48,11 @@ namespace UnstableUnicornCore {
             }
         }
 
-        private void RegisterAllEffects() {
+        internal void RegisterAllEffects() {
             if (Player == null)
                 throw new InvalidOperationException("Can't register effects without knowing who played card");
 
+            // spells
             foreach (var effect in oneTimeEffects)
                 Player.GameController.AddNewEffectToLink(effect);
 
@@ -76,7 +77,7 @@ namespace UnstableUnicornCore {
             // todo: how play instant card
         }
 
-        public void CardPlayed(APlayer player) {
+        public void CardPlayed(GameController gameController, APlayer player) {
             if (_cardType == ECardType.Instant)
                 throw new InvalidOperationException("Instant card cannot be used by calling CardPlayed");
 
@@ -87,35 +88,77 @@ namespace UnstableUnicornCore {
             RegisterAllEffects();
 
             if (_cardType == ECardType.Spell) {
-                MoveCard(null, CardLocation.DiscardPile);
+                MoveCard(gameController, null, CardLocation.DiscardPile);
             } else
-                MoveCard(player, CardLocation.OnTable);
+                MoveCard(gameController, player, CardLocation.OnTable);
         }
 
-        public void MoveCard(APlayer? newPlayer, CardLocation newCardLocation) {
-            if(Location == CardLocation.OnTable)
-                UnregisterAllEffects();
+        /// <summary>
+        /// Warning: This function doesn't register or unregister card in pile, because
+        /// -> when you draw card, caller can immediately remove this card from pile
+        /// -- -> use `PlayerDrawCard` in game controller
+        /// -> on other hand when card should be moved to pile, where should be this card placed
+        /// 
+        /// In other locations function sets new owning player and location and register/unregister on desired locations
+        /// from data structures
+        /// </summary>
+        /// <param name="gameController"></param>
+        /// <param name="newPlayer"></param>
+        /// <param name="newCardLocation"></param>
+        /// <exception cref="InvalidOperationException"></exception>
+        internal void MoveCard(GameController gameController, APlayer? newPlayer, CardLocation newCardLocation) {
+            if( (Location == CardLocation.InHand || Location == CardLocation.OnTable) && Player == null)
+                throw new InvalidOperationException($"On location `{Location}` variable Player should be setted!");
+            switch (Location) {
+                case CardLocation.Pile:
+                case CardLocation.DiscardPile:
+                    break;
+                case CardLocation.InHand:
+                    Player.Hand.Remove(this);
+                    break;
+                case CardLocation.OnTable:
+                    if (_cardType == ECardType.Unicorn)
+                        Player.Stable.Remove(this);
+                    else if (_cardType == ECardType.Upgrade)
+                        Player.Upgrades.Remove(this);
+                    else if (_cardType == ECardType.Downgrade)
+                        Player.Downgrades.Remove(this);
+                    else
+                        throw new InvalidOperationException($"Card type {_cardType} can't be on Table!");
+                    break;
+                default:
+                    throw new InvalidOperationException($"Uknown location {Location}");
+            }
 
-            APlayer? oldPlayer = Player;
-            CardLocation oldLocation = Location;
             Player = newPlayer;
             Location = newCardLocation;
 
-            if (Location != oldLocation && Location == CardLocation.OnTable) {
-                // TODO: fire unconditional effects
-            }
+            if ((Location == CardLocation.Pile || Location == CardLocation.DiscardPile) && Player != null)
+                throw new InvalidOperationException($"Player can't be set on location `{Location}`");
+            if ((Location == CardLocation.InHand || Location == CardLocation.OnTable) && Player == null)
+                throw new InvalidOperationException($"Player must be set on location `{Location}`");
 
-            switch (newCardLocation) {
-                case CardLocation.OnTable:
-                    // TODO: register effects
+            switch (Location) {
+                case CardLocation.Pile:
                     break;
                 case CardLocation.DiscardPile:
-                    if (oldPlayer == null)
-                        throw new InvalidOperationException($"Card moved from {oldLocation} and player wasn't set!");
-                    oldPlayer.GameController.DiscardPile.Add(this);
+                    gameController.DiscardPile.Add(this);
+                    break;
+                case CardLocation.InHand:
+                    Player.Hand.Add(this);
+                    break;
+                case CardLocation.OnTable:
+                    if (_cardType == ECardType.Unicorn)
+                        Player.Stable.Add(this);
+                    else if (_cardType == ECardType.Upgrade)
+                        Player.Upgrades.Add(this);
+                    else if (_cardType == ECardType.Downgrade)
+                        Player.Downgrades.Add(this);
+                    else
+                        throw new InvalidOperationException($"Card type {_cardType} can't be on Table!");
                     break;
                 default:
-                    throw new InvalidOperationException("More location is not know supported");
+                    throw new InvalidOperationException($"Uknown location {Location}");
             }
         }
     }

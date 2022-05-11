@@ -27,11 +27,6 @@ namespace UnstableUnicornCore {
         public abstract Card StealCard();
         public abstract Card WhichCardDiscard();
 
-        public void DrawCardHandler(Card drewCard) {
-            drewCard.MoveCard(this, CardLocation.InHand);
-            Hand.Add(drewCard);
-        }
-
         /// <summary>
         /// Add card type transformer into list of transformers
         /// </summary>
@@ -49,18 +44,6 @@ namespace UnstableUnicornCore {
         /// <param name="effectedCard"></param>
         public void CardEnterOnTable(AEffect effect, Card effectedCard) {
 
-        }
-
-        internal void CardPlayed(Card card) {
-            if (!Hand.Remove(card))
-                throw new InvalidOperationException($"Card {card.Name} not in player hand!");
-            card.CardPlayed(this);
-        }
-
-        internal void CardDiscarded(Card card) {
-            if(!Hand.Remove(card))
-                throw new InvalidOperationException($"Card {card.Name} not in player hand!");
-            card.MoveCard(null, CardLocation.DiscardPile);
         }
     }
 }
