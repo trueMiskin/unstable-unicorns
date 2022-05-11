@@ -115,13 +115,13 @@ namespace UnstableUnicornCore {
         }
 
         private void OnBeginTurn(APlayer player) {
-            PlayerDrawCard(player);
-
             // Trigger on begin turn effects
             PublishEvent(ETriggerSource.BeginningTurn);
 
             // resolve chain link
             ResolveChainLink();
+
+            PlayerDrawCard(player);
         }
 
         private void OnEndTurn(APlayer player) {
