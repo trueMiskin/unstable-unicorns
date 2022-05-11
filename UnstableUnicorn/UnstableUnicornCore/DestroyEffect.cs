@@ -16,11 +16,12 @@ namespace UnstableUnicornCore {
                 throw new InvalidOperationException("Selected own card or card which is not on table");
 
             TargetCard = card;
+            TargetOwner = null;
             TargetLocation = CardLocation.DiscardPile;
         }
 
         public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
-            TargetCard.MoveCard(gameController, null, TargetLocation);
+            TargetCard.MoveCard(gameController, TargetOwner, TargetLocation);
         }
     }
 }

@@ -5,16 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace UnstableUnicornCore {
-    public sealed class DiscardCardEffect : AEffect {
+    public sealed class DiscardEffect : AEffect {
         // card types which can be targeted
         List<ECardType> _allowedCardTypes;
         
         // number card to discard
         int _cardCount;
-        public DiscardCardEffect(int cardCount, List<ECardType> targetType, Card owningCard) {
+        public DiscardEffect(int cardCount, List<ECardType> targetType, Card owningCard) {
             _cardCount = cardCount;
             _allowedCardTypes = targetType;
             OwningCard = owningCard;
+            TargetOwner = null;
             TargetLocation = CardLocation.DiscardPile;
         }
 
@@ -28,7 +29,7 @@ namespace UnstableUnicornCore {
                     throw new InvalidOperationException($"Card {card.Name} does not have allowed card type");
                 if (!player.Hand.Remove(card))
                     throw new InvalidOperationException($"Card {card.Name} not in player hand!");
-                card.MoveCard(gameController, null, TargetLocation);
+                card.MoveCard(gameController, TargetOwner, TargetLocation);
             }
         }
     }
