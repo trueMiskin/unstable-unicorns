@@ -9,15 +9,19 @@ namespace UnstableUnicornCore {
         /// <summary>
         /// Which card belongs this affect
         /// </summary>
-        public Card OwningCard { get; set; }
+        public Card OwningCard { get; protected set; }
         
         /// <summary>
         /// Which card is target of affect
         /// </summary>
-        public Card TargetCard { get; set; }
+        public Card TargetCard { get; protected set; }
 
-        public CardLocation TargetLocation { get; set; }
-        public APlayer? TargetOwner { get; set; }
+        public CardLocation TargetLocation { get; protected set; }
+
+        /// <summary>
+        /// Who will own card after effect
+        /// </summary>
+        public APlayer? TargetOwner { get; protected set; }
 
         public abstract void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController);
     }
@@ -71,21 +75,5 @@ namespace UnstableUnicornCore {
         }
 
         void askOnActivate() { }   
-    }
-
-    public class DiscardCard : AEffect {
-        // card types which can be targeted
-        List<ECardType> CardTypes;
-        
-        // number card to discard
-        int CardCount;
-        public DiscardCard(int cardCount, List<ECardType> targetType) {
-            CardCount = cardCount;
-            CardTypes = targetType;
-        }
-
-        public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
-            throw new NotImplementedException();
-        }
     }
 }
