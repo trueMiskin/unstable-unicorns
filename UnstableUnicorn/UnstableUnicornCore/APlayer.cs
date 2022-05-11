@@ -24,7 +24,7 @@ namespace UnstableUnicornCore {
         public abstract Card? WhichCardToPlay();
         public abstract Card WhichCardToSacrifice();
         public abstract Card WhichCardToDestroy();
-        public abstract Card StealCard();
+        public abstract Card WhichCardToSteal();
         public abstract Card WhichCardToDiscard(List<ECardType> allowedCardTypes);
 
         /// <summary>
