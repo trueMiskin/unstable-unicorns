@@ -9,21 +9,23 @@ namespace UnstableUnicornCore {
         /// <summary>
         /// Which card belongs this affect
         /// </summary>
-        public Card OwningCard { get; protected set; }
+        public Card OwningCard { get; set; }
         
         /// <summary>
         /// Which card is target of affect
         /// </summary>
-        public Card TargetCard { get; protected set; }
+        public Card TargetCard { get; set; }
 
-        public CardLocation TargetLocation { get; protected set; }
+        public CardLocation TargetLocation { get; set; }
 
         /// <summary>
         /// Who will own card after effect
         /// </summary>
-        public APlayer? TargetOwner { get; protected set; }
+        public APlayer? TargetOwner { get; set; }
 
         public abstract void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController);
+
+        public abstract bool CanBeActivate();
     }
 
     public class TriggerEffect : AEffect {
@@ -60,11 +62,16 @@ namespace UnstableUnicornCore {
                     gameController.AddNewEffectToChainLink(effectToTrigger);
             }
         }
+
+        // TODO: should instead return effectToTrigger.CanBeActivate() ???
+        public override bool CanBeActivate() => false;
     }
 
     public abstract class ContinuousEffect {
+        APlayer player;
         public abstract bool IsEnabledTriggeringEffects(AEffect effect);
         public abstract bool IsCardPlayable(Card card);
+        public abstract bool AreUnicornsDestroyable(APlayer other);
     }
 
     public class ActivatableEffect : AEffect {

@@ -49,6 +49,8 @@ namespace UnstableUnicornCore {
                 else {
                     if (!player.Hand.Remove(card))
                         throw new InvalidOperationException($"Card {card.Name} not in player hand!");
+                    if (!card.IsCardPlayable(this))
+                        throw new InvalidOperationException($"Card can't be played");
 
                     // check instant
                     // interative resolving instant cards

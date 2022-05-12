@@ -7,15 +7,10 @@ using System.Threading.Tasks;
 namespace UnstableUnicornCore {
     public sealed class DestroyEffect : AEffect {
 
-        public DestroyEffect(Card owningCard) {
+        public DestroyEffect(Card owningCard, Card targetCard) {
             OwningCard = owningCard;
 
-            // choosing card as target
-            Card card = owningCard.Player.WhichCardToDestroy();
-            if (card.Player == owningCard.Player || card.Location != CardLocation.OnTable)
-                throw new InvalidOperationException("Selected own card or card which is not on table");
-
-            TargetCard = card;
+            TargetCard = targetCard;
             TargetOwner = null;
             TargetLocation = CardLocation.DiscardPile;
         }

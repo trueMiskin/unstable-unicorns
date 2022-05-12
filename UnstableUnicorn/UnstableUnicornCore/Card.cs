@@ -93,6 +93,19 @@ namespace UnstableUnicornCore {
                 MoveCard(gameController, player, CardLocation.OnTable);
         }
 
+        public bool IsCardPlayable(GameController gameController) {
+            bool ret = true;
+            // check continuous effects
+            foreach (var conEffects in gameController.ContinuousEffects)
+                ret &= conEffects.IsCardPlayable(this);
+
+            // if all mandatory effects can be performed
+            foreach (var oneTimeEffect in oneTimeEffects)
+                ret &= oneTimeEffect.CanBeActivate();
+
+            return ret;
+        }
+
         /// <summary>
         /// Warning: This function doesn't register or unregister card in pile, because
         /// -> when you draw card, caller can immediately remove this card from pile
