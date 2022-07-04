@@ -21,8 +21,9 @@ namespace UnstableUnicornCore {
         DiscardPile
     }
     public class Card {
+        public delegate AEffect FactoryEffect();
         internal readonly ECardType _cardType;
-        private List<AEffect> oneTimeEffects;
+        private List<FactoryEffect> oneTimeFactoryEffects;
         private List<TriggerEffect> triggerEffects;
         private List<ContinuousEffect> continuousEffects;
         public CardLocation Location { get; private set; }
@@ -53,8 +54,8 @@ namespace UnstableUnicornCore {
                 throw new InvalidOperationException("Can't register effects without knowing who played card");
 
             // spells
-            foreach (var effect in oneTimeEffects)
-                Player.GameController.AddNewEffectToChainLink(effect);
+            foreach (var factoryEffect in oneTimeFactoryEffects)
+                Player.GameController.AddNewEffectToChainLink(factoryEffect());
 
             foreach (var effect in triggerEffects)
                 effect.SubscribeToEvent(Player.GameController);
