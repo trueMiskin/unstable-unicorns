@@ -26,6 +26,8 @@ namespace UnstableUnicornCore {
         private List<AEffect> _actualChainLink = new();
         private List<AEffect> _nextChainLink = new();
 
+        public HashSet<Card> cardsWhichAreTargeted { get; set; }
+
         public GameController(List<Card> pile, List<Card> nursery, List<APlayer> players, int seed = 42) {
             Random = new Random(seed);
             Pile = pile.Shuffle(Random);
@@ -67,8 +69,12 @@ namespace UnstableUnicornCore {
 
         private void ResolveChainLink() {
             while (_nextChainLink.Count > 0) {
+                cardsWhichAreTargeted = new HashSet<Card>();
+
                 _actualChainLink = _nextChainLink;
                 _nextChainLink = new List<AEffect>();
+
+                // choosing targets of effects
 
                 // trigger all ChangeTargeting
                 foreach (var effect in _actualChainLink) {

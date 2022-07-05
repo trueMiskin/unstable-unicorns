@@ -10,19 +10,41 @@ namespace UnstableUnicornCore {
         /// Which card belongs this affect
         /// </summary>
         public Card OwningCard { get; protected set; }
-        
-        /// <summary>
-        /// Which card is target of affect
-        /// </summary>
-        public Card TargetCard { get; protected set; }
 
+        /// <summary>
+        /// Number card to discard
+        /// </summary>
+        protected int _cardCount;
+
+        /// <summary>
+        /// Which cards are targets of affect
+        /// </summary>
+        public List<Card> CardTargets { get; protected set; } = new();
+
+        /// <summary>
+        /// Where will be card after effect
+        /// </summary>
         public CardLocation TargetLocation { get; protected set; }
 
         /// <summary>
-        /// Who will own card after effect
+        /// Who will owner of card after effect
         /// </summary>
         public APlayer? TargetOwner { get; protected set; }
 
+        public AEffect(Card owningCard, int cardCount) {
+            OwningCard = owningCard;
+            _cardCount = cardCount;
+        }
+
+        /// <summary>
+        /// Choosing targets of effect
+        /// 
+        /// This method should check if targets are valid and is selected required
+        /// number of cards if is possible to do it
+        /// 
+        /// This method should not append to list `cardsWhichAreTargeted`
+        /// </summary>
+        public abstract void ChooseTargets(GameController gameController);
         public abstract void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController);
     }
 

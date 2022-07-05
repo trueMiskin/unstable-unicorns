@@ -7,21 +7,26 @@ using System.Threading.Tasks;
 namespace UnstableUnicornCore {
     public sealed class StealEffect : AEffect {
 
-        public StealEffect(Card owningCard) {
-            OwningCard = owningCard;
-
-            // choosing card as target
-            Card card = owningCard.Player.WhichCardToSacrifice();
-            if (card.Player == owningCard.Player || card.Location != CardLocation.OnTable)
-                throw new InvalidOperationException("Selected own card or card which is not on table");
-
-            TargetCard = card;
+        public StealEffect(Card owningCard, int cardCount) : base(owningCard, cardCount) {
             TargetOwner = owningCard.Player;
             TargetLocation = CardLocation.OnTable;
         }
 
+        public override void ChooseTargets(GameController gameController) {
+            
+            // choosing card as target
+            CardTargets = OwningCard.Player.WhichCardsToSacrifice(_cardCount);
+
+            // TODO: Check if cards are not same
+            // TODO: Check if card is not target of another affect
+            foreach (var card in CardTargets)
+                if (card.Player == OwningCard.Player || card.Location != CardLocation.OnTable)
+                    throw new InvalidOperationException("Selected own card or card which is not on table");
+        }
+
         public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
-            TargetCard.MoveCard(gameController, TargetOwner, TargetLocation);
+            foreach(var card in CardTargets)
+                card.MoveCard(gameController, TargetOwner, TargetLocation);
         }
 
     }
