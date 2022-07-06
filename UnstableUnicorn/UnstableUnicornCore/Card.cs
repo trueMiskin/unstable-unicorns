@@ -20,8 +20,11 @@ namespace UnstableUnicornCore {
         OnTable,
         DiscardPile
     }
-    public class Card {
-        public delegate AEffect FactoryEffect();
+    public sealed class Card {
+        public delegate AEffect FactoryEffect(Card owningCard, GameController gameController);
+        public delegate IEnumerable<TriggerEffect> TriggerFactoryEffect();
+        public delegate IEnumerable<ContinuousEffect> ContinuousFactoryEffect();
+
         internal readonly ECardType _cardType;
         private List<FactoryEffect> oneTimeFactoryEffects;
         private List<TriggerEffect> triggerEffects;
@@ -29,6 +32,21 @@ namespace UnstableUnicornCore {
         public CardLocation Location { get; private set; }
         public string Name { get; init; }
 
+        public Card(String name, ECardType cardType, List<FactoryEffect> oneTimeFactoryEffects,
+            List<TriggerFactoryEffect> triggerFactoryEffects, List<ContinuousFactoryEffect> continuousFactoryEffect) {
+            this.Name = name;
+            this._cardType = cardType;
+            this.oneTimeFactoryEffects = oneTimeFactoryEffects;
+            this.triggerEffects = new();
+            foreach (var f in triggerFactoryEffects)
+                this.triggerEffects.AddRange(f());
+
+            this.continuousEffects = new();
+            foreach (var f in continuousFactoryEffect)
+                this.continuousEffects.AddRange(f());
+
+            this.Location = CardLocation.Pile;
+        }
 
         public bool CanBeNeigh() { return false; }
         public bool CanBeSacriced() { return false; }
@@ -55,7 +73,7 @@ namespace UnstableUnicornCore {
 
             // spells
             foreach (var factoryEffect in oneTimeFactoryEffects)
-                Player.GameController.AddNewEffectToChainLink(factoryEffect());
+                Player.GameController.AddNewEffectToChainLink(factoryEffect(this, Player.GameController));
 
             foreach (var effect in triggerEffects)
                 effect.SubscribeToEvent(Player.GameController);
