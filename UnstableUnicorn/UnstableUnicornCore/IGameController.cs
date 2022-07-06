@@ -94,22 +94,23 @@ namespace UnstableUnicornCore {
                 }
 
                 // unregister affects of targets cards
-                foreach (var effect in _actualChainLink) {
-                    effect.TargetCard.UnregisterAllEffects();
-                }
+                foreach (var effect in _actualChainLink)
+                    foreach (var card in effect.CardTargets)
+                        card.UnregisterAllEffects();
 
                 // move cards to new location, trigger leave card and
-                foreach (var effect in _actualChainLink) {
-                    effect.TargetCard.MoveCard(this, effect.TargetOwner, effect.TargetLocation);
-                }
+                foreach (var effect in _actualChainLink)
+                    foreach (var card in effect.CardTargets)
+                        card.MoveCard(this, effect.TargetOwner, effect.TargetLocation);
 
                 // delay card enter to new stable to next chain link - a.k.a. add to chainLink
                 // --> this i dont need to solve, nearly all trigger effects are by default delayed
                 foreach (var effect in _actualChainLink) {
-                    if (effect.TargetCard.Location == CardLocation.OnTable) {
-                        effect.TargetCard.RegisterAllEffects();
-                        PublishEvent(ETriggerSource.CardEnteredStable, effect);
-                    }
+                    foreach (var card in effect.CardTargets)
+                        if (card.Location == CardLocation.OnTable) {
+                            card.RegisterAllEffects();
+                            PublishEvent(ETriggerSource.CardEnteredStable, effect);
+                        }
                 }
             }
         }
@@ -152,7 +153,8 @@ namespace UnstableUnicornCore {
             if (!EventsPool.TryGetValue(_event, out List<TriggerEffect>? triggerList))
                 return;
             foreach (var trigger in triggerList) {
-                trigger.InvokeEffect(_event, effect, this);
+                throw new NotImplementedException();
+                // trigger.InvokeEffect(_event, effect, this);
             }
         }
 

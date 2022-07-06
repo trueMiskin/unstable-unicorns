@@ -66,7 +66,7 @@ namespace UnstableUnicornCore {
         public abstract void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController);
     }
 
-    public class TriggerEffect : AEffect {
+    public class TriggerEffect /*: AEffect*/ {
         /// <summary>
         /// Predicate which determines if effect is triggered or not
         /// </summary>
@@ -89,7 +89,7 @@ namespace UnstableUnicornCore {
                 gameController.UnsubscribeEvent(trigger, this);
         }
 
-        public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
+        /*public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
             if (triggerPredicate(effect, OwningCard) ) {
                 // execute `PreLeaveCardFromTable` immediately because this event should be used
                 // only on effects which saving unicorns from leaving stable (for example: to discard pile)
@@ -99,7 +99,7 @@ namespace UnstableUnicornCore {
                     // TOD: add info about effect to effectToTrigger
                     gameController.AddNewEffectToChainLink(effectToTrigger);
             }
-        }
+        }*/
     }
 
     public abstract class ContinuousEffect {
@@ -107,12 +107,12 @@ namespace UnstableUnicornCore {
         public abstract bool IsCardPlayable(Card card);
     }
 
-    public class ActivatableEffect : AEffect {
+    public class ActivatableEffect /*: AEffect*/ {
         AEffect effect;
 
-        public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
+        /*public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
             throw new NotImplementedException();
-        }
+        }*/
 
         void askOnActivate() { }   
     }
