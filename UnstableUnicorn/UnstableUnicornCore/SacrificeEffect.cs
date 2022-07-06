@@ -34,5 +34,13 @@ namespace UnstableUnicornCore {
             foreach (var card in CardTargets)
                 card.MoveCard(gameController, TargetOwner, TargetLocation);
         }
+
+        public override bool MeetsRequirementsToPlayInner(GameController gameController) {
+            APlayer player = OwningCard.Player;
+            return player.Stable.Count +
+                player.Upgrades.Count +
+                player.Downgrades.Count
+                >= _cardCount;
+        }
     }
 }

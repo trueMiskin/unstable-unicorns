@@ -45,6 +45,24 @@ namespace UnstableUnicornCore {
         /// This method should not append to list `cardsWhichAreTargeted`
         /// </summary>
         public abstract void ChooseTargets(GameController gameController);
+
+        /// <summary>
+        /// Check if card meets criteria to play
+        /// 
+        /// This method should be overrided only by if effect.
+        /// Else this requirement will be required on every time when you want play
+        /// card with this effect even if effect by itself have no condition.
+        /// </summary>
+        /// <param name="gameController"></param>
+        /// <returns></returns>
+        public virtual bool MeetsRequirementsToPlay(GameController gameController) => true;
+
+        /// <summary>
+        /// Requirement which will be checked in conditional effect.
+        /// </summary>
+        /// <param name="gameController"></param>
+        /// <returns></returns>
+        public abstract bool MeetsRequirementsToPlayInner(GameController gameController);
         public abstract void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController);
     }
 

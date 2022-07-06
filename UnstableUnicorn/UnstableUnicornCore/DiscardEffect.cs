@@ -70,5 +70,9 @@ namespace UnstableUnicornCore {
             foreach (var card in CardTargets)
                 card.MoveCard(gameController, TargetOwner, TargetLocation);
         }
+
+        public override bool MeetsRequirementsToPlayInner(GameController gameController) {
+            return numberValidTarget(gameController, OwningCard.Player) >= _cardCount;
+        }
     }
 }

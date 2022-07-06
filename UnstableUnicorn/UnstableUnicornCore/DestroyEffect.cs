@@ -13,7 +13,7 @@ namespace UnstableUnicornCore {
         }
 
         public override void ChooseTargets(GameController gameController) {
-            int numCardsInHand = OwningCard.Player.Hand.Count();
+            int numCardsInHand = OwningCard.Player.Hand.Count;
             if (_cardCount > numCardsInHand)
                 _cardCount = numCardsInHand;
             
@@ -33,6 +33,10 @@ namespace UnstableUnicornCore {
         public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
             foreach (var card in CardTargets)
                 card.MoveCard(gameController, TargetOwner, TargetLocation);
+        }
+
+        public override bool MeetsRequirementsToPlayInner(GameController gameController) {
+            return OwningCard.Player.Hand.Count >= _cardCount;
         }
     }
 }
