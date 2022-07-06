@@ -28,6 +28,8 @@ namespace UnstableUnicornCore {
 
         public HashSet<Card> cardsWhichAreTargeted { get; set; }
 
+        private bool _willTakeExtraTurn = false;
+
         public GameController(List<Card> pile, List<Card> nursery, List<APlayer> players, int seed = 42) {
             Random = new Random(seed);
             Pile = pile.Shuffle(Random);
@@ -61,9 +63,14 @@ namespace UnstableUnicornCore {
 
                 OnEndTurn(player);
 
-                index = (index + 1) % Players.Count;
+                if (_willTakeExtraTurn)
+                    _willTakeExtraTurn = false;
+                else
+                    index = (index + 1) % Players.Count;
             }
         }
+
+        public void ThisPlayerTakeExtraTurn() => _willTakeExtraTurn = true;
 
         public void AddNewEffectToChainLink(AEffect effect) => _nextChainLink.Add(effect);
 
