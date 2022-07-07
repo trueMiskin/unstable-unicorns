@@ -51,6 +51,18 @@ namespace UnstableUnicornCore {
         public bool CanBeNeigh() { return false; }
         public bool CanBeSacriced() { return false; }
         public bool CanBeDestroyed() { return false; }
+        public bool CanBePlayed() {
+            if (Location != CardLocation.InHand)
+                throw new InvalidOperationException("Card is not in hand. Card cannot be played.");
+            if (Player == null)
+                throw new InvalidOperationException("Card should be presented in hand but `Player` is not set.");
+
+            bool ret = true;
+            GameController gameController = Player.GameController;
+            foreach (var effectFactory in oneTimeFactoryEffects)
+                ret &= effectFactory(this, gameController).MeetsRequirementsToPlay(gameController);
+            return ret;
+        }
 
         /// <summary>
         /// Player which own this card or null if it is in pile or discard pile
@@ -96,12 +108,16 @@ namespace UnstableUnicornCore {
             // todo: how play instant card
         }
 
-        public void CardPlayed(GameController gameController, APlayer player) {
+        public void CardPlayed(GameController gameController, APlayer newCardOwner) {
             if (_cardType == ECardType.Instant)
                 throw new InvalidOperationException("Instant card cannot be used by calling CardPlayed");
+            if (!CanBePlayed())
+                throw new InvalidOperationException("This card cannot be played. Requirements are not met.");
 
-            // player who played card
-            Player = player;
+            // player who will own card
+            // - in case of spell, owner will be player who played this spell
+            // - in other case, owner will be player who own stable where this card will be
+            Player = newCardOwner;
             // register all trigger and continuous effects
             // fire one time effects (or spell effects)
             RegisterAllEffects();
@@ -109,7 +125,7 @@ namespace UnstableUnicornCore {
             if (_cardType == ECardType.Spell) {
                 MoveCard(gameController, null, CardLocation.DiscardPile);
             } else
-                MoveCard(gameController, player, CardLocation.OnTable);
+                MoveCard(gameController, newCardOwner, CardLocation.OnTable);
         }
 
         /// <summary>

@@ -26,7 +26,7 @@ namespace UnstableUnicornCore {
         private List<AEffect> _actualChainLink = new();
         private List<AEffect> _nextChainLink = new();
 
-        public HashSet<Card> cardsWhichAreTargeted { get; set; }
+        public HashSet<Card> cardsWhichAreTargeted { get; set; } = new();
 
         private bool _willTakeExtraTurn = false;
 
@@ -82,6 +82,8 @@ namespace UnstableUnicornCore {
                 _nextChainLink = new List<AEffect>();
 
                 // choosing targets of effects
+                foreach (var effect in _actualChainLink)
+                    effect.ChooseTargets(this);
 
                 // trigger all ChangeTargeting
                 foreach (var effect in _actualChainLink) {
@@ -97,6 +99,10 @@ namespace UnstableUnicornCore {
                 foreach (var effect in _actualChainLink)
                     foreach (var card in effect.CardTargets)
                         card.UnregisterAllEffects();
+
+                foreach (var effect in _actualChainLink)
+                    // TODO: better trigger source - maybe change API?
+                    effect.InvokeEffect(ETriggerSource.CardLeftStable /* Something for now */, null, this);
 
                 // move cards to new location, trigger leave card and
                 foreach (var effect in _actualChainLink)
@@ -121,13 +127,6 @@ namespace UnstableUnicornCore {
             topCard.MoveCard(this, player, CardLocation.InHand);
         }
 
-        public void PlayerDiscardCard(APlayer player) {
-            Card card = player.WhichCardToDiscard( Enum.GetValues(typeof(ECardType)).Cast<ECardType>().ToList() );
-            if (!player.Hand.Remove(card))
-                throw new InvalidOperationException($"Card {card.Name} not in player hand!");
-            card.MoveCard(this, null, CardLocation.DiscardPile);
-        }
-
         private void OnBeginTurn(APlayer player) {
             // Trigger on begin turn effects
             PublishEvent(ETriggerSource.BeginningTurn);
@@ -145,8 +144,14 @@ namespace UnstableUnicornCore {
             // resolve chain link
             ResolveChainLink();
 
-            while (player.Hand.Count > 7)
-                PlayerDiscardCard(player);
+            if (player.Hand.Count > 7) {
+                List<Card> cards = player.WhichCardsToDiscard(player.Hand.Count - 7, Enum.GetValues(typeof(ECardType)).Cast<ECardType>().ToList());
+                foreach (var card in cards) {
+                    if (!player.Hand.Remove(card))
+                        throw new InvalidOperationException($"Card {card.Name} not in player hand!");
+                    card.MoveCard(this, null, CardLocation.DiscardPile);
+                }
+            }
         }
 
         public void PublishEvent(ETriggerSource _event, AEffect? effect = null) {
