@@ -10,7 +10,7 @@ namespace UnstableUnicornCore.BasicEffects {
 
         public override void ChooseTargets(GameController gameController) {}
 
-        public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
+        public override void InvokeEffect(GameController gameController) {
             for (int i = 0; i < _cardCount; i++)
                 gameController.PlayerDrawCard(OwningPlayer);
         }

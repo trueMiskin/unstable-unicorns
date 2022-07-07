@@ -18,9 +18,9 @@ namespace UnstableUnicornCore.BasicEffects {
             _secondEffect.ChooseTargets(gameController);
         }
 
-        public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
-            _firstEffect.InvokeEffect(triggerSource, effect, gameController);
-            _secondEffect.InvokeEffect(triggerSource, effect, gameController);
+        public override void InvokeEffect(GameController gameController) {
+            _firstEffect.InvokeEffect(gameController);
+            _secondEffect.InvokeEffect(gameController);
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {

@@ -24,7 +24,7 @@ namespace UnstableUnicornCore {
                     throw new InvalidOperationException("Selected own card or card which is not on table");
         }
 
-        public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
+        public override void InvokeEffect(GameController gameController) {
             foreach(var card in CardTargets)
                 card.MoveCard(gameController, TargetOwner, TargetLocation);
         }

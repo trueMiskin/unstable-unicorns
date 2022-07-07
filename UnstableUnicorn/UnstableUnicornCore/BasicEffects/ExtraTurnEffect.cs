@@ -13,7 +13,7 @@ namespace UnstableUnicornCore.BasicEffects {
 
         public override void ChooseTargets(GameController gameController) {}
 
-        public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
+        public override void InvokeEffect(GameController gameController) {
             gameController.ThisPlayerTakeExtraTurn();
         }
 

@@ -101,8 +101,7 @@ namespace UnstableUnicornCore {
                         card.UnregisterAllEffects();
 
                 foreach (var effect in _actualChainLink)
-                    // TODO: better trigger source - maybe change API?
-                    effect.InvokeEffect(ETriggerSource.CardLeftStable /* Something for now */, null, this);
+                    effect.InvokeEffect(this);
 
                 // move cards to new location, trigger leave card and
                 foreach (var effect in _actualChainLink)

@@ -20,8 +20,8 @@ namespace UnstableUnicornCore.BasicEffects {
             _condition.ChooseTargets(gameController);
         }
 
-        public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
-            _condition.InvokeEffect(triggerSource, effect, gameController);
+        public override void InvokeEffect(GameController gameController) {
+            _condition.InvokeEffect(gameController);
             gameController.AddNewEffectToChainLink(_thenEffect);
         }
 

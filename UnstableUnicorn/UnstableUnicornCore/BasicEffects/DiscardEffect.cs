@@ -68,7 +68,7 @@ namespace UnstableUnicornCore {
             return validTargets;
         }
 
-        public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
+        public override void InvokeEffect(GameController gameController) {
             foreach (var card in CardTargets)
                 card.MoveCard(gameController, TargetOwner, TargetLocation);
         }

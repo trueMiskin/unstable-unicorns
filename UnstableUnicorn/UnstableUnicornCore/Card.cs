@@ -22,7 +22,7 @@ namespace UnstableUnicornCore {
     }
     public sealed class Card {
         public delegate AEffect FactoryEffect(Card owningCard, GameController gameController);
-        public delegate IEnumerable<TriggerEffect> TriggerFactoryEffect();
+        public delegate TriggerEffect TriggerFactoryEffect(Card owningCard);
         public delegate IEnumerable<ContinuousEffect> ContinuousFactoryEffect();
 
         internal readonly ECardType _cardType;
@@ -39,7 +39,7 @@ namespace UnstableUnicornCore {
             this.oneTimeFactoryEffects = oneTimeFactoryEffects;
             this.triggerEffects = new();
             foreach (var f in triggerFactoryEffects)
-                this.triggerEffects.AddRange(f());
+                this.triggerEffects.Add(f(this));
 
             this.continuousEffects = new();
             foreach (var f in continuousFactoryEffect)
