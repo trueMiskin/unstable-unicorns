@@ -17,13 +17,13 @@ namespace UnstableUnicornCore {
         public override void ChooseTargets(GameController gameController) {
             // TODO: valide to sacrificy max number of cards on board
 
-            CardTargets = OwningCard.Player.WhichCardsToSacrifice(_cardCount);
+            CardTargets = OwningPlayer.WhichCardsToSacrifice(_cardCount);
 
             if (CardTargets.Count != _cardCount)
                 throw new InvalidOperationException($"Not selected enough cards to discard");
 
             foreach (var card in CardTargets) {
-                if (card.Player != OwningCard.Player || card.Location != CardLocation.OnTable)
+                if (card.Player != OwningPlayer || card.Location != CardLocation.OnTable)
                     throw new InvalidOperationException("Selected other player's card or card which is not on table");
                 if (gameController.cardsWhichAreTargeted.Contains(card))
                     throw new InvalidOperationException($"Card {card.Name} is targeted by another effect");
@@ -36,10 +36,9 @@ namespace UnstableUnicornCore {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            APlayer player = OwningCard.Player;
-            return player.Stable.Count +
-                player.Upgrades.Count +
-                player.Downgrades.Count
+            return OwningPlayer.Stable.Count +
+                OwningPlayer.Upgrades.Count +
+                OwningPlayer.Downgrades.Count
                 >= _cardCount;
         }
     }

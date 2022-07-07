@@ -13,17 +13,17 @@ namespace UnstableUnicornCore {
         }
 
         public override void ChooseTargets(GameController gameController) {
-            int numCardsInHand = OwningCard.Player.Hand.Count;
+            int numCardsInHand = OwningPlayer.Hand.Count;
             if (_cardCount > numCardsInHand)
                 _cardCount = numCardsInHand;
             
-            CardTargets = OwningCard.Player.WhichCardsToDestroy(_cardCount);
+            CardTargets = OwningPlayer.WhichCardsToDestroy(_cardCount);
             
             if (CardTargets.Count != _cardCount)
                 throw new InvalidOperationException($"Not selected enough cards to discard");
 
             foreach (var card in CardTargets) {
-                if (card.Player == OwningCard.Player || card.Location != CardLocation.OnTable)
+                if (card.Player == OwningPlayer || card.Location != CardLocation.OnTable)
                     throw new InvalidOperationException("Selected own card or card which is not on table");
                 if (gameController.cardsWhichAreTargeted.Contains(card))
                     throw new InvalidOperationException($"Card {card.Name} is targeted by another effect");
@@ -36,7 +36,7 @@ namespace UnstableUnicornCore {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            return OwningCard.Player.Hand.Count >= _cardCount;
+            return OwningPlayer.Hand.Count >= _cardCount;
         }
     }
 }

@@ -9,7 +9,16 @@ namespace UnstableUnicornCore {
         /// <summary>
         /// Which card belongs this affect
         /// </summary>
-        public Card OwningCard { get; protected set; }
+        public Card OwningCard { get; init; }
+
+        /// <summary>
+        /// Player who owned this card in time, when this card
+        /// was played
+        /// 
+        /// DON'T USE `OwningCard.Player` because when card is spell
+        /// than this value will be resetted on null!
+        /// </summary>
+        public APlayer OwningPlayer { get; init; }
 
         /// <summary>
         /// Number card to discard
@@ -33,6 +42,11 @@ namespace UnstableUnicornCore {
 
         public AEffect(Card owningCard, int cardCount) {
             OwningCard = owningCard;
+
+            if (owningCard.Player == null)
+                throw new InvalidOperationException("When constructing effect player who owns card must be setted!");
+
+            OwningPlayer = owningCard.Player;
             _cardCount = cardCount;
         }
 

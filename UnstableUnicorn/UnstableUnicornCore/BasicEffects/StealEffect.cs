@@ -15,12 +15,12 @@ namespace UnstableUnicornCore {
         public override void ChooseTargets(GameController gameController) {
             
             // choosing card as target
-            CardTargets = OwningCard.Player.WhichCardsToSacrifice(_cardCount);
+            CardTargets = OwningPlayer.WhichCardsToSacrifice(_cardCount);
 
             // TODO: Check if cards are not same
             // TODO: Check if card is not target of another affect
             foreach (var card in CardTargets)
-                if (card.Player == OwningCard.Player || card.Location != CardLocation.OnTable)
+                if (card.Player == OwningPlayer || card.Location != CardLocation.OnTable)
                     throw new InvalidOperationException("Selected own card or card which is not on table");
         }
 
@@ -30,10 +30,9 @@ namespace UnstableUnicornCore {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            APlayer player = OwningCard.Player;
-            return player.Stable.Count +
-                player.Upgrades.Count +
-                player.Downgrades.Count
+            return OwningPlayer.Stable.Count +
+                OwningPlayer.Upgrades.Count +
+                OwningPlayer.Downgrades.Count
                 >= _cardCount;
         }
     }

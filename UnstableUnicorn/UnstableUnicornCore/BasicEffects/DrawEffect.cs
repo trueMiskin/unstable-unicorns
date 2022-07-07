@@ -12,7 +12,7 @@ namespace UnstableUnicornCore.BasicEffects {
 
         public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
             for (int i = 0; i < _cardCount; i++)
-                gameController.PlayerDrawCard(OwningCard.Player);
+                gameController.PlayerDrawCard(OwningPlayer);
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;

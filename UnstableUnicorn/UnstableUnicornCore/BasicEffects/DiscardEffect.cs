@@ -23,9 +23,9 @@ namespace UnstableUnicornCore {
 
         public override void ChooseTargets(GameController gameController) {
             List<APlayer> players = _playerTargeting switch {
-                PlayerTargeting.PlayerOwner => new List<APlayer> { OwningCard.Player },
+                PlayerTargeting.PlayerOwner => new List<APlayer> { OwningPlayer },
                 PlayerTargeting.EachPlayer => gameController.Players,
-                PlayerTargeting.EachOtherPlayer => gameController.Players.Except( new List<APlayer>{ OwningCard.Player }).ToList(),
+                PlayerTargeting.EachOtherPlayer => gameController.Players.Except( new List<APlayer>{ OwningPlayer }).ToList(),
                 _ => throw new NotImplementedException(),
             };
 
@@ -60,6 +60,8 @@ namespace UnstableUnicornCore {
         private int numberValidTarget(GameController gameController, APlayer player) {
             int validTargets = 0;
             foreach (var card in player.Hand) {
+                if (card == OwningCard)
+                    continue;
                 if (_allowedCardTypes.Contains(card.CardType) && !gameController.cardsWhichAreTargeted.Contains(card))
                     validTargets++;
             }
@@ -72,7 +74,7 @@ namespace UnstableUnicornCore {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            return numberValidTarget(gameController, OwningCard.Player) >= _cardCount;
+            return numberValidTarget(gameController, OwningPlayer) >= _cardCount;
         }
     }
 }
