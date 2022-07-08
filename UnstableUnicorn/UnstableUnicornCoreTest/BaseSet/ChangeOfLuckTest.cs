@@ -11,6 +11,10 @@ using System.Reflection;
 namespace UnstableUnicornCoreTest.BaseSet {
     public class ChangeOfLuckTest {
         public class SimplePlayerMockUp : APlayer {
+            public override List<APlayer> ChoosePlayers(int number, bool canChooseMyself, AEffect effect) {
+                throw new NotImplementedException();
+            }
+
             public List<Card> SimpleSelection(int number) {
                 List<Card> list = new();
                 for (int i = 0; i < number; i++)
