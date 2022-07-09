@@ -44,30 +44,33 @@ namespace UnstableUnicornCore {
             int index = 0;
             while (true) {
                 APlayer player = Players[index];
-
-                OnBeginTurn(player);
-
-                Card? card = player.WhichCardToPlay();
-                if (card == null)
-                    PlayerDrawCard(player);
-                else {
-                    if (!player.Hand.Remove(card))
-                        throw new InvalidOperationException($"Card {card.Name} not in player hand!");
-
-                    // check instant
-                    // interative resolving instant cards
-                    // stack chain resolve
-
-                    card.CardPlayed(this, player);
-                }
-
-                OnEndTurn(player);
+                SimulateOneTurn(player);
 
                 if (_willTakeExtraTurn)
                     _willTakeExtraTurn = false;
                 else
                     index = (index + 1) % Players.Count;
             }
+        }
+
+        internal void SimulateOneTurn(APlayer playerOnTurn) {
+            OnBeginTurn(playerOnTurn);
+
+            Card? card = playerOnTurn.WhichCardToPlay();
+            if (card == null)
+                PlayerDrawCard(playerOnTurn);
+            else {
+                if (!playerOnTurn.Hand.Remove(card))
+                    throw new InvalidOperationException($"Card {card.Name} not in player hand!");
+
+                // check instant
+                // interative resolving instant cards
+                // stack chain resolve
+
+                card.CardPlayed(this, playerOnTurn);
+            }
+
+            OnEndTurn(playerOnTurn);
         }
 
         public void ThisPlayerTakeExtraTurn() => _willTakeExtraTurn = true;
@@ -87,12 +90,12 @@ namespace UnstableUnicornCore {
 
                 // trigger all ChangeTargeting
                 foreach (var effect in _actualChainLink) {
-                    PublishEvent(ETriggerSource.ChangeTargeting, effect);
+                    PublishEvent(ETriggerSource.ChangeTargeting, effect.OwningCard, effect);
                 }
 
                 // trigger change card location
                 foreach (var effect in _actualChainLink) {
-                    PublishEvent(ETriggerSource.ChangeLocationOfCard, effect);
+                    PublishEvent(ETriggerSource.ChangeLocationOfCard, effect.OwningCard, effect);
                 }
 
                 // unregister affects of targets cards
@@ -114,7 +117,7 @@ namespace UnstableUnicornCore {
                     foreach (var card in effect.CardTargets)
                         if (card.Location == CardLocation.OnTable) {
                             card.RegisterAllEffects();
-                            PublishEvent(ETriggerSource.CardEnteredStable, effect);
+                            PublishEvent(ETriggerSource.CardEnteredStable, effect.OwningCard, effect);
                         }
                 }
             }
@@ -153,12 +156,11 @@ namespace UnstableUnicornCore {
             }
         }
 
-        public void PublishEvent(ETriggerSource _event, AEffect? effect = null) {
+        public void PublishEvent(ETriggerSource _event, Card? card = null, AEffect? effect = null) {
             if (!EventsPool.TryGetValue(_event, out List<TriggerEffect>? triggerList))
                 return;
             foreach (var trigger in triggerList) {
-                throw new NotImplementedException();
-                // trigger.InvokeEffect(_event, effect, this);
+                trigger.InvokeEffect(_event, card, effect, this);
             }
         }
 

@@ -124,8 +124,10 @@ namespace UnstableUnicornCore {
 
             if (_cardType == ECardType.Spell) {
                 MoveCard(gameController, null, CardLocation.DiscardPile);
-            } else
+            } else {
                 MoveCard(gameController, newCardOwner, CardLocation.OnTable);
+                gameController.PublishEvent(ETriggerSource.CardEnteredStable, this);
+            }
         }
 
         /// <summary>
