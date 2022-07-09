@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace UnstableUnicornCore.BasicEffects {
-    public class PullCardEffect : AEffect {
+    public class PullOpponentsCardEffect : AEffect {
         int _numberSelectPlayers;
         List<APlayer>? playerList;
-        public PullCardEffect(Card owningCard, int cardCount, int numberSelectedPlayers) : base(owningCard, cardCount) {
+        public PullOpponentsCardEffect(Card owningCard, int cardCount, int numberSelectedPlayers) : base(owningCard, cardCount) {
             TargetOwner = OwningPlayer;
             TargetLocation = CardLocation.InHand;
             _numberSelectPlayers = numberSelectedPlayers;
