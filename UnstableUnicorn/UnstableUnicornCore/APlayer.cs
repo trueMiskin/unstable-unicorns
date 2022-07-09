@@ -13,7 +13,7 @@ namespace UnstableUnicornCore {
         public List<Card> Stable     = new();
         public List<Card> Upgrades   = new();
         public List<Card> Downgrades = new();
-        internal GameController GameController { get; set; }
+        public GameController GameController { get; set; }
 
         /// <summary>
         /// Which card from should be played
