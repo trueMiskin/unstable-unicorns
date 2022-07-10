@@ -23,14 +23,16 @@ namespace UnstableUnicornCore {
     public sealed class Card {
         public delegate AEffect FactoryEffect(Card owningCard, GameController gameController);
         public delegate TriggerEffect TriggerFactoryEffect(Card owningCard);
-        public delegate IEnumerable<ContinuousEffect> ContinuousFactoryEffect();
+        public delegate AContinuousEffect ContinuousFactoryEffect(Card owningCard);
 
         internal readonly ECardType _cardType;
         private List<FactoryEffect> oneTimeFactoryEffects;
         private List<TriggerEffect> triggerEffects;
-        private List<ContinuousEffect> continuousEffects;
+        private List<ContinuousFactoryEffect> _continuousFactoryEffects;
+        private List<AContinuousEffect> continuousEffects;
         public CardLocation Location { get; private set; }
         public string Name { get; init; }
+        private bool _canBeNeigh = true, _canBeDestroyed = true;
 
         public Card(String name, ECardType cardType, List<FactoryEffect> oneTimeFactoryEffects,
             List<TriggerFactoryEffect> triggerFactoryEffects, List<ContinuousFactoryEffect> continuousFactoryEffect) {
@@ -42,15 +44,24 @@ namespace UnstableUnicornCore {
                 this.triggerEffects.Add(f(this));
 
             this.continuousEffects = new();
-            foreach (var f in continuousFactoryEffect)
-                this.continuousEffects.AddRange(f());
+            this._continuousFactoryEffects = continuousFactoryEffect;
 
             this.Location = CardLocation.Pile;
         }
 
         public bool CanBeNeigh() { return false; }
         public bool CanBeSacriced() { return false; }
-        public bool CanBeDestroyed() { return false; }
+        public bool CanBeDestroyed() {
+            if (Location != CardLocation.OnTable)
+                throw new InvalidOperationException("Invalid calling method, this card is not on table!");
+            if (Player == null)
+                throw new InvalidOperationException("Card on table but player is not set!");
+
+            bool ret = _canBeDestroyed;
+            foreach (AContinuousEffect effect in Player.GameController.ContinuousEffects)
+                ret &= effect.IsCardDestroyable(this);
+            return ret;
+        }
         public bool CanBePlayed() {
             if (Location != CardLocation.InHand)
                 throw new InvalidOperationException("Card is not in hand. Card cannot be played.");
@@ -90,6 +101,12 @@ namespace UnstableUnicornCore {
             foreach (var effect in triggerEffects)
                 effect.SubscribeToEvent(Player.GameController);
 
+            if (this.continuousEffects.Count != 0)
+                throw new InvalidOperationException("Previous continous effects of this card was not unregistered!");
+            // Creating new continuous effect for given payer
+            foreach (var f in _continuousFactoryEffects)
+                this.continuousEffects.Add(f(this));
+
             foreach (var effect in continuousEffects)
                 Player.GameController.AddContinuousEffect(effect);
         }
@@ -100,8 +117,10 @@ namespace UnstableUnicornCore {
             foreach (var effect in triggerEffects)
                 effect.SubscribeToEvent(Player.GameController);
 
-            foreach (var effect in triggerEffects)
-                effect.UnSubscribeToEvent(Player.GameController);
+            foreach (var effect in continuousEffects)
+                Player.GameController.RemoveContinuousEffect(effect);
+            
+            this.continuousEffects.Clear();
         }
 
         public void PlayedInstant(APlayer? player, List<Card> chainLink) {

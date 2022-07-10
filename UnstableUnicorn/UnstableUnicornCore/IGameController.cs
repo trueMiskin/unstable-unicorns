@@ -15,7 +15,7 @@ namespace UnstableUnicornCore {
         public List<Card> DiscardPile = new();
         public List<Card> Nursery;
         public List<APlayer> Players;
-        public List<ContinuousEffect> ContinuousEffects = new();
+        public List<AContinuousEffect> ContinuousEffects = new();
         private Dictionary<ETriggerSource, List<TriggerEffect>> EventsPool = new();
 
         /// <summary>
@@ -103,23 +103,20 @@ namespace UnstableUnicornCore {
                     foreach (var card in effect.CardTargets)
                         card.UnregisterAllEffects();
 
+                // move cards to new location, trigger leave card and
                 foreach (var effect in _actualChainLink)
                     effect.InvokeEffect(this);
 
-                // move cards to new location, trigger leave card and
-                foreach (var effect in _actualChainLink)
-                    foreach (var card in effect.CardTargets)
-                        card.MoveCard(this, effect.TargetOwner, effect.TargetLocation);
-
+                // TODO: Does it done in CardPlayed already?
                 // delay card enter to new stable to next chain link - a.k.a. add to chainLink
                 // --> this i dont need to solve, nearly all trigger effects are by default delayed
-                foreach (var effect in _actualChainLink) {
+                /*foreach (var effect in _actualChainLink) {
                     foreach (var card in effect.CardTargets)
                         if (card.Location == CardLocation.OnTable) {
                             card.RegisterAllEffects();
                             PublishEvent(ETriggerSource.CardEnteredStable, effect.OwningCard, effect);
                         }
-                }
+                }*/
             }
         }
 
@@ -164,10 +161,10 @@ namespace UnstableUnicornCore {
             }
         }
 
-        public void AddContinuousEffect(ContinuousEffect effect) => ContinuousEffects.Add(effect);
+        public void AddContinuousEffect(AContinuousEffect effect) => ContinuousEffects.Add(effect);
 
         // TODO: maybe throw error on remove non-existent effect
-        public void RemoveContinuousEffect(ContinuousEffect effect) => ContinuousEffects.Remove(effect);
+        public void RemoveContinuousEffect(AContinuousEffect effect) => ContinuousEffects.Remove(effect);
 
         public void SubscribeEvent(ETriggerSource _event, TriggerEffect effect) {
             if (!EventsPool.TryGetValue(_event, out List<TriggerEffect>? triggerList)) {
@@ -182,6 +179,16 @@ namespace UnstableUnicornCore {
                 throw new InvalidOperationException($"Trying unsubscribe unknown effect!");
             if(!triggerList.Remove(effect))
                 throw new InvalidOperationException($"Trying unsubscribe unknown effect!");
+        }
+
+        public List<Card> GetCardsOnTable() {
+            List<Card> cards = new();
+            foreach(var player in Players) {
+                cards.AddRange(player.Stable);
+                cards.AddRange(player.Upgrades);
+                cards.AddRange(player.Downgrades);
+            }
+            return cards;
         }
     }
 }
