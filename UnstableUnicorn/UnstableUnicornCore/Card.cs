@@ -34,7 +34,7 @@ namespace UnstableUnicornCore {
     }
 
     public sealed class Card {
-        public delegate AEffect FactoryEffect(Card owningCard, GameController gameController);
+        public delegate AEffect FactoryEffect(Card owningCard);
         public delegate TriggerEffect TriggerFactoryEffect(Card owningCard);
         public delegate AContinuousEffect ContinuousFactoryEffect(Card owningCard);
 
@@ -87,7 +87,7 @@ namespace UnstableUnicornCore {
             bool ret = true;
             GameController gameController = Player.GameController;
             foreach (var effectFactory in oneTimeFactoryEffects)
-                ret &= effectFactory(this, gameController).MeetsRequirementsToPlay(gameController);
+                ret &= effectFactory(this).MeetsRequirementsToPlay(gameController);
             foreach (var effect in Player.GameController.ContinuousEffects)
                 ret &= effect.IsCardPlayable(Player, this);
             return ret;
@@ -119,7 +119,7 @@ namespace UnstableUnicornCore {
 
             // spells
             foreach (var factoryEffect in oneTimeFactoryEffects)
-                Player.GameController.AddNewEffectToChainLink(factoryEffect(this, Player.GameController));
+                Player.GameController.AddNewEffectToChainLink(factoryEffect(this));
 
             foreach (var effect in triggerEffects)
                 effect.SubscribeToEvent(Player.GameController);

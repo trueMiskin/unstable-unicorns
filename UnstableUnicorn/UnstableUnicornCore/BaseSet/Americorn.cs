@@ -18,8 +18,7 @@ namespace UnstableUnicornCore.BaseSet {
                         owningCard,
                         (AEffect? affect, Card? card) => owningCard == card,
                         new List<ETriggerSource>() { ETriggerSource.CardEnteredStable },
-                        (Card _, GameController gameController) => new PullOpponentsCardEffect(owningCard, cardCount: 1,
-                                                                                               numberSelectedPlayers: 1)
+                        (Card _) => new PullOpponentsCardEffect(owningCard, cardCount: 1, numberSelectedPlayers: 1)
                     )
                 );
         }

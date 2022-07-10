@@ -126,7 +126,7 @@ namespace UnstableUnicornCore {
 
         public void InvokeEffect(ETriggerSource triggerSource, Card? cardWhichTriggerEffect,
                                  AEffect? effectWhichTriggerEffect, GameController gameController) {
-            AEffect triggeredEffect = factoryEffect(OwningCard, gameController);
+            AEffect triggeredEffect = factoryEffect(OwningCard);
             if (triggerPredicate(effectWhichTriggerEffect, cardWhichTriggerEffect) ) {
                 // execute `ChangeTargeting` and `ChangeLocationOfCard` immediately because this event should be used
                 // only on effects which saving unicorns from leaving stable (for example: to discard pile)

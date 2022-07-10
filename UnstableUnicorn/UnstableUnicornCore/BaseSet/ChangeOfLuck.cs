@@ -12,7 +12,7 @@ namespace UnstableUnicornCore.BaseSet {
                 .Name("Change of Luck")
                 .CardType(ECardType.Spell)
                 .Text("DRAW 2 cards and DISCARD 3 cards, then take another turn.")
-                .Cast((Card owningCard, GameController gameController) => {
+                .Cast((Card owningCard) => {
                     return new ConditionalEffect(owningCard,
                         new AndEffect(owningCard,
                             new DiscardEffect(owningCard, 3, ECardTypeUtils.CardTarget, PlayerTargeting.PlayerOwner),

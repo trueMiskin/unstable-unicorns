@@ -16,7 +16,7 @@ namespace UnstableUnicornCore.BaseSet {
                         owningCard,
                         (AEffect? affect, Card? card) => owningCard == card,
                         new List<ETriggerSource>() { ETriggerSource.CardEnteredStable },
-                        (Card _, GameController gameController) => new SacrificeEffect(owningCard, Int32.MaxValue, new List<ECardType>() { ECardType.Downgrade })
+                        (Card _) => new SacrificeEffect(owningCard, Int32.MaxValue, new List<ECardType>() { ECardType.Downgrade })
                 ));
         }
     }
