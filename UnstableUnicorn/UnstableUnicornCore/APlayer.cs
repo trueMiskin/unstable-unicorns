@@ -22,7 +22,7 @@ namespace UnstableUnicornCore {
         public abstract Card? WhichCardToPlay();
         public abstract List<Card> WhichCardsToSacrifice(int number, List<ECardType> allowedCardTypes);
         public abstract List<Card> WhichCardsToDestroy(int number, List<ECardType> allowedCardTypes);
-        public abstract List<Card> WhichCardsToSteal(int number);
+        public abstract List<Card> WhichCardsToSteal(int number, List<ECardType> allowedCardTypes);
         public abstract List<Card> WhichCardsToDiscard(int number, List<ECardType> allowedCardTypes);
         public abstract List<APlayer> ChoosePlayers(int number, bool canChooseMyself, AEffect effect);
         

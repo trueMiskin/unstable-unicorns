@@ -55,8 +55,16 @@ namespace UnstableUnicornCoreTest {
             return selection;
         }
 
-        public override List<Card> WhichCardsToSteal(int number) {
-            return SimpleSelection(number);
+        public override List<Card> WhichCardsToSteal(int number, List<ECardType> allowedCardTypes) {
+            List<Card> selection = new();
+            foreach (var card in GameController.GetCardsOnTable()) {
+                if (selection.Count == number)
+                    break;
+                if ( (card.Player != this) && allowedCardTypes.Contains(card.CardType)) {
+                    selection.Add(card);
+                }
+            }
+            return selection;
         }
 
         public override Card WhichCardToPlay() {
