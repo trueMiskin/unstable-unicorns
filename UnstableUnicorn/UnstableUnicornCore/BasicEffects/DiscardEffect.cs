@@ -49,7 +49,7 @@ namespace UnstableUnicornCore {
                 if (card == null)
                     throw new InvalidOperationException($"Card was not selected");
                 if (!_allowedCardTypes.Contains(card.CardType))
-                    throw new InvalidOperationException($"Card {card.Name} is not have allowed card type");
+                    throw new InvalidOperationException($"Card {card.Name} have not allowed card type");
                 if (!copyPlayerHand.Remove(card))
                     throw new InvalidOperationException($"Card {card.Name} not in player hand!");
                 if (gameController.cardsWhichAreTargeted.Contains(card))
