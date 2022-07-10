@@ -31,6 +31,9 @@ namespace UnstableUnicornCore {
         private List<ContinuousFactoryEffect> _continuousFactoryEffects;
         private List<AContinuousEffect> continuousEffects;
         public CardLocation Location { get; private set; }
+
+        private static string CardOnTablePlayerNull = "Card on table but player is not set!";
+
         public string Name { get; init; }
         private bool _canBeNeigh = true, _canBeDestroyed = true;
 
@@ -55,7 +58,7 @@ namespace UnstableUnicornCore {
             if (Location != CardLocation.OnTable)
                 throw new InvalidOperationException("Invalid calling method, this card is not on table!");
             if (Player == null)
-                throw new InvalidOperationException("Card on table but player is not set!");
+                throw new InvalidOperationException(CardOnTablePlayerNull);
 
             bool ret = _canBeDestroyed;
             foreach (AContinuousEffect effect in Player.GameController.ContinuousEffects)
@@ -82,9 +85,14 @@ namespace UnstableUnicornCore {
 
         public ECardType CardType {
             get {
+                if (Location != CardLocation.OnTable)
+                    return _cardType;
+                if (Player == null)
+                    throw new InvalidOperationException(CardOnTablePlayerNull);
+
                 ECardType type = _cardType;
-                foreach (var cardTypeTranformer in Player?.CardTypeTransformers ?? Enumerable.Empty<Func<ECardType, ECardType>>())
-                    type = cardTypeTranformer( type );
+                foreach (var continuousEffect in Player.GameController.ContinuousEffects)
+                    type = continuousEffect.GetCardType(type, Player);
 
                 return type;
             }
@@ -132,6 +140,8 @@ namespace UnstableUnicornCore {
                 throw new InvalidOperationException("Instant card cannot be used by calling CardPlayed");
             if (!CanBePlayed())
                 throw new InvalidOperationException("This card cannot be played. Requirements are not met.");
+            if (_cardType == ECardType.Spell && newCardOwner != Player)
+                throw new InvalidOperationException("A spell cannot have a new card owner while the spell is being cast.");
 
             // player who will own card
             // - in case of spell, owner will be player who played this spell

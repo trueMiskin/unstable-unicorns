@@ -167,6 +167,7 @@ namespace UnstableUnicornCore {
         public virtual bool IsCardPlayable(APlayer player, Card card) => true;
 
         public virtual bool IsCardDestroyable(Card card) => true;
+        public virtual ECardType GetCardType(ECardType actualCardType, APlayer playerOwner) => actualCardType; 
     }
 
     public class ActivatableEffect /*: AEffect*/ {
