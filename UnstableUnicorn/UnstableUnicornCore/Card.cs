@@ -88,6 +88,8 @@ namespace UnstableUnicornCore {
             GameController gameController = Player.GameController;
             foreach (var effectFactory in oneTimeFactoryEffects)
                 ret &= effectFactory(this, gameController).MeetsRequirementsToPlay(gameController);
+            foreach (var effect in Player.GameController.ContinuousEffects)
+                ret &= effect.IsCardPlayable(Player, this);
             return ret;
         }
 
