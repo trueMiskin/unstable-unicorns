@@ -6,25 +6,37 @@ using System.Threading.Tasks;
 
 namespace UnstableUnicornCore {
     public sealed class DestroyEffect : AEffect {
+        // card types which can be targeted
+        List<ECardType> _allowedCardTypes;
 
-        public DestroyEffect(Card owningCard, int cardCount) : base(owningCard, cardCount) {
+        public DestroyEffect(Card owningCard, int cardCount, List<ECardType> targetType) : base(owningCard, cardCount) {
             TargetOwner = null;
             TargetLocation = CardLocation.DiscardPile;
+            _allowedCardTypes = targetType;
         }
 
         public override void ChooseTargets(GameController gameController) {
-            int numCardsInHand = OwningPlayer.Hand.Count;
-            if (_cardCount > numCardsInHand)
-                _cardCount = numCardsInHand;
+            List<Card> cards = gameController.GetCardsOnTable();
+            int numCardsOnTable = 0;
             
-            CardTargets = OwningPlayer.WhichCardsToDestroy(_cardCount);
+            foreach (Card c in cards)
+                if (_allowedCardTypes.Contains(c.CardType) && c.CanBeDestroyed())
+                    numCardsOnTable++;
+
+            if (_cardCount > numCardsOnTable)
+                _cardCount = numCardsOnTable;
+            
+            // owner choose which card should be destroyed
+            CardTargets = OwningPlayer.WhichCardsToDestroy(numCardsOnTable, _allowedCardTypes);
             
             if (CardTargets.Count != _cardCount)
-                throw new InvalidOperationException($"Not selected enough cards to discard");
+                throw new InvalidOperationException($"Not selected enough cards to destroy");
 
             foreach (var card in CardTargets) {
-                if (card.Player == OwningPlayer || card.Location != CardLocation.OnTable)
-                    throw new InvalidOperationException("Selected own card or card which is not on table");
+                if (card.Location != CardLocation.OnTable)
+                    throw new InvalidOperationException("Selected a card which is not on table");
+                if (!_allowedCardTypes.Contains(card.CardType) || !card.CanBeDestroyed())
+                    throw new InvalidOperationException($"Card {card.Name} have not allowed card type or can't be destroyed");
                 if (gameController.cardsWhichAreTargeted.Contains(card))
                     throw new InvalidOperationException($"Card {card.Name} is targeted by another effect");
             }
