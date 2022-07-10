@@ -28,10 +28,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             Assert.Equal(playerOne.Hand[0], americorn);
             Assert.Equal(playerTwo.Hand[0], basicUnicorn);
 
-            americorn.CardPlayed(controller, playerOne);
-
-            typeof(GameController).GetMethod("ResolveChainLink", BindingFlags.Instance | BindingFlags.NonPublic)
-                .Invoke(controller, new object[] { });
+            controller.PlayCardAndResolveChainLink(americorn, playerOne);
             
             Assert.Single(playerOne.Hand);
             Assert.Empty(playerTwo.Hand);

@@ -48,10 +48,8 @@ namespace UnstableUnicornCoreTest.BaseSet {
             for (int i = 0; i < numberOtherCardsInHand + 1; i++)
                 controller.PlayerDrawCard(player);
 
-            changeOfLuck.CardPlayed(controller, player);
-            // Kdyz se karta zahraje, tak player se nastavi na null
-            typeof(GameController).GetMethod("ResolveChainLink", BindingFlags.Instance | BindingFlags.NonPublic)
-                .Invoke(controller, new object[]{ });
+            controller.PlayCardAndResolveChainLink(changeOfLuck, player);
+
             Assert.Equal(2, player.Hand.Count);
         }
     }
