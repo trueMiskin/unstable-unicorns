@@ -23,9 +23,9 @@ namespace UnstableUnicornCoreTest.BaseSet {
             Assert.Equal(playerOne.Hand[0], pandamonium);
             Assert.Equal(playerOne.Hand[1], basicUnicorn);
 
-            Assert.Equal(ECardType.Unicorn, basicUnicorn.CardType);
+            Assert.Equal(ECardType.BasicUnicorn, basicUnicorn.CardType);
             controller.PlayCardAndResolveChainLink(basicUnicorn, playerOne);
-            Assert.Equal(ECardType.Unicorn, basicUnicorn.CardType);
+            Assert.Equal(ECardType.BasicUnicorn, basicUnicorn.CardType);
             controller.PlayCardAndResolveChainLink(pandamonium, playerOne);
             Assert.Equal(ECardType.Panda, basicUnicorn.CardType);
 
@@ -59,9 +59,9 @@ namespace UnstableUnicornCoreTest.BaseSet {
             Assert.Equal(playerOne.Hand[1], basicUnicorn);
             Assert.Equal(playerTwo.Hand[0], unicornPoison);
 
-            Assert.Equal(ECardType.Unicorn, basicUnicorn.CardType);
+            Assert.Equal(ECardType.BasicUnicorn, basicUnicorn.CardType);
             controller.PlayCardAndResolveChainLink(basicUnicorn, playerOne);
-            Assert.Equal(ECardType.Unicorn, basicUnicorn.CardType);
+            Assert.Equal(ECardType.BasicUnicorn, basicUnicorn.CardType);
             controller.PlayCardAndResolveChainLink(pandamonium, playerOne);
             Assert.Equal(ECardType.Panda, basicUnicorn.CardType);
 

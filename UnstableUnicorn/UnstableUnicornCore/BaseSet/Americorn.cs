@@ -10,7 +10,7 @@ namespace UnstableUnicornCore.BaseSet {
         public override CardTemplate GetCardTemplate() {
             return Card
                 .Name("Americorn")
-                .CardType(ECardType.Unicorn)
+                .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, choose any player. Pull a card from that player's hand.")
                 .TriggerEffect(
                     (Card owningCard) =>

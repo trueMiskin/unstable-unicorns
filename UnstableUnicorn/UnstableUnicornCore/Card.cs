@@ -6,12 +6,24 @@ using System.Threading.Tasks;
 
 namespace UnstableUnicornCore {
     public enum ECardType {
-        Unicorn,
+        BabyUnicorn,
+        BasicUnicorn,
+        MagicUnicorn,
         Spell,
         Upgrade,
         Downgrade,
         Instant,
         Panda
+    }
+
+    public static class ECardTypeUtils {
+        public static readonly List<ECardType> UnicornTarget = new List<ECardType>() {
+            ECardType.BabyUnicorn, ECardType.BasicUnicorn, ECardType.MagicUnicorn
+        };
+        public static readonly List<ECardType> CardTarget = new List<ECardType>() {
+            ECardType.BabyUnicorn, ECardType.BasicUnicorn, ECardType.MagicUnicorn,
+            ECardType.Spell, ECardType.Upgrade, ECardType.Downgrade, ECardType.Instant
+        };
     }
 
     public enum CardLocation {
@@ -20,6 +32,7 @@ namespace UnstableUnicornCore {
         OnTable,
         DiscardPile
     }
+
     public sealed class Card {
         public delegate AEffect FactoryEffect(Card owningCard, GameController gameController);
         public delegate TriggerEffect TriggerFactoryEffect(Card owningCard);
@@ -183,7 +196,7 @@ namespace UnstableUnicornCore {
                     Player.Hand.Remove(this);
                     break;
                 case CardLocation.OnTable:
-                    if (_cardType == ECardType.Unicorn)
+                    if (ECardTypeUtils.UnicornTarget.Contains(_cardType))
                         Player.Stable.Remove(this);
                     else if (_cardType == ECardType.Upgrade)
                         Player.Upgrades.Remove(this);
@@ -214,7 +227,7 @@ namespace UnstableUnicornCore {
                     Player.Hand.Add(this);
                     break;
                 case CardLocation.OnTable:
-                    if (_cardType == ECardType.Unicorn)
+                    if (ECardTypeUtils.UnicornTarget.Contains(_cardType))
                         Player.Stable.Add(this);
                     else if (_cardType == ECardType.Upgrade)
                         Player.Upgrades.Add(this);

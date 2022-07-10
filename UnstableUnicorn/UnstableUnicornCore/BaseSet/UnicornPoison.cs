@@ -12,7 +12,7 @@ namespace UnstableUnicornCore.BaseSet {
                 .CardType(ECardType.Spell)
                 .Text("DESTROY a Unicorn card.")
                 .Cast((Card owningCard, GameController gameController) =>
-                    new DestroyEffect(owningCard, 1, new List<ECardType>() { ECardType.Unicorn })
+                    new DestroyEffect(owningCard, 1, ECardTypeUtils.UnicornTarget)
                 );
         }
     }

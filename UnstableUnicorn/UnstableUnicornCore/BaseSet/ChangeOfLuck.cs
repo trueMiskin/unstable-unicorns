@@ -15,7 +15,7 @@ namespace UnstableUnicornCore.BaseSet {
                 .Cast((Card owningCard, GameController gameController) => {
                     return new ConditionalEffect(owningCard,
                         new AndEffect(owningCard,
-                            new DiscardEffect(owningCard, 3, new List<ECardType>() { ECardType.Unicorn, ECardType.Spell, ECardType.Upgrade, ECardType.Downgrade }, PlayerTargeting.PlayerOwner),
+                            new DiscardEffect(owningCard, 3, ECardTypeUtils.CardTarget, PlayerTargeting.PlayerOwner),
                             new DrawEffect(owningCard, 2)
                         ),
                         new ExtraTurnEffect(owningCard)

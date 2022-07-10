@@ -9,7 +9,7 @@
             if (OwningPlayer != playerOwner)
                 return actualCardType;
 
-            if (actualCardType == ECardType.Unicorn)
+            if (ECardTypeUtils.UnicornTarget.Contains(actualCardType))
                 return _newCardType;
 
             return actualCardType;
