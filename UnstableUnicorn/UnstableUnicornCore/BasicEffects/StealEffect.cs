@@ -13,9 +13,8 @@ namespace UnstableUnicornCore {
         }
 
         public override void ChooseTargets(GameController gameController) {
-            
             // choosing card as target
-            CardTargets = OwningPlayer.WhichCardsToSacrifice(_cardCount);
+            CardTargets = OwningPlayer.WhichCardsToSteal(_cardCount);
 
             // TODO: Check if cards are not same
             // TODO: Check if card is not target of another affect

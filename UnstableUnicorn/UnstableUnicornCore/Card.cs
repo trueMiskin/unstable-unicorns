@@ -48,7 +48,7 @@ namespace UnstableUnicornCore {
         private static string CardOnTablePlayerNull = "Card on table but player is not set!";
 
         public string Name { get; init; }
-        private bool _canBeNeigh = true, _canBeDestroyed = true;
+        private bool _canBeNeigh = true, _canBeDestroyed = true, _canBeSacrificed = true;
 
         public Card(String name, ECardType cardType, List<FactoryEffect> oneTimeFactoryEffects,
             List<TriggerFactoryEffect> triggerFactoryEffects, List<ContinuousFactoryEffect> continuousFactoryEffect) {
@@ -65,8 +65,8 @@ namespace UnstableUnicornCore {
             this.Location = CardLocation.Pile;
         }
 
-        public bool CanBeNeigh() { return false; }
-        public bool CanBeSacriced() { return false; }
+        public bool CanBeNeigh() { return _canBeNeigh; }
+        public bool CanBeSacriced() { return _canBeSacrificed; }
         public bool CanBeDestroyed() {
             if (Location != CardLocation.OnTable)
                 throw new InvalidOperationException("Invalid calling method, this card is not on table!");
@@ -158,18 +158,17 @@ namespace UnstableUnicornCore {
             if (_cardType == ECardType.Spell && newCardOwner != Player)
                 throw new InvalidOperationException("A spell cannot have a new card owner while the spell is being cast.");
 
-            // player who will own card
-            // - in case of spell, owner will be player who played this spell
-            // - in other case, owner will be player who own stable where this card will be
-            Player = newCardOwner;
-            // register all trigger and continuous effects
-            // fire one time effects (or spell effects)
-            RegisterAllEffects();
-
             if (_cardType == ECardType.Spell) {
+                // set player for trigger effect, then cast spell
+                Player = newCardOwner;
+                // trigger one time effect
+                RegisterAllEffects();
                 MoveCard(gameController, null, CardLocation.DiscardPile);
             } else {
                 MoveCard(gameController, newCardOwner, CardLocation.OnTable);
+                // register all trigger and continuous effects
+                // fire one time effects (or spell effects
+                RegisterAllEffects();
                 gameController.PublishEvent(ETriggerSource.CardEnteredStable, this);
             }
         }

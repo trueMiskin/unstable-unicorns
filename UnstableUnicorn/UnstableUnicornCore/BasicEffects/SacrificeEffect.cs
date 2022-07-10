@@ -6,18 +6,35 @@ using System.Threading.Tasks;
 
 namespace UnstableUnicornCore {
     public sealed class SacrificeEffect : AEffect {
+        // card types which can be targeted
+        List<ECardType> _allowedCardTypes;
 
-        public SacrificeEffect(Card owningCard, int cardCount) : base(owningCard, cardCount) {
+        public SacrificeEffect(Card owningCard, int cardCount, List<ECardType> targetType) : base(owningCard, cardCount) {
             OwningCard = owningCard;
 
+            _allowedCardTypes = targetType;
             TargetOwner = null;
             TargetLocation = CardLocation.DiscardPile;
         }
 
-        public override void ChooseTargets(GameController gameController) {
-            // TODO: valide to sacrificy max number of cards on board
+        private int numberValidTargets(GameController gameController) {
+            int numberValidTargets = 0;
 
-            CardTargets = OwningPlayer.WhichCardsToSacrifice(_cardCount);
+            List<Card> cards = gameController.GetCardsOnTable();
+            foreach (Card c in cards)
+                if (_allowedCardTypes.Contains(c.CardType) && c.CanBeSacriced() && c.Player == OwningPlayer)
+                    numberValidTargets++;
+
+            return numberValidTargets;
+        }
+
+        public override void ChooseTargets(GameController gameController) {
+            int numCardsSacrifice = numberValidTargets(gameController);
+
+            if (_cardCount > numCardsSacrifice)
+                _cardCount = numCardsSacrifice;
+
+            CardTargets = OwningPlayer.WhichCardsToSacrifice(_cardCount, _allowedCardTypes);
 
             if (CardTargets.Count != _cardCount)
                 throw new InvalidOperationException($"Not selected enough cards to discard");
@@ -25,6 +42,8 @@ namespace UnstableUnicornCore {
             foreach (var card in CardTargets) {
                 if (card.Player != OwningPlayer || card.Location != CardLocation.OnTable)
                     throw new InvalidOperationException("Selected other player's card or card which is not on table");
+                if (!_allowedCardTypes.Contains(card.CardType) || !card.CanBeSacriced())
+                    throw new InvalidOperationException($"Card {card.Name} have not allowed card type or can't be sacrificed");
                 if (gameController.cardsWhichAreTargeted.Contains(card))
                     throw new InvalidOperationException($"Card {card.Name} is targeted by another effect");
             }
@@ -36,10 +55,7 @@ namespace UnstableUnicornCore {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            return OwningPlayer.Stable.Count +
-                OwningPlayer.Upgrades.Count +
-                OwningPlayer.Downgrades.Count
-                >= _cardCount;
+            return numberValidTargets(gameController) >= _cardCount;
         }
     }
 }
