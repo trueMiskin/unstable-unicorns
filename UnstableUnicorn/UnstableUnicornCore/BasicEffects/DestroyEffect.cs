@@ -15,13 +15,19 @@ namespace UnstableUnicornCore {
             _allowedCardTypes = targetType;
         }
 
-        public override void ChooseTargets(GameController gameController) {
+        private int numberValidTargets(GameController gameController) {
             List<Card> cards = gameController.GetCardsOnTable();
-            int numCardsOnTable = 0;
-            
+            int numberValidTargets = 0;
+
             foreach (Card c in cards)
                 if (_allowedCardTypes.Contains(c.CardType) && c.CanBeDestroyed())
-                    numCardsOnTable++;
+                    numberValidTargets++;
+
+            return numberValidTargets;
+        }
+
+        public override void ChooseTargets(GameController gameController) {
+            int numCardsOnTable = numberValidTargets(gameController);
 
             if (_cardCount > numCardsOnTable)
                 _cardCount = numCardsOnTable;
@@ -48,7 +54,7 @@ namespace UnstableUnicornCore {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            return OwningPlayer.Hand.Count >= _cardCount;
+            return numberValidTargets(gameController) >= _cardCount;
         }
     }
 }
