@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UnstableUnicornCore.BasicEffects {
+﻿namespace UnstableUnicornCore.BasicEffects {
     public class DrawEffect : AEffect {
         public DrawEffect(Card owningCard, int cardCount) : base(owningCard, cardCount) {}
 

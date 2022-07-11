@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UnstableUnicornCore.BasicEffects {
+﻿namespace UnstableUnicornCore.BasicEffects {
     /// <summary>
     /// Actual player will take extra turn
     /// </summary>

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnstableUnicornCore.BasicEffects;
 
 namespace UnstableUnicornCore.BaseSet {
     public class AlluringNarwhal : CardTemplateSource {

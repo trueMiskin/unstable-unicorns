@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace UnstableUnicornCore {
+namespace UnstableUnicornCore.BasicEffects {
     public sealed class DestroyEffect : AEffect {
         // card types which can be targeted
         List<ECardType> _allowedCardTypes;

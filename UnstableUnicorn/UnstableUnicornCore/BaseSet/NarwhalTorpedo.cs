@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnstableUnicornCore.BasicEffects;
 
 namespace UnstableUnicornCore.BaseSet {
     public class NarwhalTorpedo : CardTemplateSource {

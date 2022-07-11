@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UnstableUnicornCore.BasicEffects {
+﻿namespace UnstableUnicornCore.BasicEffects {
     public class AndEffect : AEffect {
         private AEffect _firstEffect, _secondEffect;
         public AndEffect(Card owningCard, AEffect firstEffect, AEffect secondEffect)

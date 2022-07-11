@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace UnstableUnicornCore {
+namespace UnstableUnicornCore.BasicEffects {
     public sealed class StealEffect : AEffect {
         private List<ECardType> _allowedCardTypes;
         public StealEffect(Card owningCard, int cardCount, List<ECardType> targetType) : base(owningCard, cardCount) {
