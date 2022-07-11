@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UnstableUnicornCore {
     public abstract class AEffect {
@@ -109,15 +106,5 @@ namespace UnstableUnicornCore {
 
         public virtual bool IsCardDestroyable(Card card) => true;
         public virtual ECardType GetCardType(ECardType actualCardType, APlayer playerOwner) => actualCardType; 
-    }
-
-    public class ActivatableEffect /*: AEffect*/ {
-        AEffect effect;
-
-        /*public override void InvokeEffect(ETriggerSource triggerSource, AEffect? effect, GameController gameController) {
-            throw new NotImplementedException();
-        }*/
-
-        void askOnActivate() { }   
     }
 }

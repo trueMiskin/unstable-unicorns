@@ -75,6 +75,12 @@ namespace UnstableUnicornCore {
 
         public void ThisPlayerTakeExtraTurn() => _willTakeExtraTurn = true;
 
+        /// <summary>
+        /// Warning: This method can be called at the lastest during calling <see cref="AEffect.ChooseTargets(GameController)"/>,
+        /// later will crash resolving whole chain link
+        /// </summary>
+        /// <param name="effect"></param>
+        public void AddEffectToActualChainLink(AEffect effect) => _actualChainLink.Add(effect);
         public void AddNewEffectToChainLink(AEffect effect) => _nextChainLink.Add(effect);
 
         private void ResolveChainLink() {
@@ -85,8 +91,10 @@ namespace UnstableUnicornCore {
                 _nextChainLink = new List<AEffect>();
 
                 // choosing targets of effects
-                foreach (var effect in _actualChainLink)
+                for (int i = 0; i < _actualChainLink.Count; i++) {
+                    var effect = _actualChainLink[i];
                     effect.ChooseTargets(this);
+                }
 
                 // trigger all ChangeTargeting
                 foreach (var effect in _actualChainLink) {

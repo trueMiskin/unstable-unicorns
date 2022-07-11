@@ -25,6 +25,7 @@ namespace UnstableUnicornCore {
         public abstract List<Card> WhichCardsToSteal(int number, List<ECardType> allowedCardTypes);
         public abstract List<Card> WhichCardsToDiscard(int number, List<ECardType> allowedCardTypes);
         public abstract List<APlayer> ChoosePlayers(int number, bool canChooseMyself, AEffect effect);
+        public abstract bool ActivateEffect(AEffect effect);
         
         /// <summary>
         /// Enter card on table of current player

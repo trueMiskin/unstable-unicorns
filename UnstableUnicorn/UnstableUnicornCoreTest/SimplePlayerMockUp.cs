@@ -9,6 +9,9 @@ namespace UnstableUnicornCoreTest {
     public class SimplePlayerMockUp : APlayer {
         public bool ChooseCardsWhichCantBeDestroy { get; set; } = false;
         public bool ChooseCardsWhichCantBeSacrificed { get; set; } = false;
+
+        public override bool ActivateEffect(AEffect effect) => true;
+
         public override List<APlayer> ChoosePlayers(int number, bool canChooseMyself, AEffect effect) {
             List<APlayer> selectedPlayers = new();
             foreach (var player in GameController.Players)
