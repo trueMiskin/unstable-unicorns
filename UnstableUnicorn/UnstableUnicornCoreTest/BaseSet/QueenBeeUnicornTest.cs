@@ -7,7 +7,7 @@ using Xunit;
 namespace UnstableUnicornCoreTest.BaseSet {
     public class QueenBeeUnicornTest {
         [Fact]
-        public void testOwnerPlayerCanPlayBasicUnicorn() {
+        public void TestOwnerPlayerCanPlayBasicUnicorn() {
             SimplePlayerMockUp playerOne = new();
             BasicUnicorn basicUnicornTemplate = new();
             GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne });
@@ -38,7 +38,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public void testOtherPlayersCannotPlayBasicUnicorn(bool toHisOwnStable) {
+        public void TestOtherPlayersCannotPlayBasicUnicorn(bool toHisOwnStable) {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
             BasicUnicorn basicUnicornTemplate = new();
             GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });

@@ -11,7 +11,7 @@ using Xunit;
 namespace UnstableUnicornCoreTest.BaseSet {
     public class AmericornTest {
         [Fact]
-        public void testFunctionality() {
+        public void TestPullOpponentCardEffect() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
             BasicUnicorn basicUnicornTemplate = new();
             GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });

@@ -7,7 +7,7 @@ using Xunit;
 namespace UnstableUnicornCoreTest.BaseSet {
     public class RainbowAuraAndUnicornPoisonTest {
         [Fact]
-        public void testFunctionalityUnicornPoison() {
+        public void TestUnicornPoison_TestDestroyEffect() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
             BasicUnicorn basicUnicornTemplate = new();
             GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
@@ -35,7 +35,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         }
 
         [Fact]
-        public void testFunctionalityBothCardsNoValidTarget() {
+        public void TestFunctionalityBothCardsNoValidTarget() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
             BasicUnicorn basicUnicornTemplate = new();
             GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
@@ -82,7 +82,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         }
 
         [Fact]
-        public void testFunctionalityBothCardsOneValidTarget() {
+        public void TestFunctionalityBothCardsOneValidTarget() {
             SimplePlayerMockUp playerOne, playerTwo;
             GameController controller;
             Card basicUnicorn, rainbowAura, basicUnicornSecond, unicornPoison;
@@ -115,7 +115,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         }
 
         [Fact]
-        public void testFunctionalityBothCardsOneValidTargetInvalidSelect() {
+        public void TestFunctionalityBothCardsOneValidTargetInvalidSelect() {
             SimplePlayerMockUp playerOne, playerTwo;
             GameController controller;
             Card basicUnicorn, rainbowAura, basicUnicornSecond, unicornPoison;

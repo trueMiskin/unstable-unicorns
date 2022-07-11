@@ -6,7 +6,7 @@ using Xunit;
 namespace UnstableUnicornCoreTest.BaseSet {
     public class PandamoniumTest {
         [Fact]
-        public void testCardType() {
+        public void TestCardType() {
             SimplePlayerMockUp playerOne = new();
             BasicUnicorn basicUnicornTemplate = new();
             GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne });
@@ -38,7 +38,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         }
 
         [Fact]
-        public void testInteractionWithUnicornPoison() {
+        public void TestInteractionWithUnicornPoison() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
             BasicUnicorn basicUnicornTemplate = new();
             GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });

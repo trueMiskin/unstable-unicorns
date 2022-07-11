@@ -11,7 +11,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [InlineData(2)]
         [InlineData(3)]
         [InlineData(10)]
-        public void testOwnerPlayerCanPlayBasicUnicorn(int numberDowngrades) {
+        public void TestSacrificeEffect(int numberDowngrades) {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
             Pandamonium pandamoniumTemplate = new();
             GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });

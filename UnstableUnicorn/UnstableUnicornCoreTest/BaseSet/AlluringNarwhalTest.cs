@@ -6,7 +6,7 @@ using Xunit;
 namespace UnstableUnicornCoreTest.BaseSet {
     public class AlluringNarwhalTest {
         [Fact]
-        public void testWithoutValidTarget() {
+        public void TestStealEffectWithoutValidTarget() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
             GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
 
@@ -37,7 +37,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         }
 
         [Fact]
-        public void testWithValidTarget() {
+        public void TestStealEffectWithValidTarget() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
             GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
 

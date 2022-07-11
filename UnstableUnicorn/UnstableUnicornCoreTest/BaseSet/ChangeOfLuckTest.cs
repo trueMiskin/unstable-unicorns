@@ -15,7 +15,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [InlineData(1, false)]
         [InlineData(2, false)]
         [InlineData(3, true)]
-        public void testCondition(int numberOtherCardsInHand, bool expectedOutput) {
+        public void TestConditionalEffect(int numberOtherCardsInHand, bool expectedOutput) {
             SimplePlayerMockUp player = new();
             BasicUnicorn basicUnicornTemplate = new();
             List<Card> cards = new();
@@ -33,7 +33,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         }
 
         [Fact]
-        public void testFunctionality() {
+        public void TestDrawAndDiscardEffect() {
             SimplePlayerMockUp player = new();
             BasicUnicorn basicUnicornTemplate = new();
             GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { player });
