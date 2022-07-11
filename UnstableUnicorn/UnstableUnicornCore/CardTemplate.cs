@@ -31,8 +31,8 @@ namespace UnstableUnicornCore {
             return this;
         }
 
-        public CardTemplate TriggerEffect(Card.TriggerFactoryEffect triggerFactoryEffect) {
-            triggerFactoryEffects.Add(triggerFactoryEffect);
+        public CardTemplate TriggerEffect(TriggerEffect.TriggerPredicate triggerPredicate, List<ETriggerSource> triggers, Card.FactoryEffect factoryEffect) {
+            triggerFactoryEffects.Add((Card owningCard) => new TriggerEffect(owningCard, triggerPredicate, triggers, factoryEffect));
             return this;
         }
 
