@@ -103,5 +103,16 @@ namespace UnstableUnicornCore {
                 }
                 return false;
             };
+
+        public static readonly TriggerEffect.TriggerPredicate CardEnterLeaveYourStable =
+            (AEffect? effect, Card? causedCard, Card owningCard, GameController controller) => {
+                if (causedCard == null)
+                    throw new InvalidOperationException("Card is disallowed to be null");
+
+                if (WhenThisCardEntersYourStable(effect, causedCard, owningCard, controller))
+                    return false;
+
+                return owningCard.Player == causedCard.Player;
+            };
     }
 }
