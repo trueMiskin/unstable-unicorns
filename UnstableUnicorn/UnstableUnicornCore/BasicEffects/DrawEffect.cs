@@ -1,5 +1,5 @@
 ﻿namespace UnstableUnicornCore.BasicEffects {
-    public class DrawEffect : AEffect {
+    public sealed class DrawEffect : AEffect {
         public DrawEffect(Card owningCard, int cardCount) : base(owningCard, cardCount) {}
 
         public override void ChooseTargets(GameController gameController) {}

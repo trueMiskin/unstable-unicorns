@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-namespace UnstableUnicornCore.BasicEffects {
-    class ConditionalEffect : AEffect {
+﻿namespace UnstableUnicornCore.BasicEffects {
+    public sealed class ConditionalEffect : AEffect {
         private AEffect _condition;
         private AEffect _thenEffect;
         public ConditionalEffect(Card owningCard, AEffect condition, AEffect thenEffect)

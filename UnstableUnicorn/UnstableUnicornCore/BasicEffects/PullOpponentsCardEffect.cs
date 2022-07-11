@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace UnstableUnicornCore.BasicEffects {
-    public class PullOpponentsCardEffect : AEffect {
+    public sealed class PullOpponentsCardEffect : AEffect {
         int _numberSelectPlayers;
         List<APlayer>? playerList;
         public PullOpponentsCardEffect(Card owningCard, int cardCount, int numberSelectedPlayers) : base(owningCard, cardCount) {

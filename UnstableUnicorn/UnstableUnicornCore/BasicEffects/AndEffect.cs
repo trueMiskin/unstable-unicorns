@@ -1,5 +1,5 @@
 ﻿namespace UnstableUnicornCore.BasicEffects {
-    public class AndEffect : AEffect {
+    public sealed class AndEffect : AEffect {
         private AEffect _firstEffect, _secondEffect;
         public AndEffect(Card owningCard, AEffect firstEffect, AEffect secondEffect)
             : base(owningCard, 0 /* For this effect is not needed*/) {
