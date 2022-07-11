@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using UnstableUnicornCore.BasicEffects;
 
 namespace UnstableUnicornCore {
     public sealed class TriggerEffect {
@@ -18,11 +20,11 @@ namespace UnstableUnicornCore {
         /// For now <see cref="TriggerPredicate"/> don't have <see cref="ETriggerSource"/>
         /// as param because I think it should not depend on it.
         /// </summary>
-        /// <param name="affect">Affect which cause trigger</param>
+        /// <param name="effect">Affect which cause trigger</param>
         /// <param name="causedCard">Card which belongs effect</param>
         /// <param name="owningCard">Card which owns this predicate/trigger effect</param>
         /// <returns>If affect should be triggered</returns>
-        public delegate bool TriggerPredicate(AEffect? affect, Card? causedCard, Card owningCard);
+        public delegate bool TriggerPredicate(AEffect? effect, Card? causedCard, Card owningCard);
         private TriggerPredicate triggerPredicate;
 
         private List<ETriggerSource> triggers;
@@ -52,8 +54,10 @@ namespace UnstableUnicornCore {
             if (triggerPredicate(effectWhichTriggerEffect, cardWhichTriggerEffect, OwningCard) ) {
                 // execute `ChangeTargeting` and `ChangeLocationOfCard` immediately because this event should be used
                 // only on effects which saving unicorns from leaving stable (for example: to discard pile)
-                if (triggerSource == ETriggerSource.ChangeTargeting || triggerSource == ETriggerSource.ChangeLocationOfCard)
+                if (triggerSource == ETriggerSource.ChangeTargeting)
                     triggeredEffect.InvokeEffect(gameController);
+                if (triggerSource == ETriggerSource.ChangeLocationOfCard)
+                    gameController.AddEffectToActualChainLink(triggeredEffect);
                 else
                     // TOD: add info about effect to effectToTrigger
                     gameController.AddNewEffectToChainLink(triggeredEffect);
@@ -62,7 +66,25 @@ namespace UnstableUnicornCore {
     }
 
     public static class TriggerPredicates {
+        private static readonly Type destroyEffectType = typeof(DestroyEffect);
+        private static readonly Type sacrificeEffectType = typeof(SacrificeEffect);
+
         public static readonly TriggerEffect.TriggerPredicate WhenThisCardEntersYourStable =
-            (AEffect? affect, Card? causedCard, Card owningCard) => causedCard == owningCard;
+            (AEffect? effect, Card? causedCard, Card owningCard) => causedCard == owningCard;
+
+        public static readonly TriggerEffect.TriggerPredicate IfThisCardWouldBeSacrificedOrDestroyed =
+            (AEffect? effect, Card? causedCard, Card owningCard) => {
+                if (effect == null)
+                    throw new InvalidOperationException("Effect is disallowed to be null");
+
+                if (!destroyEffectType.IsInstanceOfType(effect) && !sacrificeEffectType.IsInstanceOfType(effect))
+                    return false;
+
+                foreach (var card in effect.CardTargets) {
+                    if (card == owningCard)
+                        return true;
+                }
+                return false;
+            };
     }
 }

@@ -76,8 +76,9 @@ namespace UnstableUnicornCore {
         public void ThisPlayerTakeExtraTurn() => _willTakeExtraTurn = true;
 
         /// <summary>
-        /// Warning: This method can be called at the lastest during calling <see cref="AEffect.ChooseTargets(GameController)"/>,
-        /// later will crash resolving whole chain link
+        /// Warning: This method can be called during calling <see cref="AEffect.ChooseTargets(GameController)"/>
+        /// or during publishing <see cref="ETriggerSource.ChangeLocationOfCard"/>
+        /// in any other situations it will crash resolving whole chain link
         /// </summary>
         /// <param name="effect"></param>
         public void AddEffectToActualChainLink(AEffect effect) => _actualChainLink.Add(effect);
@@ -102,7 +103,14 @@ namespace UnstableUnicornCore {
                 }
 
                 // trigger change card location
-                foreach (var effect in _actualChainLink) {
+                // actual redirection work in this way
+                // -> it is created a new affect which will be called after a card is moved
+                //    for example: when card is destroyed and card have text:
+                //    -  If this card would be sacrificed or destroyed, return it to your hand instead.
+                //    then card will be moved on discard pile and then will be moved back to owner's hand
+                //    in same chain link
+                for (int i = 0; i < _actualChainLink.Count; i++) {
+                    var effect = _actualChainLink[i];
                     PublishEvent(ETriggerSource.ChangeLocationOfCard, effect.OwningCard, effect);
                 }
 

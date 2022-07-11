@@ -45,7 +45,8 @@ namespace UnstableUnicornCore {
         private List<AContinuousEffect> continuousEffects;
         public CardLocation Location { get; private set; }
 
-        private static string CardOnTablePlayerNull = "Card on table but player is not set!";
+        public static string CardOnTablePlayerNull = "Card on table but player is not set!";
+        public static string CardCannotBePlayed = "This card cannot be played. Requirements are not met.";
 
         public string Name { get; init; }
         private bool _canBeNeigh = true, _canBeDestroyed = true, _canBeSacrificed = true;
@@ -154,7 +155,7 @@ namespace UnstableUnicornCore {
             if (_cardType == ECardType.Instant)
                 throw new InvalidOperationException("Instant card cannot be used by calling CardPlayed");
             if (!CanBePlayed())
-                throw new InvalidOperationException("This card cannot be played. Requirements are not met.");
+                throw new InvalidOperationException(CardCannotBePlayed);
             if (_cardType == ECardType.Spell && newCardOwner != Player)
                 throw new InvalidOperationException("A spell cannot have a new card owner while the spell is being cast.");
 
@@ -174,13 +175,10 @@ namespace UnstableUnicornCore {
         }
 
         /// <summary>
-        /// Warning: This function doesn't register or unregister card in pile, because
-        /// -> when you draw card, caller can immediately remove this card from pile
-        /// -- -> use `PlayerDrawCard` in game controller
-        /// -> on other hand when card should be moved to pile, where should be this card placed
-        /// 
-        /// In other locations function sets new owning player and location and register/unregister on desired locations
-        /// from data structures
+        /// Warning: This function does not add or remove cards to <see cref="CardLocation.Pile"/>
+        /// for performence 
+        /// <br/>
+        /// In other locations will be card set to desired data structures
         /// </summary>
         /// <param name="gameController"></param>
         /// <param name="newPlayer"></param>
@@ -191,7 +189,9 @@ namespace UnstableUnicornCore {
                 throw new InvalidOperationException($"On location `{Location}` variable Player should be setted!");
             switch (Location) {
                 case CardLocation.Pile:
+                    break;
                 case CardLocation.DiscardPile:
+                    gameController.DiscardPile.Remove(this);
                     break;
                 case CardLocation.InHand:
                     Player.Hand.Remove(this);
