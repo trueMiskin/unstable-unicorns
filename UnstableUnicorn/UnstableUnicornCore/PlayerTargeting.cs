@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace UnstableUnicornCore {
     public enum PlayerTargeting {
         PlayerOwner,
+        AnyPlayer,
         EachPlayer,
         EachOtherPlayer,  // excludes player owner
     }

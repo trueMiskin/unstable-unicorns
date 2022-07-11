@@ -22,6 +22,7 @@ namespace UnstableUnicornCore.BasicEffects {
         public override void ChooseTargets(GameController gameController) {
             List<APlayer> players = _playerTargeting switch {
                 PlayerTargeting.PlayerOwner => new List<APlayer> { OwningPlayer },
+                PlayerTargeting.AnyPlayer => OwningPlayer.ChoosePlayers(1, true, this),
                 PlayerTargeting.EachPlayer => gameController.Players,
                 PlayerTargeting.EachOtherPlayer => gameController.Players.Except( new List<APlayer>{ OwningPlayer }).ToList(),
                 _ => throw new NotImplementedException(),
