@@ -12,7 +12,8 @@ namespace UnstableUnicornCore.BasicEffects {
         public ReturnThisCardToHand(Card owningCard) : base(owningCard, 0, ECardTypeUtils.CardTarget) {
             if (owningCard.Player == null)
                 throw new InvalidOperationException("Card should not have null player");
-            
+
+            CardTargets.Add(owningCard);
             TargetOwner = owningCard.Player;
             TargetLocation = CardLocation.InHand;
         }

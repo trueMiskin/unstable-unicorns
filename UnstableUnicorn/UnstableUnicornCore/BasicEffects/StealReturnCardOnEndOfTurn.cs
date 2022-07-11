@@ -20,13 +20,15 @@ namespace UnstableUnicornCore.BasicEffects {
 
         public class ReturnEffectCardOnEndOfTurn : AEffect {
             public ReturnEffectCardOnEndOfTurn(Card owningCard, APlayer previousPlayer) : base(owningCard, 0) {
+                CardTargets.Add(owningCard);
                 TargetOwner = previousPlayer;
                 TargetLocation = CardLocation.OnTable;
             }
             public override void ChooseTargets(GameController gameController) {}
 
             public override void InvokeEffect(GameController gameController) {
-                OwningCard.MoveCard(gameController, TargetOwner, TargetLocation);
+                foreach (var card in CardTargets)
+                    card.MoveCard(gameController, TargetOwner, TargetLocation);
             }
 
             public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;

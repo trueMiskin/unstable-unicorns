@@ -124,25 +124,30 @@ namespace UnstableUnicornCore {
                     PublishEvent(ETriggerSource.ChangeLocationOfCard, effect.OwningCard, effect);
                 }
 
-                // unregister affects of targets cards
+                // unregister affects of targets cards then moves
+                // the cards which published card leave and card enter events
+                // for example barbed wire could cause trouble
                 foreach (var effect in _actualChainLink)
                     foreach (var card in effect.CardTargets)
-                        card.UnregisterAllEffects();
+                        if (card.Location == CardLocation.OnTable)
+                            card.UnregisterAllEffects();
 
                 // move cards to new location, trigger leave card and
                 foreach (var effect in _actualChainLink)
                     effect.InvokeEffect(this);
 
-                // TODO: Does it done in CardPlayed already?
                 // delay card enter to new stable to next chain link - a.k.a. add to chainLink
                 // --> this i dont need to solve, nearly all trigger effects are by default delayed
-                /*foreach (var effect in _actualChainLink) {
+                foreach (var effect in _actualChainLink) {
                     foreach (var card in effect.CardTargets)
                         if (card.Location == CardLocation.OnTable) {
+                            // register all effects and trigger one time effects
+                            // this will cast even cards which says when this card enter stable
+                            // because this effects are not trigger effects but one time effects
+                            // -> this will prevent interaction of cards in same chain link
                             card.RegisterAllEffects();
-                            PublishEvent(ETriggerSource.CardEnteredStable, effect.OwningCard, effect);
                         }
-                }*/
+                }
             }
         }
 
@@ -194,7 +199,6 @@ namespace UnstableUnicornCore {
 
         public void AddContinuousEffect(AContinuousEffect effect) => ContinuousEffects.Add(effect);
 
-        // TODO: maybe throw error on remove non-existent effect
         public void RemoveContinuousEffect(AContinuousEffect effect) => ContinuousEffects.Remove(effect);
 
         public void SubscribeEvent(ETriggerSource _event, TriggerEffect effect) {
@@ -207,9 +211,9 @@ namespace UnstableUnicornCore {
 
         public void UnsubscribeEvent(ETriggerSource _event, TriggerEffect effect) {
             if (!EventsPool.TryGetValue(_event, out List<TriggerEffect>? triggerList))
-                throw new InvalidOperationException($"Trying unsubscribe unknown effect!");
-            if(!triggerList.Remove(effect))
-                throw new InvalidOperationException($"Trying unsubscribe unknown effect!");
+                return; // Effect was not event registered, nothing to unregister -> OK state
+            if (!triggerList.Remove(effect))
+                return; // Effect was not found, nothing to unregister -> OK state
         }
 
         public void UnsubscribeEventAfterEndOfPublishing(TriggerEffect triggerEffect)

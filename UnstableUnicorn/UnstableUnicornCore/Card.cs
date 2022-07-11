@@ -138,6 +138,9 @@ namespace UnstableUnicornCore {
                 Player.GameController.AddContinuousEffect(effect);
         }
 
+        /// <summary>
+        /// Calling <see cref="Card.UnregisterAllEffects"/> multiple times is a safe operation
+        /// </summary>
         internal void UnregisterAllEffects() {
             if (Player == null)
                 throw new InvalidOperationException("Can't unregister effects without knowing who owning card");
@@ -187,7 +190,6 @@ namespace UnstableUnicornCore {
                 // register all trigger and continuous effects
                 // fire one time effects (or spell effects
                 RegisterAllEffects();
-                gameController.PublishEvent(ETriggerSource.CardEnteredStable, this);
             }
         }
 
@@ -204,6 +206,11 @@ namespace UnstableUnicornCore {
         internal void MoveCard(GameController gameController, APlayer? newPlayer, CardLocation newCardLocation) {
             if( (Location == CardLocation.InHand || Location == CardLocation.OnTable) && Player == null)
                 throw new InvalidOperationException($"On location `{Location}` variable Player should be setted!");
+
+            // event must be published before moving card for triggers
+            if (Location == CardLocation.OnTable)
+                gameController.PublishEvent(ETriggerSource.CardLeftStable, this);
+
             switch (Location) {
                 case CardLocation.Pile:
                     break;
@@ -257,6 +264,9 @@ namespace UnstableUnicornCore {
                 default:
                     throw new InvalidOperationException($"Uknown location {Location}");
             }
+
+            if (Location == CardLocation.OnTable)
+                gameController.PublishEvent(ETriggerSource.CardEnteredStable, this);
         }
     }
 }

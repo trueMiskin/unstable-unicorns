@@ -8,9 +8,7 @@ namespace UnstableUnicornCore.BaseSet {
                 .Name("Alluring Narwhal")
                 .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, you may STEAL an Upgrade card.")
-                .TriggerEffect(
-                    TriggerPredicates.WhenThisCardEntersYourStable,
-                    new List<ETriggerSource>() { ETriggerSource.CardEnteredStable },
+                .Cast(
                     (Card owningCard) => new StealEffect(owningCard, 1, new List<ECardType>{ ECardType.Upgrade })
                 );
         }

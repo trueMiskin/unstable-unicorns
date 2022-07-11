@@ -10,9 +10,7 @@ namespace UnstableUnicornCore.BaseSet {
                 .Name("Americorn")
                 .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, choose any player. Pull a card from that player's hand.")
-                .TriggerEffect(
-                    TriggerPredicates.WhenThisCardEntersYourStable,
-                    new List<ETriggerSource>() { ETriggerSource.CardEnteredStable },
+                .Cast(
                     (Card owningCard) => new PullOpponentsCardEffect(owningCard, cardCount: 1, numberSelectedPlayers: 1)
                 );
         }
