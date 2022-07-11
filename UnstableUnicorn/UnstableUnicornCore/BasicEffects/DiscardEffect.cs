@@ -56,10 +56,15 @@ namespace UnstableUnicornCore.BasicEffects {
             }
         }
 
-        private int numberValidTarget(GameController gameController, APlayer player) {
+        private int numberValidTarget(GameController gameController, APlayer player, bool checkPrePlayConditions = false) {
             int validTargets = 0;
             foreach (var card in player.Hand) {
-                if (card == OwningCard)
+                // if this card is not played - only checking requirements, then
+                // don't count this card as valid target, but when this is presented
+                // on hand during choosing target then this card can be valid target
+                // this can be used like in ReturnThenDiscardCard when we need choosen
+                // player to discard a card
+                if (card == OwningCard && checkPrePlayConditions)
                     continue;
                 if (_allowedCardTypes.Contains(card.CardType) && !gameController.cardsWhichAreTargeted.Contains(card))
                     validTargets++;
@@ -73,7 +78,7 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            return numberValidTarget(gameController, OwningPlayer) >= _cardCount;
+            return numberValidTarget(gameController, OwningPlayer, true) >= _cardCount;
         }
     }
 }
