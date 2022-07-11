@@ -17,6 +17,7 @@ namespace UnstableUnicornCore {
         public List<APlayer> Players;
         public List<AContinuousEffect> ContinuousEffects = new();
         private Dictionary<ETriggerSource, List<TriggerEffect>> EventsPool = new();
+        private List<TriggerEffect> triggersToRemove = new();
 
         /// <summary>
         /// Actual chain link is link which is already in proccess of resolving
@@ -25,6 +26,11 @@ namespace UnstableUnicornCore {
         /// </summary>
         private List<AEffect> _actualChainLink = new();
         private List<AEffect> _nextChainLink = new();
+
+        public List<AEffect> ActualChainLink => _actualChainLink;
+        public List<AEffect> NextChainLink => _nextChainLink;
+
+        public APlayer ActualPlayerOnTurn { get; set; }
 
         public HashSet<Card> cardsWhichAreTargeted { get; set; } = new();
 
@@ -38,6 +44,9 @@ namespace UnstableUnicornCore {
             foreach(APlayer p in players)
                 p.GameController = this;
             Players = new List<APlayer>( players );
+
+            // setting for unit tests
+            ActualPlayerOnTurn = Players[0];
         }
 
         public void SimulateGame() {
@@ -54,6 +63,7 @@ namespace UnstableUnicornCore {
         }
 
         internal void SimulateOneTurn(APlayer playerOnTurn) {
+            ActualPlayerOnTurn = playerOnTurn;
             OnBeginTurn(playerOnTurn);
 
             Card? card = playerOnTurn.WhichCardToPlay();
@@ -175,6 +185,11 @@ namespace UnstableUnicornCore {
             foreach (var trigger in triggerList) {
                 trigger.InvokeEffect(_event, card, effect, this);
             }
+
+            foreach (var trigger in triggersToRemove)
+                trigger.UnsubscribeToEvent(this);
+            
+            triggersToRemove.Clear();
         }
 
         public void AddContinuousEffect(AContinuousEffect effect) => ContinuousEffects.Add(effect);
@@ -196,6 +211,9 @@ namespace UnstableUnicornCore {
             if(!triggerList.Remove(effect))
                 throw new InvalidOperationException($"Trying unsubscribe unknown effect!");
         }
+
+        public void UnsubscribeEventAfterEndOfPublishing(TriggerEffect triggerEffect)
+            => triggersToRemove.Add(triggerEffect);
 
         public List<Card> GetCardsOnTable() {
             List<Card> cards = new();

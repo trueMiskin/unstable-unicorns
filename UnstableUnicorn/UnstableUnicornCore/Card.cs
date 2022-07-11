@@ -41,9 +41,11 @@ namespace UnstableUnicornCore {
         internal readonly ECardType _cardType;
         private List<FactoryEffect> oneTimeFactoryEffects;
         private List<TriggerEffect> triggerEffects;
+        private List<TriggerEffect> _oneTimeTriggerEffects;
         private List<ContinuousFactoryEffect> _continuousFactoryEffects;
         private List<AContinuousEffect> continuousEffects;
         public CardLocation Location { get; private set; }
+        public List<TriggerEffect> OneTimeTriggerEffects => _oneTimeTriggerEffects;
 
         public static string CardOnTablePlayerNull = "Card on table but player is not set!";
         public static string CardCannotBePlayed = "This card cannot be played. Requirements are not met.";
@@ -61,6 +63,7 @@ namespace UnstableUnicornCore {
                 this.triggerEffects.Add(f(this));
 
             this.continuousEffects = new();
+            this._oneTimeTriggerEffects = new();
             this._continuousFactoryEffects = continuousFactoryEffect;
 
             this.Location = CardLocation.Pile;
@@ -134,17 +137,31 @@ namespace UnstableUnicornCore {
             foreach (var effect in continuousEffects)
                 Player.GameController.AddContinuousEffect(effect);
         }
+
         internal void UnregisterAllEffects() {
             if (Player == null)
                 throw new InvalidOperationException("Can't unregister effects without knowing who owning card");
 
             foreach (var effect in triggerEffects)
-                effect.SubscribeToEvent(Player.GameController);
+                effect.UnsubscribeToEvent(Player.GameController);
+
+            foreach (var effect in _oneTimeTriggerEffects)
+                effect.UnsubscribeToEvent(Player.GameController);
+
+            _oneTimeTriggerEffects.Clear();
 
             foreach (var effect in continuousEffects)
                 Player.GameController.RemoveContinuousEffect(effect);
             
             this.continuousEffects.Clear();
+        }
+
+        public void AddOneTimeTriggerEffect(TriggerEffect triggerEffect) {
+            _oneTimeTriggerEffects.Add(triggerEffect);
+        }
+
+        public void RemoveOneTimeTriggerEffect(TriggerEffect triggerEffect) {
+            _oneTimeTriggerEffects.Remove(triggerEffect);
         }
 
         public void PlayedInstant(APlayer? player, List<Card> chainLink) {

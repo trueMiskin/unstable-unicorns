@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace UnstableUnicornCore.BasicEffects {
-    public sealed class StealEffect : AEffect {
+    public class StealEffect : AEffect {
         private List<ECardType> _allowedCardTypes;
         public StealEffect(Card owningCard, int cardCount, List<ECardType> targetType) : base(owningCard, cardCount) {
             _allowedCardTypes = targetType;
