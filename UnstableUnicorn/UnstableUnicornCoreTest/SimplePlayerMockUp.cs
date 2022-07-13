@@ -9,16 +9,28 @@ namespace UnstableUnicornCoreTest {
     public class SimplePlayerMockUp : APlayer {
         public bool ChooseCardsWhichCantBeDestroy { get; set; } = false;
         public bool ChooseCardsWhichCantBeSacrificed { get; set; } = false;
+        public bool ChooseMyself { get; set; } = false;
 
         public override bool ActivateEffect(AEffect effect) => true;
 
         public override List<APlayer> ChoosePlayers(int number, bool canChooseMyself, AEffect effect) {
             List<APlayer> selectedPlayers = new();
+            if (ChooseMyself)
+                selectedPlayers.Add(this);
+
             foreach (var player in GameController.Players)
                 if (player != this && selectedPlayers.Count < number)
-                selectedPlayers.Add(player);
+                    selectedPlayers.Add(player);
 
             return selectedPlayers;
+        }
+
+        private static List<Card> SimpleSelectionFromCards(int number, List<Card> cardsWhichCanBeSelected) {
+            List<Card> ret = new();
+            for (int i = 0; i < number; i++)
+                ret.Add(cardsWhichCanBeSelected[i]);
+
+            return ret;
         }
 
         public List<Card> SimpleSelection(int number) {
@@ -44,6 +56,10 @@ namespace UnstableUnicornCoreTest {
             return SimpleSelection(number);
         }
 
+        public override List<Card> WhichCardsToGet(int number, AEffect effect, List<Card> cards) {
+            return SimpleSelectionFromCards(number, cards);
+        }
+
         public override List<Card> WhichCardsToSacrifice(int number, List<ECardType> allowedCardTypes) {
             List<Card> selection = new();
             foreach (var card in GameController.GetCardsOnTable()) {
@@ -59,11 +75,7 @@ namespace UnstableUnicornCoreTest {
         }
 
         public override List<Card> WhichCardsToSave(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
-            List<Card> ret = new();
-            for (int i = 0; i < number; i++)
-                ret.Add(cardsWhichCanBeSelected[i]);
-
-            return ret;
+            return SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
         public override List<Card> WhichCardsToSteal(int number, List<ECardType> allowedCardTypes) {
