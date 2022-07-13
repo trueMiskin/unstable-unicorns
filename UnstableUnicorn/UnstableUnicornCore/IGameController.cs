@@ -230,5 +230,7 @@ namespace UnstableUnicornCore {
             }
             return cards;
         }
+
+        public void ShuffleDeck() => Pile = Pile.Shuffle(Random);
     }
 }
