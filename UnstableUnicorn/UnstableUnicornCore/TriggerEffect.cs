@@ -63,15 +63,12 @@ namespace UnstableUnicornCore {
             if (triggerPredicate(effectWhichTriggerEffect, cardWhichTriggerEffect, OwningCard, gameController) ) {
                 // execute `ChangeTargeting` and `ChangeLocationOfCard` immediately because this event should be used
                 // only on effects which saving unicorns from leaving stable (for example: to discard pile)
-                if (triggerSource == ETriggerSource.ChangeTargeting) {
+                if (triggerSource == ETriggerSource.ChangeTargeting || triggerSource == ETriggerSource.ChangeLocationOfCard) {
                     if (effectWhichTriggerEffect == null)
-                        throw new InvalidOperationException($"{ETriggerSource.ChangeTargeting} must have not null effect");
+                        throw new InvalidOperationException($"{triggerSource} must have not null effect");
 
                     triggeredEffect.InvokeReactionEffect(gameController, effectWhichTriggerEffect);
-                }
-                if (triggerSource == ETriggerSource.ChangeLocationOfCard)
-                    gameController.AddEffectToActualChainLink(triggeredEffect);
-                else
+                }else
                     // TOD: add info about effect to effectToTrigger
                     gameController.AddNewEffectToChainLink(triggeredEffect);
 
