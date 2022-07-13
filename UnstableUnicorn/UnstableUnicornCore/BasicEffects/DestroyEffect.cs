@@ -30,7 +30,7 @@ namespace UnstableUnicornCore.BasicEffects {
                 _cardCount = numCardsOnTable;
             
             // owner choose which card should be destroyed
-            CardTargets = OwningPlayer.WhichCardsToDestroy(numCardsOnTable, _allowedCardTypes);
+            CardTargets = OwningPlayer.WhichCardsToDestroy(_cardCount, _allowedCardTypes);
             
             if (CardTargets.Count != _cardCount)
                 throw new InvalidOperationException($"Not selected enough cards to destroy");
