@@ -31,6 +31,9 @@ namespace UnstableUnicornCoreTest.BaseSet {
             TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 0, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
 
             Assert.Equal(rainbowAura, playerOne.Hand[0]);
+
+            Assert.Empty(controller.Pile);
+            Assert.Empty(controller.DiscardPile);
         }
 
         [Fact]
@@ -83,6 +86,8 @@ namespace UnstableUnicornCoreTest.BaseSet {
             Assert.Equal(playerOne.Hand[0], classyNarwhal);
 
             var copyList = new List<Card>(controller.Pile);
+            copyList.Remove(rainbowAura);
+
             var correctlyShuffled = copyList.Shuffle(new Random(42));
             controller.Random = new Random(42);
 
