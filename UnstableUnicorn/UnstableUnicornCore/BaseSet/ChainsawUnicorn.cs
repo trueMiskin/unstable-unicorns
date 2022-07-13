@@ -14,9 +14,9 @@ namespace UnstableUnicornCore.BaseSet {
                 .Text("When this card enters your Stable, you may DESTROY an Upgrade card or SACRIFICE a Downgrade card.")
                 .Cast( (Card owningCard) => new ActivatableEffect(owningCard,
                     (_) => new ChooseEffect(owningCard,
-                        new List<Card.FactoryEffect> {
-                            (_) => new DestroyEffect(owningCard, 1, new List<ECardType>{ECardType.Upgrade}),
-                            (_) => new SacrificeEffect(owningCard, 1, new List<ECardType>{ECardType.Downgrade})
+                        new List<AEffect> {
+                            new DestroyEffect(owningCard, 1, new List<ECardType>{ECardType.Upgrade}),
+                            new SacrificeEffect(owningCard, 1, new List<ECardType>{ECardType.Downgrade})
                         }
                     ))
                 );
