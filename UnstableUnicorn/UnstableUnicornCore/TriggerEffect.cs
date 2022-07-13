@@ -59,6 +59,9 @@ namespace UnstableUnicornCore {
 
         public void InvokeEffect(ETriggerSource triggerSource, Card? cardWhichTriggerEffect,
                                  AEffect? effectWhichTriggerEffect, GameController gameController) {
+            if (!OwningCard.CanBeActivatedTriggerEffect(OwningCard.CardType))
+                return;
+
             AEffect triggeredEffect = factoryEffect(OwningCard);
             if (triggerPredicate(effectWhichTriggerEffect, cardWhichTriggerEffect, OwningCard, gameController) ) {
                 // execute `ChangeTargeting` and `ChangeLocationOfCard` immediately because this event should be used

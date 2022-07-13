@@ -30,7 +30,8 @@ namespace UnstableUnicornCore {
         Pile,
         InHand,
         OnTable,
-        DiscardPile
+        DiscardPile,
+        Nursery
     }
 
     public sealed class Card {
@@ -98,6 +99,21 @@ namespace UnstableUnicornCore {
         }
 
         /// <summary>
+        /// <see cref="AContinuousEffect.CanBeActivatedTriggerEffect(Card, ECardType)"/>
+        /// </summary>
+        /// <param name="cardType"></param>
+        /// <returns></returns>
+        public bool CanBeActivatedTriggerEffect(ECardType cardType) {
+            if (Player == null)
+                throw new InvalidOperationException("Card should be presented on board but `Player` is not set.");
+
+            bool ret = true;
+            foreach (var effect in Player.GameController.ContinuousEffects)
+                ret &= effect.CanBeActivatedTriggerEffect(this, cardType);
+            return ret;
+        }
+
+        /// <summary>
         /// Player which own this card or null if it is in pile or discard pile
         /// </summary>
         public APlayer? Player { get; set; }
@@ -121,9 +137,12 @@ namespace UnstableUnicornCore {
             if (Player == null)
                 throw new InvalidOperationException("Can't register effects without knowing who played card");
 
-            // spells
-            foreach (var factoryEffect in oneTimeFactoryEffects)
-                Player.GameController.AddNewEffectToChainLink(factoryEffect(this));
+            // spells or unicorns one time effects a.k.a when this card enter the stable
+            // there must be passed real card type!!!
+            if (CanBeActivatedTriggerEffect(_cardType)) {
+                foreach (var factoryEffect in oneTimeFactoryEffects)
+                    Player.GameController.AddNewEffectToChainLink(factoryEffect(this));
+            }
 
             foreach (var effect in triggerEffects)
                 effect.SubscribeToEvent(Player.GameController);

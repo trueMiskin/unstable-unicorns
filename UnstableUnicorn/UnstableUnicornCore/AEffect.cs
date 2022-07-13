@@ -93,35 +93,4 @@ namespace UnstableUnicornCore {
             throw new NotImplementedException($"{this} is not reaction effect or is not implemented.");
         }
     }
-
-    public abstract class AContinuousEffect {
-        /// <summary>
-        /// Which card belongs this affect
-        /// </summary>
-        public Card OwningCard { get; init; }
-
-        /// <summary>
-        /// Player who owned this card in time, when this card
-        /// was played
-        /// 
-        /// DON'T USE `OwningCard.Player` because when card is spell
-        /// than this value will be resetted on null!
-        /// </summary>
-        public APlayer OwningPlayer { get; init; }
-
-        protected AContinuousEffect(Card owningCard) {
-            OwningCard = owningCard;
-
-            if (owningCard.Player == null)
-                throw new InvalidOperationException("When constructing continuous effect player who owns card must be setted!");
-
-            OwningPlayer = owningCard.Player;
-        }
-
-        // public abstract bool IsEnabledTriggeringEffects(AEffect effect);
-        public virtual bool IsCardPlayable(APlayer player, Card card) => true;
-
-        public virtual bool IsCardDestroyable(Card card) => true;
-        public virtual ECardType GetCardType(ECardType actualCardType, APlayer playerOwner) => actualCardType; 
-    }
 }
