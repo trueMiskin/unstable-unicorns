@@ -10,6 +10,7 @@ namespace UnstableUnicornCoreTest {
         public bool ChooseCardsWhichCantBeDestroy { get; set; } = false;
         public bool ChooseCardsWhichCantBeSacrificed { get; set; } = false;
         public bool ChooseMyself { get; set; } = false;
+        public int WhichEffectShouldBeSelected { get; set; } = 0;
 
         public override bool ActivateEffect(AEffect effect) => true;
 
@@ -92,6 +93,10 @@ namespace UnstableUnicornCoreTest {
 
         public override Card WhichCardToPlay() {
             return Hand[0];
+        }
+
+        public override AEffect WhichEffectToSelect(List<AEffect> effectsVariants) {
+            return effectsVariants[WhichEffectShouldBeSelected];
         }
     }
 }
