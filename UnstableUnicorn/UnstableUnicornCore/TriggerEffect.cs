@@ -63,8 +63,12 @@ namespace UnstableUnicornCore {
             if (triggerPredicate(effectWhichTriggerEffect, cardWhichTriggerEffect, OwningCard, gameController) ) {
                 // execute `ChangeTargeting` and `ChangeLocationOfCard` immediately because this event should be used
                 // only on effects which saving unicorns from leaving stable (for example: to discard pile)
-                if (triggerSource == ETriggerSource.ChangeTargeting)
-                    triggeredEffect.InvokeEffect(gameController);
+                if (triggerSource == ETriggerSource.ChangeTargeting) {
+                    if (effectWhichTriggerEffect == null)
+                        throw new InvalidOperationException($"{ETriggerSource.ChangeTargeting} must have not null effect");
+
+                    triggeredEffect.InvokeReactionEffect(gameController, effectWhichTriggerEffect);
+                }
                 if (triggerSource == ETriggerSource.ChangeLocationOfCard)
                     gameController.AddEffectToActualChainLink(triggeredEffect);
                 else
@@ -99,6 +103,21 @@ namespace UnstableUnicornCore {
 
                 foreach (var card in effect.CardTargets) {
                     if (card == owningCard)
+                        return true;
+                }
+                return false;
+            };
+
+        public static readonly TriggerEffect.TriggerPredicate IfUnicornInYourStableWouldBeDestroyd =
+            (AEffect? effect, Card? causedCard, Card owningCard, GameController controller) => {
+                if (effect == null)
+                    throw new InvalidOperationException("Effect is disallowed to be null");
+
+                if (!destroyEffectType.IsInstanceOfType(effect))
+                    return false;
+
+                foreach (var card in effect.CardTargets) {
+                    if (card.Player == owningCard.Player && ECardTypeUtils.UnicornTarget.Contains(card.CardType))
                         return true;
                 }
                 return false;

@@ -58,6 +58,14 @@ namespace UnstableUnicornCoreTest {
             return selection;
         }
 
+        public override List<Card> WhichCardsToSave(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            List<Card> ret = new();
+            for (int i = 0; i < number; i++)
+                ret.Add(cardsWhichCanBeSelected[i]);
+
+            return ret;
+        }
+
         public override List<Card> WhichCardsToSteal(int number, List<ECardType> allowedCardTypes) {
             List<Card> selection = new();
             foreach (var card in GameController.GetCardsOnTable()) {

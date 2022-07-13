@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 
 namespace UnstableUnicornCore.BasicEffects {
-    public sealed class SacrificeEffect : AEffect {
+    public class SacrificeEffect : AEffect {
         // card types which can be targeted
-        List<ECardType> _allowedCardTypes;
+        protected List<ECardType> _allowedCardTypes;
 
         public SacrificeEffect(Card owningCard, int cardCount, List<ECardType> targetType) : base(owningCard, cardCount) {
             OwningCard = owningCard;

@@ -75,6 +75,23 @@ namespace UnstableUnicornCore {
         /// <returns></returns>
         public abstract bool MeetsRequirementsToPlayInner(GameController gameController);
         public abstract void InvokeEffect(GameController gameController);
+
+        /// <summary>
+        /// Some effect are reacting on other effects like card Black knight Unicorn
+        /// which sacrifice himself instead other card
+        /// <br/>
+        /// This method call <see cref="TriggerEffect"/> in situation when is published
+        /// <see cref="ETriggerSource.ChangeTargeting"/> or <see cref="ETriggerSource.ChangeLocationOfCard"/>
+        /// <br/>
+        /// DON'T forget to ADD new effect to <see cref="GameController.AddEffectToActualChainLink(AEffect)"/>
+        /// This method should not do actual effect, only preparing. Real execution of effect should
+        /// be in <see cref="InvokeEffect(GameController)"/>
+        /// </summary>
+        /// <param name="gameController"></param>
+        /// <param name="effect"></param>
+        public virtual void InvokeReactionEffect(GameController gameController, AEffect effect) {
+            throw new NotImplementedException($"{this} is not reaction effect or is not implemented.");
+        }
     }
 
     public abstract class AContinuousEffect {

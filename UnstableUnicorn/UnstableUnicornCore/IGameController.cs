@@ -86,9 +86,10 @@ namespace UnstableUnicornCore {
         public void ThisPlayerTakeExtraTurn() => _willTakeExtraTurn = true;
 
         /// <summary>
-        /// Warning: This method can be called during calling <see cref="AEffect.ChooseTargets(GameController)"/>
-        /// or during publishing <see cref="ETriggerSource.ChangeLocationOfCard"/>
-        /// in any other situations it will crash resolving whole chain link
+        /// Warning: This method can be called during resolving chain link but
+        /// do not called it during <see cref="AEffect.InvokeEffect(GameController)"/>
+        /// 
+        /// If you do then resolving will crash
         /// </summary>
         /// <param name="effect"></param>
         public void AddEffectToActualChainLink(AEffect effect) => _actualChainLink.Add(effect);
@@ -108,7 +109,8 @@ namespace UnstableUnicornCore {
                 }
 
                 // trigger all ChangeTargeting
-                foreach (var effect in _actualChainLink) {
+                for (int i = 0; i < _actualChainLink.Count; i++) {
+                    var effect = _actualChainLink[i];
                     PublishEvent(ETriggerSource.ChangeTargeting, effect.OwningCard, effect);
                 }
 
