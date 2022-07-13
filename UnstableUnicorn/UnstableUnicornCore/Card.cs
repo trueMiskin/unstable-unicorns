@@ -83,18 +83,28 @@ namespace UnstableUnicornCore {
                 ret &= effect.IsCardDestroyable(this);
             return ret;
         }
-        public bool CanBePlayed() {
+
+        /// <summary>
+        /// Is card playable if card is played to targetOwner's stable
+        /// 
+        /// If card is spell, then set target owner to player who cast spell
+        /// </summary>
+        /// <param name="targetOwner"></param>
+        /// <returns></returns>
+        public bool CanBePlayed(APlayer targetOwner) {
             if (Location != CardLocation.InHand)
                 throw new InvalidOperationException("Card is not in hand. Card cannot be played.");
             if (Player == null)
                 throw new InvalidOperationException("Card should be presented in hand but `Player` is not set.");
+            if (targetOwner == null)
+                throw new InvalidOperationException($"{nameof(targetOwner)} should not be null");
 
             bool ret = true;
             GameController gameController = Player.GameController;
             foreach (var effectFactory in oneTimeFactoryEffects)
                 ret &= effectFactory(this).MeetsRequirementsToPlay(gameController);
             foreach (var effect in Player.GameController.ContinuousEffects)
-                ret &= effect.IsCardPlayable(Player, this);
+                ret &= effect.IsCardPlayable(this, targetOwner);
             return ret;
         }
 
@@ -193,10 +203,10 @@ namespace UnstableUnicornCore {
         public void CardPlayed(GameController gameController, APlayer newCardOwner) {
             if (_cardType == ECardType.Instant)
                 throw new InvalidOperationException("Instant card cannot be used by calling CardPlayed");
-            if (!CanBePlayed())
-                throw new InvalidOperationException(CardCannotBePlayed);
             if (_cardType == ECardType.Spell && newCardOwner != Player)
                 throw new InvalidOperationException("A spell cannot have a new card owner while the spell is being cast.");
+            if (!CanBePlayed(newCardOwner))
+                throw new InvalidOperationException(CardCannotBePlayed);
 
             if (_cardType == ECardType.Spell) {
                 // set player for trigger effect, then cast spell

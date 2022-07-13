@@ -27,7 +27,14 @@ namespace UnstableUnicornCore {
         }
 
         // public abstract bool IsEnabledTriggeringEffects(AEffect effect);
-        public virtual bool IsCardPlayable(APlayer player, Card card) => true;
+
+        /// <summary>
+        /// If continuous effect allow or disallow play given card to given player stable
+        /// </summary>
+        /// <param name="card"></param>
+        /// <param name="targetOwner">Who will own the card after it is played</param>
+        /// <returns></returns>
+        public virtual bool IsCardPlayable(Card card, APlayer targetOwner) => true;
 
         public virtual bool IsCardDestroyable(Card card) => true;
 

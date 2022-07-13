@@ -29,7 +29,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             for (int i = 0; i < numberOtherCardsInHand+1; i++) 
                 controller.PlayerDrawCard(player);
 
-            Assert.Equal(expectedOutput, changeOfLuck.CanBePlayed());
+            Assert.Equal(expectedOutput, changeOfLuck.CanBePlayed(player));
         }
 
         [Fact]
