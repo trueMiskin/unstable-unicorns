@@ -58,15 +58,16 @@ namespace UnstableUnicornCoreTest.BaseSet {
 
             controller.PlayCardAndResolveChainLink(basicUnicorn, playerOne);
             controller.PlayCardAndResolveChainLink(rainbowAura, playerOne);
-            controller.PlayCardAndResolveChainLink(unicornPoison, playerTwo);
 
-            // After unicorn poison is played no valid target can be selected, so
-            // nothing is happend
+            TestUtils.CardCantBePlayed(unicornPoison, playerTwo, controller);
+
+            // Unicorn poison can't be played -> no valid targets, so
+            // nothing happend
             // can't be selected rainbowAura because it is not unicorn card
             // can't be selected basicUnicorn because it it protected by rainbowAura
 
             Assert.Empty(playerOne.Hand);
-            Assert.Empty(playerTwo.Hand);
+            Assert.Single(playerTwo.Hand);
 
             Assert.Single(playerOne.Stable);
             Assert.Equal(basicUnicorn, playerOne.Stable[0]);
@@ -78,7 +79,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             Assert.Empty(playerTwo.Upgrades);
             Assert.Empty(playerTwo.Downgrades);
 
-            Assert.Single(controller.DiscardPile);
+            Assert.Empty(controller.DiscardPile);
         }
 
         [Fact]

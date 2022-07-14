@@ -66,19 +66,20 @@ namespace UnstableUnicornCoreTest.BaseSet {
             Assert.Equal(ECardType.Panda, basicUnicorn.CardType);
 
             // Unicorn poison can target unicorn, but players one unicorn are pandas!
-            controller.PlayCardAndResolveChainLink(unicornPoison, playerTwo);
+            // so unicorn spell can't be played
+            TestUtils.CardCantBePlayed(unicornPoison, playerTwo, controller);
 
             Assert.Empty(playerOne.Hand);
             Assert.Single(playerOne.Stable);
             Assert.Empty(playerOne.Upgrades);
             Assert.Single(playerOne.Downgrades);
 
-            Assert.Empty(playerTwo.Hand);
+            Assert.Single(playerTwo.Hand);
             Assert.Empty(playerTwo.Stable);
             Assert.Empty(playerTwo.Upgrades);
             Assert.Empty(playerTwo.Downgrades);
 
-            Assert.Single(controller.DiscardPile);
+            Assert.Empty(controller.DiscardPile);
         }
     }
 }

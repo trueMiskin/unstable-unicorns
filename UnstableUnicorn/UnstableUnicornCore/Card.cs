@@ -110,7 +110,11 @@ namespace UnstableUnicornCore {
             if (_requiresBasicUnicornInStableToPlay)
                 ret &= Player.Stable.Find(card => card.CardType == ECardType.BasicUnicorn) != null;
             foreach (var effectFactory in oneTimeFactoryEffects)
-                ret &= effectFactory(this).MeetsRequirementsToPlay(gameController);
+                if (_cardType != ECardType.Spell)
+                    ret &= effectFactory(this).MeetsRequirementsToPlay(gameController);
+                else
+                    // for spells should be always be target
+                    ret &= effectFactory(this).MeetsRequirementsToPlayInner(gameController);
             foreach (var effect in Player.GameController.ContinuousEffects)
                 ret &= effect.IsCardPlayable(this, targetOwner);
             return ret;
