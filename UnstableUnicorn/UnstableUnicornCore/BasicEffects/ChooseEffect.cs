@@ -19,6 +19,12 @@ namespace UnstableUnicornCore.BasicEffects {
 
         public override void InvokeEffect(GameController gameController) { }
 
-        public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;
+        public override bool MeetsRequirementsToPlayInner(GameController gameController) {
+            bool canBePlayed = false;
+            foreach (var effect in effectVariants)
+                canBePlayed |= effect.MeetsRequirementsToPlayInner(gameController);
+
+            return canBePlayed;
+        }
     }
 }

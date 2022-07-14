@@ -98,5 +98,9 @@ namespace UnstableUnicornCoreTest {
         public override AEffect WhichEffectToSelect(List<AEffect> effectsVariants) {
             return effectsVariants[WhichEffectShouldBeSelected];
         }
+
+        public override List<Card> WhichCardsToMove(int number, AEffect effect, List<Card> cards) {
+            return SimpleSelectionFromCards(number, cards);
+        }
     }
 }

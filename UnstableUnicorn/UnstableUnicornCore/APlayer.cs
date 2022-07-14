@@ -28,6 +28,7 @@ namespace UnstableUnicornCore {
         public abstract List<Card> WhichCardsToSave(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
         public abstract List<APlayer> ChoosePlayers(int number, bool canChooseMyself, AEffect effect);
         public abstract List<Card> WhichCardsToGet(int number, AEffect effect, List<Card> cards);
+        public abstract List<Card> WhichCardsToMove(int number, AEffect effect, List<Card> cards);
         public abstract AEffect WhichEffectToSelect(List<AEffect> effectsVariants);
         public abstract bool ActivateEffect(AEffect effect);
         
