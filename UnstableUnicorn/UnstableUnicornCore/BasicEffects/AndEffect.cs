@@ -1,30 +1,40 @@
-﻿namespace UnstableUnicornCore.BasicEffects {
+﻿using System.Collections.Generic;
+
+namespace UnstableUnicornCore.BasicEffects {
     public sealed class AndEffect : AEffect {
-        private AEffect _firstEffect, _secondEffect;
+        private List<AEffect> _effects;
         public AndEffect(Card owningCard, AEffect firstEffect, AEffect secondEffect)
             : base(owningCard, 0 /* For this effect is not needed*/) {
-            _firstEffect = firstEffect;
-            _secondEffect = secondEffect;
+            _effects = new List<AEffect> { firstEffect, secondEffect };
+        }
+
+        public AndEffect(Card owningCard, params AEffect[] effects)
+            : base(owningCard, 0 /* For this effect is not needed*/) {
+            _effects = new List<AEffect>(effects);
         }
 
         public override void ChooseTargets(GameController gameController) {
-            _firstEffect.ChooseTargets(gameController);
-            _secondEffect.ChooseTargets(gameController);
+            foreach(var effect in _effects)
+                effect.ChooseTargets(gameController);
         }
 
         public override void InvokeEffect(GameController gameController) {
-            _firstEffect.InvokeEffect(gameController);
-            _secondEffect.InvokeEffect(gameController);
+            foreach (var effect in _effects)
+                effect.InvokeEffect(gameController);
         }
 
         public override bool MeetsRequirementsToPlay(GameController gameController) {
-            return _firstEffect.MeetsRequirementsToPlay(gameController) &&
-                _secondEffect.MeetsRequirementsToPlay(gameController);
+            bool ret = true;
+            foreach (var effect in _effects)
+                ret &= effect.MeetsRequirementsToPlay(gameController);
+            return ret;
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            return _firstEffect.MeetsRequirementsToPlayInner(gameController) &&
-                _secondEffect.MeetsRequirementsToPlayInner(gameController);
+            bool ret = true;
+            foreach (var effect in _effects)
+                ret &= effect.MeetsRequirementsToPlayInner(gameController);
+            return ret;
         }
     }
 }
