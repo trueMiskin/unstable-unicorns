@@ -38,13 +38,13 @@ namespace UnstableUnicornCore.BasicEffects {
             if (_cardCount > validTargets)
                 _cardCount = validTargets;
 
-            CardTargets = player.WhichCardsToDiscard(_cardCount, _allowedCardTypes);
+            var selectedCards = player.WhichCardsToDiscard(_cardCount, _allowedCardTypes);
 
-            if (CardTargets.Count != _cardCount)
+            if (selectedCards.Count != _cardCount)
                 throw new InvalidOperationException($"Not selected enough cards to discard");
 
             var copyPlayerHand = new List<Card>(player.Hand);
-            foreach (var card in CardTargets) {
+            foreach (var card in selectedCards) {
                 if (card == null)
                     throw new InvalidOperationException($"Card was not selected");
                 if (!_allowedCardTypes.Contains(card.CardType))
@@ -54,9 +54,16 @@ namespace UnstableUnicornCore.BasicEffects {
                 if (gameController.cardsWhichAreTargeted.Contains(card))
                     throw new InvalidOperationException($"Card {card.Name} is targeted by another effect");
             }
+            CardTargets.AddRange(selectedCards);
         }
 
         private int numberValidTarget(GameController gameController, APlayer player, bool checkPrePlayConditions = false) {
+            if (_playerTargeting != PlayerTargeting.EachPlayer
+                && _playerTargeting != PlayerTargeting.PlayerOwner
+                && checkPrePlayConditions)
+                // requirements are always met, if player targeting don't include owner of card
+                return _cardCount;
+
             int validTargets = 0;
             foreach (var card in player.Hand) {
                 // if this card is not played - only checking requirements, then
@@ -76,6 +83,8 @@ namespace UnstableUnicornCore.BasicEffects {
             foreach (var card in CardTargets)
                 card.MoveCard(gameController, TargetOwner, TargetLocation);
         }
+
+        public override bool MeetsRequirementsToPlay(GameController gameController) => MeetsRequirementsToPlayInner(gameController);
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
             return numberValidTarget(gameController, OwningPlayer, true) >= _cardCount;

@@ -17,6 +17,11 @@
             _secondEffect.InvokeEffect(gameController);
         }
 
+        public override bool MeetsRequirementsToPlay(GameController gameController) {
+            return _firstEffect.MeetsRequirementsToPlay(gameController) &&
+                _secondEffect.MeetsRequirementsToPlay(gameController);
+        }
+
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
             return _firstEffect.MeetsRequirementsToPlayInner(gameController) &&
                 _secondEffect.MeetsRequirementsToPlayInner(gameController);
