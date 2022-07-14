@@ -19,17 +19,15 @@ namespace UnstableUnicornCore.BasicEffects {
             _playerTargeting = playerTargeting;
         }
 
+        List<APlayer>? players;
         public override void ChooseTargets(GameController gameController) {
-            List<APlayer> players = _playerTargeting switch {
+            players = _playerTargeting switch {
                 PlayerTargeting.PlayerOwner => new List<APlayer> { OwningPlayer },
                 PlayerTargeting.AnyPlayer => OwningPlayer.ChoosePlayers(1, true, this),
                 PlayerTargeting.EachPlayer => gameController.Players,
                 PlayerTargeting.EachOtherPlayer => gameController.Players.Except( new List<APlayer>{ OwningPlayer }).ToList(),
                 _ => throw new NotImplementedException(),
             };
-
-            foreach (APlayer player in players)
-                ChooseTargetForPlayer(gameController, player);
         }
 
         private void ChooseTargetForPlayer(GameController gameController, APlayer player) {
@@ -79,6 +77,12 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override void InvokeEffect(GameController gameController) {
+            if (players == null)
+                throw new NullReferenceException();
+
+            // choosing what should be discarded right before perfoming this action
+            foreach (APlayer player in players)
+                ChooseTargetForPlayer(gameController, player);
             foreach (var card in CardTargets)
                 card.MoveCard(gameController, TargetOwner, TargetLocation);
         }
