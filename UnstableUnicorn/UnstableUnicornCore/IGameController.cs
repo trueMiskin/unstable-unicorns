@@ -31,6 +31,7 @@ namespace UnstableUnicornCore {
         public List<AEffect> NextChainLink => _nextChainLink;
 
         public APlayer ActualPlayerOnTurn { get; set; }
+        public bool SkipToEndTurnPhase { get; set; } = false;
 
         public HashSet<Card> cardsWhichAreTargeted { get; set; } = new();
 
@@ -63,21 +64,24 @@ namespace UnstableUnicornCore {
         }
 
         internal void SimulateOneTurn(APlayer playerOnTurn) {
+            SkipToEndTurnPhase = false;
             ActualPlayerOnTurn = playerOnTurn;
             OnBeginTurn(playerOnTurn);
 
-            Card? card = playerOnTurn.WhichCardToPlay();
-            if (card == null)
-                PlayerDrawCard(playerOnTurn);
-            else {
-                if (!playerOnTurn.Hand.Remove(card))
-                    throw new InvalidOperationException($"Card {card.Name} not in player hand!");
+            if (!SkipToEndTurnPhase) {
+                Card? card = playerOnTurn.WhichCardToPlay();
+                if (card == null)
+                    PlayerDrawCard(playerOnTurn);
+                else {
+                    if (!playerOnTurn.Hand.Remove(card))
+                        throw new InvalidOperationException($"Card {card.Name} not in player hand!");
 
-                // check instant
-                // interative resolving instant cards
-                // stack chain resolve
+                    // check instant
+                    // interative resolving instant cards
+                    // stack chain resolve
 
-                card.CardPlayed(this, playerOnTurn);
+                    card.CardPlayed(this, playerOnTurn);
+                }
             }
 
             OnEndTurn(playerOnTurn);
