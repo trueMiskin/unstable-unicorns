@@ -93,6 +93,14 @@ namespace UnstableUnicornCore {
         public static readonly TriggerEffect.TriggerPredicate WhenThisCardEntersYourStable =
             (AEffect? effect, Card? causedCard, Card owningCard, GameController controller) => causedCard == owningCard;
 
+        public static readonly TriggerEffect.TriggerPredicate WhenYourStableHaveMoreThanFiveUnicorns =
+            (AEffect? effect, Card? causedCard, Card owningCard, GameController controller) => {
+                if (owningCard.Player == null)
+                    throw new InvalidOperationException("Player of the card must be non null");
+
+                return owningCard.Player.Stable.Count > 5;
+            };
+
         public static readonly TriggerEffect.TriggerPredicate IfThisCardWouldBeSacrificedOrDestroyed =
             (AEffect? effect, Card? causedCard, Card owningCard, GameController controller) => {
                 if (effect == null)
