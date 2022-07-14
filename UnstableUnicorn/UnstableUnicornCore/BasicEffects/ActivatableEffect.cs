@@ -1,16 +1,15 @@
 ﻿namespace UnstableUnicornCore.BasicEffects {
     public sealed class ActivatableEffect : AEffect {
-        private Card.FactoryEffect _effectFactory;
+        private AEffect _effect;
 
-        public ActivatableEffect(Card owningCard, Card.FactoryEffect effectFactory) : base(owningCard, 0) {
-            _effectFactory = effectFactory;
+        public ActivatableEffect(Card owningCard, AEffect effect) : base(owningCard, 0) {
+            _effect = effect;
         }
 
         public override void ChooseTargets(GameController gameController) {
-            AEffect effect = _effectFactory(OwningCard);
-            if (OwningPlayer.ActivateEffect(effect)) {
+            if (OwningPlayer.ActivateEffect(_effect)) {
                 // choosing targets of added effect will be called too
-                gameController.AddEffectToActualChainLink(effect);
+                gameController.AddEffectToActualChainLink(_effect);
             }
         }
 

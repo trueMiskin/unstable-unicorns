@@ -9,7 +9,7 @@ namespace UnstableUnicornCore.BaseSet {
                 .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, you may choose any player. That player must DISCARD a card. If this card would be sacrificed or destroyed, return it to your hand instead.")
                 .Cast((Card owningCard) => new ActivatableEffect(owningCard,
-                        (Card _) => new DiscardEffect(owningCard, 1, ECardTypeUtils.CardTarget, PlayerTargeting.AnyPlayer)
+                        new DiscardEffect(owningCard, 1, ECardTypeUtils.CardTarget, PlayerTargeting.AnyPlayer)
                     )
                 )
                 .TriggerEffect(

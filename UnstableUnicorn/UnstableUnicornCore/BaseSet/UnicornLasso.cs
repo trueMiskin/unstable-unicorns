@@ -17,7 +17,7 @@ namespace UnstableUnicornCore.BaseSet {
                     new List<ETriggerSource> { ETriggerSource.BeginningTurn },
                     (Card owningCard) => new ActivatableEffect(
                         owningCard,
-                        (Card _) => new StealReturnCardOnEndOfTurn(owningCard, 1, ECardTypeUtils.UnicornTarget)
+                        new StealReturnCardOnEndOfTurn(owningCard, 1, ECardTypeUtils.UnicornTarget)
                     )
                 );
         }

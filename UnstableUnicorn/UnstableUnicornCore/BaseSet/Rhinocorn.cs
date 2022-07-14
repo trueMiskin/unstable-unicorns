@@ -12,7 +12,7 @@ namespace UnstableUnicornCore.BaseSet {
                     TriggerPredicates.IsItInYourStableAtTheBeginningOfYourTurn,
                     new List<ETriggerSource> { ETriggerSource.BeginningTurn },
                     (Card owningCard) => new ActivatableEffect(owningCard,
-                        (_) => new AndEffect(owningCard,
+                        new AndEffect(owningCard,
                             new DestroyEffect(owningCard, 1, ECardTypeUtils.UnicornTarget),
                             new SkipToEndTurnPhaseEffect(owningCard)
                         )

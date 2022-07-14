@@ -8,7 +8,7 @@ namespace UnstableUnicornCore.BaseSet {
                 .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, you may choose any player. Return a card in that player's Stable to their hand.")
                 .Cast((Card owningCard) => new ActivatableEffect(owningCard,
-                        (_) => new ReturnEffect(owningCard, 1, ECardTypeUtils.CardTarget)
+                        new ReturnEffect(owningCard, 1, ECardTypeUtils.CardTarget)
                     )
                 );
         }
