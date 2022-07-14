@@ -9,6 +9,7 @@ namespace UnstableUnicornCore.BasicEffects {
     /// card was sacrificed than do... (could be a little bit OP but why not)
     /// 
     /// This effect should be called on trigger <see cref="ETriggerSource.ChangeTargeting"/>
+    /// but can be used also for self kill card (without using reaction part)
     /// </summary>
     public class SacrificeThisCardInsteadOtherCard : SacrificeEffect {
         public SacrificeThisCardInsteadOtherCard(Card owningCard, List<ECardType> targetType) : base(owningCard, 1, targetType) {
