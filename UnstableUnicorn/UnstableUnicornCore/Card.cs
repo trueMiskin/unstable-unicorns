@@ -54,9 +54,14 @@ namespace UnstableUnicornCore {
         private bool _canBeNeigh = true, _canBeDestroyed = true, _canBeSacrificed = true;
 
         public Card(String name, ECardType cardType, List<FactoryEffect> oneTimeFactoryEffects,
-            List<TriggerFactoryEffect> triggerFactoryEffects, List<ContinuousFactoryEffect> continuousFactoryEffect) {
+            List<TriggerFactoryEffect> triggerFactoryEffects, List<ContinuousFactoryEffect> continuousFactoryEffect,
+            bool canBeSacrificed, bool canBeDestroyed) {
             this.Name = name;
             this._cardType = cardType;
+
+            this._canBeSacrificed = canBeSacrificed;
+            this._canBeDestroyed = canBeDestroyed;
+
             this.oneTimeFactoryEffects = oneTimeFactoryEffects;
             this.triggerEffects = new();
             foreach (var f in triggerFactoryEffects)
