@@ -1,16 +1,28 @@
 ﻿using System;
 
 namespace UnstableUnicornCore.BasicEffects {
-    public class BringCardFromHandOnTable : AEffect {
+    public class BringCardFromSourceOnTable : AEffect {
         Predicate<Card> allowedCardsPredicate;
-        public BringCardFromHandOnTable(Card owningCard, int cardCount, Predicate<Card> allowedCardsPredicate) : base(owningCard, cardCount) {
+        CardLocation cardsourceLocation;
+        public BringCardFromSourceOnTable(Card owningCard,
+                                        int cardCount,
+                                        Predicate<Card> allowedCardsPredicate,
+                                        CardLocation cardsourceLocation = CardLocation.InHand) : base(owningCard, cardCount) 
+        {
             this.allowedCardsPredicate = allowedCardsPredicate;
+            this.cardsourceLocation = cardsourceLocation;
             TargetOwner = OwningPlayer;
             TargetLocation = CardLocation.OnTable;
         }
 
         public override void ChooseTargets(GameController gameController) {
-            var cards = OwningPlayer.Hand.FindAll(allowedCardsPredicate);
+            var cardsSource = cardsourceLocation switch {
+                CardLocation.InHand => OwningPlayer.Hand,
+                CardLocation.DiscardPile => gameController.DiscardPile,
+                _ => throw new NotImplementedException()
+            };
+
+            var cards = cardsSource.FindAll(allowedCardsPredicate);
 
             _cardCount = Math.Min(_cardCount, cards.Count);
             // maybe a little bit wrong used this method for selection

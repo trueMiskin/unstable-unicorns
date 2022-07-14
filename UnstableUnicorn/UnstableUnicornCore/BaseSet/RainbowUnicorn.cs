@@ -9,7 +9,7 @@ namespace UnstableUnicornCore.BaseSet {
                 .Text("When this card enters your Stable, you may bring a Basic Unicorn card from your hand directly into your Stable.")
                 .Cast(
                     (Card owningCard) => new ActivatableEffect(owningCard,
-                        new BringCardFromHandOnTable(owningCard, 1, card => card.CardType == ECardType.BasicUnicorn)
+                        new BringCardFromSourceOnTable(owningCard, 1, card => card.CardType == ECardType.BasicUnicorn)
                     )
                 );
         }

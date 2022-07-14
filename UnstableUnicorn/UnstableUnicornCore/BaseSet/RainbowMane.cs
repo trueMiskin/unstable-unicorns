@@ -21,7 +21,7 @@ namespace UnstableUnicornCore.BaseSet {
                     TriggerPredicates.IsItInYourStableAtTheBeginningOfYourTurn,
                     new List<ETriggerSource> { ETriggerSource.BeginningTurn },
                     (Card owningCard) => new ActivatableEffect(owningCard,
-                        new BringCardFromHandOnTable(owningCard, 1, card => card.CardType == ECardType.BasicUnicorn)
+                        new BringCardFromSourceOnTable(owningCard, 1, card => card.CardType == ECardType.BasicUnicorn)
                     )
                 );
         }
