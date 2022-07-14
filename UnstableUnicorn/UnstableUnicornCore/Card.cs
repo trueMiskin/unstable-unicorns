@@ -52,15 +52,17 @@ namespace UnstableUnicornCore {
 
         public string Name { get; init; }
         private bool _canBeNeigh = true, _canBeDestroyed = true, _canBeSacrificed = true;
+        private bool _requiresBasicUnicornInStableToPlay = false;
 
         public Card(String name, ECardType cardType, List<FactoryEffect> oneTimeFactoryEffects,
             List<TriggerFactoryEffect> triggerFactoryEffects, List<ContinuousFactoryEffect> continuousFactoryEffect,
-            bool canBeSacrificed, bool canBeDestroyed) {
+            bool canBeSacrificed, bool canBeDestroyed, bool requiresBasicUnicornInStableToPlay) {
             this.Name = name;
             this._cardType = cardType;
 
             this._canBeSacrificed = canBeSacrificed;
             this._canBeDestroyed = canBeDestroyed;
+            this._requiresBasicUnicornInStableToPlay = requiresBasicUnicornInStableToPlay;
 
             this.oneTimeFactoryEffects = oneTimeFactoryEffects;
             this.triggerEffects = new();
@@ -105,6 +107,8 @@ namespace UnstableUnicornCore {
 
             bool ret = true;
             GameController gameController = Player.GameController;
+            if (_requiresBasicUnicornInStableToPlay)
+                ret &= Player.Stable.Find(card => card.CardType == ECardType.BasicUnicorn) != null;
             foreach (var effectFactory in oneTimeFactoryEffects)
                 ret &= effectFactory(this).MeetsRequirementsToPlay(gameController);
             foreach (var effect in Player.GameController.ContinuousEffects)

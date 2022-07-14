@@ -15,5 +15,13 @@ namespace UnstableUnicornCoreTest {
             Assert.Equal(numUpgrades, player.Upgrades.Count);
             Assert.Equal(numDowngrades, player.Downgrades.Count);
         }
+
+        public static void CardCantBePlayed(Card card, APlayer targetOwner, GameController controller) {
+            Assert.False(card.CanBePlayed(targetOwner));
+
+            Action act = () => controller.PlayCardAndResolveChainLink(card, targetOwner);
+            var exception = Assert.Throws<InvalidOperationException>(act);
+            Assert.Equal(Card.CardCannotBePlayed, exception.Message);
+        }
     }
 }
