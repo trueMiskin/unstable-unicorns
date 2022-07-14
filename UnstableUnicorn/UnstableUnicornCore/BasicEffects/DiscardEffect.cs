@@ -35,12 +35,11 @@ namespace UnstableUnicornCore.BasicEffects {
         private void ChooseTargetForPlayer(GameController gameController, APlayer player) {
             int validTargets = numberValidTarget(gameController, player);
 
-            if (_cardCount > validTargets)
-                _cardCount = validTargets;
+            int numberCardsToSelect = Math.Min(_cardCount, validTargets);
 
-            var selectedCards = player.WhichCardsToDiscard(_cardCount, _allowedCardTypes);
+            var selectedCards = player.WhichCardsToDiscard(numberCardsToSelect, _allowedCardTypes);
 
-            if (selectedCards.Count != _cardCount)
+            if (selectedCards.Count != numberCardsToSelect)
                 throw new InvalidOperationException($"Not selected enough cards to discard");
 
             var copyPlayerHand = new List<Card>(player.Hand);
