@@ -232,5 +232,18 @@ namespace UnstableUnicornCore {
         }
 
         public void ShuffleDeck() => Pile = Pile.Shuffle(Random);
+
+        /// <summary>
+        /// Move all cards from discard pile to pile
+        /// 
+        /// Warning: Must be shuffled deck after this operation
+        /// </summary>
+        public void AddDiscardPileToPile() {
+            var listCopy = new List<Card>(DiscardPile);
+            foreach (var card in listCopy)
+                card.MoveCard(this, null, CardLocation.Pile);
+            
+            Pile.AddRange(listCopy);
+        }
     }
 }
