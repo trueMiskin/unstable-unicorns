@@ -76,6 +76,15 @@ namespace UnstableUnicornCore {
             this.Location = CardLocation.Pile;
         }
 
+        public bool CanPlayInstantCards() {
+            if (Player == null)
+                throw new InvalidOperationException($"{nameof(Player)} should be not null.");
+
+            bool ret = true;
+            foreach (var effect in Player.GameController.ContinuousEffects)
+                ret &= effect.CanBePlayedInstantCards(Player);
+            return ret;
+        }
         public bool CanBeNeigh() { return _canBeNeigh; }
         public bool CanBeSacriced() { return _canBeSacrificed; }
         public bool CanBeDestroyed() {

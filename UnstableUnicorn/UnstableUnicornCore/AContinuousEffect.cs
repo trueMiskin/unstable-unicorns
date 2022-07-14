@@ -56,6 +56,8 @@ namespace UnstableUnicornCore {
         /// <param name="cardType"></param>
         /// <returns></returns>
         public virtual bool CanBeActivatedTriggerEffect(Card card, ECardType cardType) => true;
+
+        public virtual bool CanBePlayedInstantCards(APlayer player) => true;
         public virtual ECardType GetCardType(ECardType actualCardType, APlayer playerOwner) => actualCardType; 
     }
 }
