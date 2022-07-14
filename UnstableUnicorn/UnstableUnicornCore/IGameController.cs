@@ -130,6 +130,14 @@ namespace UnstableUnicornCore {
                     PublishEvent(ETriggerSource.ChangeLocationOfCard, effect.OwningCard, effect);
                 }
 
+                // effect which trigger on leaving but they not change targeting or location
+                // this event is primary used for cards which can't be triggered by CardLeftStable
+                // because in this time are triggers unregistered
+                for (int i = 0; i < _actualChainLink.Count; i++) {
+                    var effect = _actualChainLink[i];
+                    PublishEvent(ETriggerSource.PreCardLeftStable, effect.OwningCard, effect);
+                }
+
                 // unregister affects of targets cards then moves
                 // the cards which published card leave and card enter events
                 // for example barbed wire could cause trouble

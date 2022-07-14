@@ -10,6 +10,7 @@ namespace UnstableUnicornCore {
         CardEnteredStable,
         ChangeTargeting,
         ChangeLocationOfCard,
+        PreCardLeftStable,
         CardLeftStable,
         EndTurn,
     }
