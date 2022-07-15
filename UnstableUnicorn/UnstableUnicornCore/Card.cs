@@ -85,7 +85,15 @@ namespace UnstableUnicornCore {
                 ret &= effect.CanBePlayedInstantCards(Player);
             return ret;
         }
-        public bool CanBeNeigh() { return _canBeNeigh; }
+        public bool CanBeNeigh() {
+            if (Player == null)
+                throw new InvalidOperationException($"{nameof(Player)} should be not null.");
+
+            bool ret = _canBeNeigh;
+            foreach (AContinuousEffect effect in Player.GameController.ContinuousEffects)
+                ret &= effect.IsCardNeighable(this);
+            return ret;
+        }
         public bool CanBeSacriced() { return _canBeSacrificed; }
         public bool CanBeDestroyed() {
             if (Location != CardLocation.OnTable)
