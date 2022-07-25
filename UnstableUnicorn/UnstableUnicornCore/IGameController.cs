@@ -31,6 +31,7 @@ namespace UnstableUnicornCore {
         public List<AEffect> NextChainLink => _nextChainLink;
 
         public APlayer ActualPlayerOnTurn { get; set; }
+        public int MaxCardsToPlayInOneTurn { get; set; } = 1;
         public bool SkipToEndTurnPhase { get; set; } = false;
 
         public HashSet<Card> cardsWhichAreTargeted { get; set; } = new();
@@ -65,14 +66,21 @@ namespace UnstableUnicornCore {
 
         internal void SimulateOneTurn(APlayer playerOnTurn) {
             SkipToEndTurnPhase = false;
+            MaxCardsToPlayInOneTurn = 1;
             ActualPlayerOnTurn = playerOnTurn;
+
             OnBeginTurn(playerOnTurn);
 
-            if (!SkipToEndTurnPhase) {
+            for (int cardIdx = 0; cardIdx < MaxCardsToPlayInOneTurn; cardIdx++) {
+                if (SkipToEndTurnPhase)
+                    break;
+
                 Card? card = playerOnTurn.WhichCardToPlay();
-                if (card == null)
-                    PlayerDrawCard(playerOnTurn);
-                else {
+                if (card == null) {
+                    if(cardIdx == 0)
+                        PlayerDrawCard(playerOnTurn);
+                    break;
+                } else {
                     if (!playerOnTurn.Hand.Remove(card))
                         throw new InvalidOperationException($"Card {card.Name} not in player hand!");
 
