@@ -32,6 +32,7 @@ namespace UnstableUnicornCore {
 
         public APlayer ActualPlayerOnTurn { get; set; }
         public int MaxCardsToPlayInOneTurn { get; set; } = 1;
+        public int DrawExtraCards { get; set; } = 0;
         public bool SkipToEndTurnPhase { get; set; } = false;
 
         public HashSet<Card> cardsWhichAreTargeted { get; set; } = new();
@@ -67,6 +68,7 @@ namespace UnstableUnicornCore {
         internal void SimulateOneTurn(APlayer playerOnTurn) {
             SkipToEndTurnPhase = false;
             MaxCardsToPlayInOneTurn = 1;
+            DrawExtraCards = 0;
             ActualPlayerOnTurn = playerOnTurn;
 
             OnBeginTurn(playerOnTurn);
@@ -179,6 +181,11 @@ namespace UnstableUnicornCore {
             topCard.MoveCard(this, player, CardLocation.InHand);
         }
 
+        private void PlayerDrawCards(APlayer player, int numberCards) {
+            for (int i = 0; i < numberCards; i++)
+                PlayerDrawCard(player);
+        }
+
         private void OnBeginTurn(APlayer player) {
             // Trigger on begin turn effects
             PublishEvent(ETriggerSource.BeginningTurn);
@@ -186,7 +193,8 @@ namespace UnstableUnicornCore {
             // resolve chain link
             ResolveChainLink();
 
-            PlayerDrawCard(player);
+            if(!SkipToEndTurnPhase)
+                PlayerDrawCards(player, 1 + DrawExtraCards);
         }
 
         private void OnEndTurn(APlayer player) {
