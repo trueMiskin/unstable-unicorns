@@ -15,7 +15,7 @@ namespace UnstableUnicornCore.BaseSet {
                 .TriggerEffect(
                     TriggerPredicates.IfThisCardWouldBeSacrificedOrDestroyed,
                     new List<ETriggerSource> { ETriggerSource.ChangeLocationOfCard },
-                    (Card owningCard) => new ReturnThisCardToHand(owningCard)
+                    (Card owningCard) => new ReturnThisCardToLocation(owningCard)
                 );
         }
     }

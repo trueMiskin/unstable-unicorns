@@ -4,21 +4,34 @@ namespace UnstableUnicornCore.BasicEffects {
     /// <summary>
     /// Specialized effect of return effect
     /// 
-    /// This effect get a card which should be return to owner's hand
+    /// This effect get a card which should be return to:
+    /// - owner's hand
+    /// - nursery
     /// <br/>
     /// Since I wrote Black knight unicorn card, this effect move cards
     /// from table to hand without intermediate step moving to discard pile
     /// 
     /// This effect should be called on trigger <see cref="ETriggerSource.ChangeLocationOfCard"/>
     /// </summary>
-    public class ReturnThisCardToHand : ReturnEffect {
-        public ReturnThisCardToHand(Card owningCard) : base(owningCard, 0, ECardTypeUtils.CardTarget) {
+    public class ReturnThisCardToLocation : ReturnEffect {
+        public ReturnThisCardToLocation(Card owningCard, CardLocation cardLocation = CardLocation.InHand) : base(owningCard, 0, ECardTypeUtils.CardTarget) {
             if (owningCard.Player == null)
                 throw new InvalidOperationException("Card should not have null player");
 
             CardTargets.Add(owningCard);
-            TargetOwner = owningCard.Player;
-            TargetLocation = CardLocation.InHand;
+
+            switch (cardLocation) {
+                case CardLocation.InHand:
+                    TargetOwner = owningCard.Player;
+                    TargetLocation = CardLocation.InHand;
+                    break;
+                case CardLocation.Nursery:
+                    TargetOwner = null;
+                    TargetLocation = CardLocation.Nursery;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         public override void ChooseTargets(GameController gameController) {
