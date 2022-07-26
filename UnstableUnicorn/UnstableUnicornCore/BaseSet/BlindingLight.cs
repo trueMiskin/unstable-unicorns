@@ -7,7 +7,7 @@ namespace UnstableUnicornCore.BaseSet {
                 .Name("Blinding Light")
                 .CardType(ECardType.Downgrade)
                 .Text("Triggered effects of your Unicorn cards do not activate.")
-                .ContinuousFactory((Card owningCard) => new TriggerEffectsCantBeActivated(owningCard));
+                .ContinuousFactory((Card owningCard) => new UnicornTriggerEffectsCantBeActivated(owningCard));
         }
     }
 }
