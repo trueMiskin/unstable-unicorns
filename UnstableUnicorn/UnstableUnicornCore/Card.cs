@@ -98,12 +98,12 @@ namespace UnstableUnicornCore {
         }
 
         public bool CanPlayInstantCards() {
-            if (Location != CardLocation.InHand)
-                throw new InvalidOperationException(CardNotInHand);
+            // if (Location != CardLocation.InHand)
+            //     throw new InvalidOperationException(CardNotInHand);
             if (Player == null)
                 throw new InvalidOperationException(CardInHandPlayerNull);
-            if (_cardType != ECardType.Instant)
-                throw new InvalidOperationException("Card is not instant card.");
+            // if (_cardType != ECardType.Instant)
+            //     throw new InvalidOperationException("Card is not instant card.");
 
             bool ret = true;
             foreach (var effect in Player.GameController.ContinuousEffects)
