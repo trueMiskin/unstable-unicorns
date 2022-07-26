@@ -1,8 +1,8 @@
 ﻿namespace UnstableUnicornCore.BaseSet {
-    public class BasicUnicorn : CardTemplateSource {
+    public class Narwhal : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
             return Card
-                .Name("Basic Unicorn")
+                .Name("Narwhal")
                 .CardType(ECardType.BasicUnicorn)
                 .Text("Just basic unicorn.");
         }
