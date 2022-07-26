@@ -4,28 +4,34 @@ using System.Collections.Generic;
 namespace UnstableUnicornCore.BasicEffects {
     public class StealEffect : AEffect {
         private List<ECardType> _allowedCardTypes;
+        public Predicate<Card> CardPredicate;
         public StealEffect(Card owningCard, int cardCount, List<ECardType> targetType) : base(owningCard, cardCount) {
             _allowedCardTypes = targetType;
             TargetOwner = owningCard.Player;
             TargetLocation = CardLocation.OnTable;
+            CardPredicate = card => _allowedCardTypes.Contains(card.CardType) && card.Player != OwningPlayer;
         }
-        private int numberValidTargets(GameController gameController) {
+
+        public StealEffect(Card owningCard, int cardCount, Predicate<Card> predicate) : base(owningCard, cardCount) {
+            _allowedCardTypes = new();
+            TargetOwner = owningCard.Player;
+            TargetLocation = CardLocation.OnTable;
+            this.CardPredicate = predicate;
+        }
+
+        private List<Card> GetValidTargets(GameController gameController) {
             List<Card> cards = gameController.GetCardsOnTable();
-            int numberValidTargets = 0;
 
-            foreach (Card c in cards)
-                if (_allowedCardTypes.Contains(c.CardType) && c.Player != OwningPlayer)
-                    numberValidTargets++;
-
-            return numberValidTargets;
+            return cards.FindAll(CardPredicate);
         }
+
         public override void ChooseTargets(GameController gameController) {
-            int stealableCards = numberValidTargets(gameController);
-            if (_cardCount > stealableCards)
-                _cardCount = stealableCards;
+            var stealableCards = GetValidTargets(gameController);
+            if (_cardCount > stealableCards.Count)
+                _cardCount = stealableCards.Count;
 
             // owner choose target cards to steal
-            CardTargets = OwningPlayer.WhichCardsToSteal(_cardCount, _allowedCardTypes);
+            CardTargets = OwningPlayer.WhichCardsToSteal(_cardCount, this, stealableCards);
 
             if (CardTargets.Count != _cardCount)
                 throw new InvalidOperationException($"Not selected enough cards to steal");
@@ -33,12 +39,8 @@ namespace UnstableUnicornCore.BasicEffects {
             // TODO: Check if cards are not same
             // TODO: Check if card is not target of another affect
             foreach (var card in CardTargets) {
-                if (card.Location != CardLocation.OnTable)
-                    throw new InvalidOperationException("Selected a card which is not on table");
-                if (card.Player == OwningPlayer)
-                    throw new InvalidOperationException("Player selected own card.");
-                if (!_allowedCardTypes.Contains(card.CardType))
-                    throw new InvalidOperationException($"Card {card.Name} have not allowed card type to be stealed");
+                if (!stealableCards.Contains(card))
+                    throw new InvalidCastException("Selected unknown card");
             }
         }
 
@@ -48,7 +50,7 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            return numberValidTargets(gameController) >= _cardCount;
+            return GetValidTargets(gameController).Count >= _cardCount;
         }
     }
 }
