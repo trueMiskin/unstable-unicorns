@@ -7,6 +7,10 @@
         }
 
         public override void ChooseTargets(GameController gameController) {
+            // if effect cannot be executed - skip it
+            if (!_effect.MeetsRequirementsToPlayInner(gameController))
+                return;
+
             if (OwningPlayer.ActivateEffect(_effect)) {
                 // choosing targets of added effect will be called too
                 gameController.AddEffectToActualChainLink(_effect);
