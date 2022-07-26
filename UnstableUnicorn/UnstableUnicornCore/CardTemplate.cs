@@ -8,6 +8,7 @@ namespace UnstableUnicornCore {
     public class CardTemplate {
         private String name;
         private ECardType _cardType;
+        private int _extraUnicornValue;
         private List<Card.FactoryEffect> oneTimeFactoryEffects = new();
         private List<Card.TriggerFactoryEffect> triggerFactoryEffects = new();
         private List<Card.ContinuousFactoryEffect> continuousFactoryEffects = new();
@@ -25,6 +26,11 @@ namespace UnstableUnicornCore {
         }
 
         public CardTemplate Text(string text) {
+            return this;
+        }
+
+        public CardTemplate ExtraUnicornValue(int value) {
+            _extraUnicornValue = value;
             return this;
         }
 
@@ -60,7 +66,7 @@ namespace UnstableUnicornCore {
 
         public Card CreateCard() {
             return new Card(name, _cardType, oneTimeFactoryEffects, triggerFactoryEffects, continuousFactoryEffects,
-                canBeSacrificed, canBeDestroyed, requiresBasicUnicornInStableToPlay);
+                canBeSacrificed, canBeDestroyed, requiresBasicUnicornInStableToPlay, _extraUnicornValue);
         }
     }
 }

@@ -47,18 +47,39 @@ namespace UnstableUnicornCore {
         public CardLocation Location { get; private set; }
         public List<TriggerEffect> OneTimeTriggerEffects => _oneTimeTriggerEffects;
 
+        public static string CardNotInHand = "Card is not in hand.Card cannot be played.";
+        public static string CardInHandPlayerNull = "Card should be presented in hand but `Player` is not set.";
         public static string CardOnTablePlayerNull = "Card on table but player is not set!";
         public static string CardCannotBePlayed = "This card cannot be played. Requirements are not met.";
 
         public string Name { get; init; }
+
+        private int _extraUnicornValue;
+        /// <summary>
+        /// Unicorn value is number which says how many unicorns is represented by this card
+        /// 
+        /// Default value for unicorn cards is 1
+        /// </summary>
+        public int UnicornValue {
+            get {
+                // none unicorn cards have value 0
+                if (!ECardTypeUtils.UnicornTarget.Contains(_cardType))
+                    return 0;
+
+                return 1 + _extraUnicornValue;
+            }
+        }
+
         private bool _canBeNeigh = true, _canBeDestroyed = true, _canBeSacrificed = true;
         private bool _requiresBasicUnicornInStableToPlay = false;
 
         public Card(String name, ECardType cardType, List<FactoryEffect> oneTimeFactoryEffects,
             List<TriggerFactoryEffect> triggerFactoryEffects, List<ContinuousFactoryEffect> continuousFactoryEffect,
-            bool canBeSacrificed, bool canBeDestroyed, bool requiresBasicUnicornInStableToPlay) {
+            bool canBeSacrificed, bool canBeDestroyed, bool requiresBasicUnicornInStableToPlay,
+            int extraUnicornValue) {
             this.Name = name;
             this._cardType = cardType;
+            this._extraUnicornValue = extraUnicornValue;
 
             this._canBeSacrificed = canBeSacrificed;
             this._canBeDestroyed = canBeDestroyed;
@@ -77,8 +98,12 @@ namespace UnstableUnicornCore {
         }
 
         public bool CanPlayInstantCards() {
+            if (Location != CardLocation.InHand)
+                throw new InvalidOperationException(CardNotInHand);
             if (Player == null)
-                throw new InvalidOperationException($"{nameof(Player)} should be not null.");
+                throw new InvalidOperationException(CardInHandPlayerNull);
+            if (_cardType != ECardType.Instant)
+                throw new InvalidOperationException("Card is not instant card.");
 
             bool ret = true;
             foreach (var effect in Player.GameController.ContinuousEffects)
@@ -116,11 +141,13 @@ namespace UnstableUnicornCore {
         /// <returns></returns>
         public bool CanBePlayed(APlayer targetOwner) {
             if (Location != CardLocation.InHand)
-                throw new InvalidOperationException("Card is not in hand. Card cannot be played.");
+                throw new InvalidOperationException(CardNotInHand);
             if (Player == null)
-                throw new InvalidOperationException("Card should be presented in hand but `Player` is not set.");
+                throw new InvalidOperationException(CardInHandPlayerNull);
             if (targetOwner == null)
                 throw new InvalidOperationException($"{nameof(targetOwner)} should not be null");
+            if (_cardType == ECardType.Instant)
+                throw new InvalidOperationException("Instant cards cannot be played.");
 
             bool ret = true;
             GameController gameController = Player.GameController;
