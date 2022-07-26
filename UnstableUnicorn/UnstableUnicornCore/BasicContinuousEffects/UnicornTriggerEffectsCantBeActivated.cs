@@ -6,14 +6,18 @@
             if (card.Player != OwningPlayer)
                 return true;
 
+            return !IsBlockTriggeringUnicornCards(card, cardType);
+        }
+
+        public static bool IsBlockTriggeringUnicornCards(Card card, ECardType cardType) {
             if (!ECardTypeUtils.UnicornTarget.Contains(cardType))
-                return true;
+                return false;
 
             // baby unicorn must be in Nursery or on table
             if (card._cardType == ECardType.BabyUnicorn)
-                return true;
+                return false;
 
-            return false;
+            return true;
         }
     }
 }

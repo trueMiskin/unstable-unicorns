@@ -59,6 +59,11 @@ namespace UnstableUnicornCore {
 
         public void InvokeEffect(ETriggerSource triggerSource, Card? cardWhichTriggerEffect,
                                  AEffect? effectWhichTriggerEffect, GameController gameController) {
+            // if effect, which cause trigger, is blocking triggering of unicorns cards
+            if (effectWhichTriggerEffect != null &&
+                effectWhichTriggerEffect.IsBlockTriggeringUnicornCards(OwningCard, OwningCard.CardType))
+                    return;
+
             if (!OwningCard.CanBeActivatedTriggerEffect(OwningCard.CardType))
                 return;
 

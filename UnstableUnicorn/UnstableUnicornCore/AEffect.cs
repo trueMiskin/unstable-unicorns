@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnstableUnicornCore.BasicContinuousEffects;
 
 namespace UnstableUnicornCore {
     public abstract class AEffect {
@@ -36,6 +37,14 @@ namespace UnstableUnicornCore {
         /// Who will owner of card after effect
         /// </summary>
         public APlayer? TargetOwner { get; protected set; }
+
+        protected bool _blockTriggeringUnicornCardsEnabled = false;
+        public bool IsBlockTriggeringUnicornCards(Card card, ECardType cardType) {
+            if (!_blockTriggeringUnicornCardsEnabled)
+                return false;
+
+            return UnicornTriggerEffectsCantBeActivated.IsBlockTriggeringUnicornCards(card, cardType);
+        }
 
         public AEffect(Card owningCard, int cardCount) {
             OwningCard = owningCard;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace UnstableUnicornCore.BasicEffects {
-    public sealed class DestroyEffect : AEffect {
+    public class DestroyEffect : AEffect {
         // card types which can be targeted
         List<ECardType> _allowedCardTypes;
 
