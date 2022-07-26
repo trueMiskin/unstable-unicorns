@@ -102,5 +102,9 @@ namespace UnstableUnicornCoreTest {
         public override List<Card> WhichCardsToMove(int number, AEffect effect, List<Card> cards) {
             return SimpleSelectionFromCards(number, cards);
         }
+
+        public override List<Card> WhichCardsToReturn(int number, AEffect effect, List<Card> cards) {
+            return SimpleSelectionFromCards(number, cards);
+        }
     }
 }

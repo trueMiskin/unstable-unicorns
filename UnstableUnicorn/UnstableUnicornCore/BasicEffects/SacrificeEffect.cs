@@ -12,7 +12,6 @@ namespace UnstableUnicornCore.BasicEffects {
                                List<ECardType> targetType,
                                PlayerTargeting playerTargeting = PlayerTargeting.PlayerOwner) : base(owningCard, cardCount)
         {
-            OwningCard = owningCard;
             this._playerTargeting = playerTargeting;
 
             _allowedCardTypes = targetType;

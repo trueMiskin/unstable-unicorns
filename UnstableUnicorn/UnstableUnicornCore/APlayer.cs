@@ -22,6 +22,8 @@ namespace UnstableUnicornCore {
         public abstract Card? WhichCardToPlay();
         public abstract List<Card> WhichCardsToSacrifice(int number, List<ECardType> allowedCardTypes);
         public abstract List<Card> WhichCardsToDestroy(int number, List<ECardType> allowedCardTypes);
+
+        public abstract List<Card> WhichCardsToReturn(int number, AEffect effect, List<Card> cards);
         public abstract List<Card> WhichCardsToSteal(int number, List<ECardType> allowedCardTypes);
         public abstract List<Card> WhichCardsToDiscard(int number, List<ECardType> allowedCardTypes);
 
