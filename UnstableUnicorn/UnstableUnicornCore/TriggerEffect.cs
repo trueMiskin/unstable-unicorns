@@ -85,6 +85,7 @@ namespace UnstableUnicornCore {
     public static class TriggerPredicates {
         private static readonly Type destroyEffectType = typeof(DestroyEffect);
         private static readonly Type sacrificeEffectType = typeof(SacrificeEffect);
+        private static readonly Type returnEffectType = typeof(ReturnEffect);
 
         public static readonly TriggerEffect.TriggerPredicate IsItInYourStableAtTheBeginningOfYourTurn =
             (AEffect? effect, Card? causedCard, Card owningCard, GameController controller) =>
@@ -107,6 +108,22 @@ namespace UnstableUnicornCore {
                     throw new InvalidOperationException("Effect is disallowed to be null");
 
                 if (!destroyEffectType.IsInstanceOfType(effect) && !sacrificeEffectType.IsInstanceOfType(effect))
+                    return false;
+
+                foreach (var card in effect.CardTargets) {
+                    if (card == owningCard)
+                        return true;
+                }
+                return false;
+            };
+
+        public static readonly TriggerEffect.TriggerPredicate IfThisCardWouldBeSacrificedOrDestroyedOrRetuned =
+            (AEffect? effect, Card? causedCard, Card owningCard, GameController controller) => {
+                if (effect == null)
+                    throw new InvalidOperationException("Effect is disallowed to be null");
+
+                if (!destroyEffectType.IsInstanceOfType(effect) && !sacrificeEffectType.IsInstanceOfType(effect) &&
+                    !returnEffectType.IsInstanceOfType(effect))
                     return false;
 
                 foreach (var card in effect.CardTargets) {

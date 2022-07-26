@@ -44,7 +44,7 @@ namespace UnstableUnicornCore {
         private List<TriggerEffect> _oneTimeTriggerEffects;
         private List<ContinuousFactoryEffect> _continuousFactoryEffects;
         private List<AContinuousEffect> continuousEffects;
-        public CardLocation Location { get; private set; }
+        public CardLocation Location { get; internal set; }
         public List<TriggerEffect> OneTimeTriggerEffects => _oneTimeTriggerEffects;
 
         public static string CardNotInHand = "Card is not in hand.Card cannot be played.";
@@ -315,6 +315,9 @@ namespace UnstableUnicornCore {
                     else
                         throw new InvalidOperationException($"Card type {_cardType} can't be on Table!");
                     break;
+                case CardLocation.Nursery:
+                    gameController.Nursery.Remove(this);
+                    break;
                 default:
                     throw new InvalidOperationException($"Uknown location {Location}");
             }
@@ -345,6 +348,9 @@ namespace UnstableUnicornCore {
                         Player.Downgrades.Add(this);
                     else
                         throw new InvalidOperationException($"Card type {_cardType} can't be on Table!");
+                    break;
+                case CardLocation.Nursery:
+                    gameController.Nursery.Add(this);
                     break;
                 default:
                     throw new InvalidOperationException($"Uknown location {Location}");

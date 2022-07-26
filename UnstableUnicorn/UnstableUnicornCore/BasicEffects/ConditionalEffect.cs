@@ -9,13 +9,10 @@
         }
 
         public override void ChooseTargets(GameController gameController) {
-            // choosing targets only for condition
-            // the then effect will be resolved in next chain link
-            _condition.ChooseTargets(gameController);
+            gameController.AddEffectToActualChainLink(_condition);
         }
 
         public override void InvokeEffect(GameController gameController) {
-            _condition.InvokeEffect(gameController);
             gameController.AddNewEffectToChainLink(_thenEffect);
         }
 

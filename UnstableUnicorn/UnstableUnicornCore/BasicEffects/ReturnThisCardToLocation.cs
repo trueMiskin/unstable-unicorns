@@ -39,6 +39,10 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override void InvokeReactionEffect(GameController gameController, AEffect effect) {
+            // break infinite recursion when baby unicorn is returned to nursery
+            if (effect.TargetOwner == TargetOwner && effect.TargetLocation == TargetLocation)
+                return;
+
             effect.CardTargets.Remove(OwningCard);
             gameController.AddEffectToActualChainLink(this);
         }

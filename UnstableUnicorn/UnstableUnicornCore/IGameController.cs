@@ -44,6 +44,11 @@ namespace UnstableUnicornCore {
             Pile = pile.Shuffle(Random);
             Nursery = new List<Card>( nursery );
 
+            foreach(var babyUnicorn in Nursery) {
+                babyUnicorn.Player = null;
+                babyUnicorn.Location = CardLocation.Nursery;
+            }
+
             foreach(APlayer p in players)
                 p.GameController = this;
             Players = new List<APlayer>( players );
@@ -184,6 +189,21 @@ namespace UnstableUnicornCore {
         private void PlayerDrawCards(APlayer player, int numberCards) {
             for (int i = 0; i < numberCards; i++)
                 PlayerDrawCard(player);
+        }
+
+        public void PlayerGetBabyUnicornOnTable(APlayer player) {
+            // when no baby unicorn in Nursery -> player got nothing
+            if (Nursery.Count == 0)
+                return;
+
+            Card babyUnicron = Nursery[^1];
+            babyUnicron.MoveCard(this, player, CardLocation.OnTable);
+            babyUnicron.RegisterAllEffects();
+        }
+
+        public void PlayerGetBabyUnicornsOnTable(APlayer player, int numberUnicorns) {
+            for (int i = 0; i < numberUnicorns; i++)
+                PlayerGetBabyUnicornOnTable(player);
         }
 
         private void OnBeginTurn(APlayer player) {

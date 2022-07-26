@@ -14,14 +14,11 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override void ChooseTargets(GameController gameController) {
-            foreach(var effect in _effects)
-                effect.ChooseTargets(gameController);
+            foreach (var effect in _effects)
+                gameController.AddEffectToActualChainLink(effect);
         }
 
-        public override void InvokeEffect(GameController gameController) {
-            foreach (var effect in _effects)
-                effect.InvokeEffect(gameController);
-        }
+        public override void InvokeEffect(GameController gameController) {}
 
         public override bool MeetsRequirementsToPlay(GameController gameController) {
             bool ret = true;
