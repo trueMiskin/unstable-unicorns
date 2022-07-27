@@ -25,7 +25,11 @@ namespace UnstableUnicornCore {
             if (card.CardType == ECardType.Instant || card.CardType == ECardType.Spell)
                 return this;
 
-            return GameController.Players[GameController.Random.Next(GameController.Players.Count)];
+            while (true) {
+                var player = GameController.Players[GameController.Random.Next(GameController.Players.Count)];
+                if (card.CanBePlayed(player))
+                    return player;
+            }
         }
 
         private List<Card> RandomSelectionFromCards(int number, List<Card> cardsWhichCanBeSelected) {
