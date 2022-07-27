@@ -8,10 +8,19 @@ namespace UnstableUnicornCore.BasicEffects {
             this.effectVariants = effectVariants;
         }
 
-        public override void ChooseTargets(GameController gameController) {
-            AEffect effect = OwningPlayer.WhichEffectToSelect(effectVariants);
+        public List<AEffect> GetAvailableEffects(GameController gameController) {
+            List<AEffect> ret = new();
+            foreach (var effect in effectVariants)
+                if (effect.MeetsRequirementsToPlayInner(gameController))
+                    ret.Add(effect);
+            return ret;
+        }
 
-            if (!effectVariants.Contains(effect))
+        public override void ChooseTargets(GameController gameController) {
+            List<AEffect> availableEffectVariants = GetAvailableEffects(gameController);
+            AEffect effect = OwningPlayer.WhichEffectToSelect(availableEffectVariants);
+
+            if (!availableEffectVariants.Contains(effect))
                 throw new InvalidOperationException("Selected unknown effect");
 
             gameController.AddEffectToActualChainLink(effect);
@@ -20,11 +29,7 @@ namespace UnstableUnicornCore.BasicEffects {
         public override void InvokeEffect(GameController gameController) { }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            bool canBePlayed = false;
-            foreach (var effect in effectVariants)
-                canBePlayed |= effect.MeetsRequirementsToPlayInner(gameController);
-
-            return canBePlayed;
+            return GetAvailableEffects(gameController).Count > 0;
         }
     }
 }
