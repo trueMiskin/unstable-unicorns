@@ -48,6 +48,7 @@ namespace UnstableUnicornCoreTest {
             ret.Reverse();
             while (ret.Count > number)
                 ret.RemoveAt(ret.Count - 1);
+            ret.Reverse();
 
             return ret;
         }

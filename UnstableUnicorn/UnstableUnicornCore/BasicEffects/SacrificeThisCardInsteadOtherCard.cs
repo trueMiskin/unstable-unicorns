@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace UnstableUnicornCore.BasicEffects {
     /// <summary>
@@ -23,6 +24,9 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override void InvokeReactionEffect(GameController gameController, AEffect effect) {
+            if (gameController.CardsWhichAreTargeted.Contains(OwningCard))
+                throw new InvalidOperationException("This method should not be called!!!");
+            
             List<Card> cardsCanBeSelected = new();
             foreach (var card in effect.CardTargets)
                 if (_allowedCardTypes.Contains(card.CardType) && card.Player == OwningPlayer)
@@ -30,11 +34,14 @@ namespace UnstableUnicornCore.BasicEffects {
 
             var savedCards = OwningPlayer.WhichCardsToSave(1, effect, cardsCanBeSelected);
 
+            ValidatePlayerSelection(1, savedCards, cardsCanBeSelected);
             // removed saved cards from target of effect
             foreach (var card in savedCards)
                 effect.CardTargets.Remove(card);
 
             gameController.AddEffectToActualChainLink(this);
+
+            CheckAndUpdateSelectionInActualLink(savedCards, new List<Card> { OwningCard }, gameController);
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;

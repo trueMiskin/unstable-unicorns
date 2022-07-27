@@ -20,5 +20,10 @@
         public override void InvokeEffect(GameController gameController) {}
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;
+
+        public override void InvokeReactionEffect(GameController gameController, AEffect effect) {
+            if (OwningPlayer.ActivateEffect(_effect))
+                _effect.InvokeReactionEffect(gameController, effect);
+        }
     }
 }

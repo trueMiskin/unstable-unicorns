@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnstableUnicornCore.BasicEffects;
 
 namespace UnstableUnicornCore.BaseSet {
@@ -13,9 +9,13 @@ namespace UnstableUnicornCore.BaseSet {
                 .CardType(ECardType.MagicUnicorn)
                 .Text("If 1 of your Unicorn cards would be destroyed, you may SACRIFICE this card instead.")
                 .TriggerEffect(
-                    TriggerPredicates.IfUnicornInYourStableWouldBeDestroyd,
+                    (effect, causedCard, owningCard, controller) =>
+                        TriggerPredicates.IfUnicornInYourStableWouldBeDestroyd(effect, causedCard, owningCard, controller) &&
+                        !controller.CardsWhichAreTargeted.Contains(owningCard),
                     new List<ETriggerSource> { ETriggerSource.ChangeTargeting },
-                    (Card owningCard) => new SacrificeThisCardInsteadOtherCard(owningCard, ECardTypeUtils.UnicornTarget)
+                    (Card owningCard) => new ActivatableEffect(owningCard,
+                        new SacrificeThisCardInsteadOtherCard(owningCard, ECardTypeUtils.UnicornTarget)
+                    )
                 );
         }
     }
