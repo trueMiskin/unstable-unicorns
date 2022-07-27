@@ -27,6 +27,10 @@ namespace UnstableUnicornCore {
         private List<AEffect> _actualChainLink = new();
         private List<AEffect> _nextChainLink = new();
 
+        /// <summary>
+        /// Stack for resolving instant cards
+        /// </summary>
+        public List<Card> Stack = new();
         public List<AEffect> ActualChainLink => _actualChainLink;
         public List<AEffect> NextChainLink => _nextChainLink;
 
@@ -90,13 +94,50 @@ namespace UnstableUnicornCore {
                 } else {
                     if (!playerOnTurn.Hand.Remove(card))
                         throw new InvalidOperationException($"Card {card.Name} not in player hand!");
+                    if (card.CardType == ECardType.Instant)
+                        throw new InvalidOperationException("Instant card cannot be played this way.");
 
-                    // check instant
-                    // interative resolving instant cards
+                    Stack = new List<Card>{ card };
+                    while (Stack.Count != 0) {
+                        Card topCard = Stack[Stack.Count - 1];
+                        List<Card> instantCards = new();
+
+                        // if card cannot be neigh -> resolve this card
+                        if (topCard.CanBeNeigh()) {
+                            // check if any player wants to play instant card
+                            foreach (APlayer player in Players) {
+                                var cardToPlayOnStack = player.PlayInstantOnStack(Stack);
+
+                                // TODO: move CanPlayInstantCards to player class
+                                if (cardToPlayOnStack == null || !cardToPlayOnStack.CanPlayInstantCards())
+                                    continue;
+                                if (cardToPlayOnStack.CardType != ECardType.Instant || !player.Hand.Contains(cardToPlayOnStack))
+                                    throw new InvalidOperationException("Selected none instant card or card is not in your hand.");
+
+                                instantCards.Add(cardToPlayOnStack);
+                            }
+                        }
+
+                        if (instantCards.Count == 0) {
+                            if (Stack.Count == 1)
+                                break;
+
+                            // resolve last card in chain link
+                            topCard.ExecuteInstant(this);
+                        } else {
+                            // move card from hand
+                            int firstPlayedCard = Random.Next(instantCards.Count);
+                            instantCards[firstPlayedCard].PlayedInstant(Stack);
+                        }
+                    }
                     // stack chain resolve
 
-                    APlayer targetPlayer = playerOnTurn.WhereShouldBeCardPlayed(card);
-                    card.CardPlayed(this, targetPlayer);
+                    // if card is played -> was not neigh
+                    if (Stack.Count == 1) {
+                        APlayer targetPlayer = playerOnTurn.WhereShouldBeCardPlayed(card);
+                        card.CardPlayed(this, targetPlayer);
+                        ResolveChainLink();
+                    }
                 }
             }
 

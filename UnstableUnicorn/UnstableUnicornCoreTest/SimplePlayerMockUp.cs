@@ -92,5 +92,9 @@ namespace UnstableUnicornCoreTest {
         public override APlayer WhereShouldBeCardPlayed(Card card) {
             return this;
         }
+
+        public override Card PlayInstantOnStack(List<Card> stack) {
+            return null;
+        }
     }
 }

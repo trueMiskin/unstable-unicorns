@@ -36,6 +36,14 @@ namespace UnstableUnicornCore {
         /// <param name="card">Card which you decided to play</param>
         /// <returns>Target owner</returns>
         public abstract APlayer WhereShouldBeCardPlayed(Card card);
+
+        /// <summary>
+        /// Return null if you don't want play instant card on stack
+        /// or return instant card from your hand
+        /// </summary>
+        /// <param name="stack"></param>
+        /// <returns></returns>
+        public abstract Card? PlayInstantOnStack(List<Card> stack);
         public abstract List<Card> WhichCardsToSacrifice(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
         public abstract List<Card> WhichCardsToDestroy(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 

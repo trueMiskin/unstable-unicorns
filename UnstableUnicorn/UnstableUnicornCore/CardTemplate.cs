@@ -12,7 +12,7 @@ namespace UnstableUnicornCore {
         private List<Card.FactoryEffect> oneTimeFactoryEffects = new();
         private List<Card.TriggerFactoryEffect> triggerFactoryEffects = new();
         private List<Card.ContinuousFactoryEffect> continuousFactoryEffects = new();
-        private bool canBeSacrificed = true, canBeDestroyed = true;
+        private bool canBeNeigh = true, canBeSacrificed = true, canBeDestroyed = true;
         private bool requiresBasicUnicornInStableToPlay = false;
 
         public CardTemplate Name(string name) {
@@ -49,6 +49,11 @@ namespace UnstableUnicornCore {
             return this;
         }
 
+        public CardTemplate CantBeNeigh() {
+            canBeNeigh = false;
+            return this;
+        }
+
         public CardTemplate CantBeSacrificed() {
             canBeSacrificed = false;
             return this;
@@ -66,7 +71,7 @@ namespace UnstableUnicornCore {
 
         public Card CreateCard() {
             return new Card(name, _cardType, oneTimeFactoryEffects, triggerFactoryEffects, continuousFactoryEffects,
-                canBeSacrificed, canBeDestroyed, requiresBasicUnicornInStableToPlay, _extraUnicornValue);
+                canBeNeigh, canBeSacrificed, canBeDestroyed, requiresBasicUnicornInStableToPlay, _extraUnicornValue);
         }
     }
 }

@@ -75,12 +75,13 @@ namespace UnstableUnicornCore {
 
         public Card(String name, ECardType cardType, List<FactoryEffect> oneTimeFactoryEffects,
             List<TriggerFactoryEffect> triggerFactoryEffects, List<ContinuousFactoryEffect> continuousFactoryEffect,
-            bool canBeSacrificed, bool canBeDestroyed, bool requiresBasicUnicornInStableToPlay,
+            bool canBeNeigh, bool canBeSacrificed, bool canBeDestroyed, bool requiresBasicUnicornInStableToPlay,
             int extraUnicornValue) {
             this.Name = name;
             this._cardType = cardType;
             this._extraUnicornValue = extraUnicornValue;
 
+            this._canBeNeigh = canBeNeigh;
             this._canBeSacrificed = canBeSacrificed;
             this._canBeDestroyed = canBeDestroyed;
             this._requiresBasicUnicornInStableToPlay = requiresBasicUnicornInStableToPlay;
@@ -252,8 +253,34 @@ namespace UnstableUnicornCore {
             _oneTimeTriggerEffects.Remove(triggerEffect);
         }
 
-        public void PlayedInstant(APlayer? player, List<Card> chainLink) {
-            // todo: how play instant card
+        /// <summary>
+        /// Check if card can be played, add this card on stack
+        /// and remove this card from hand.
+        /// Location is still set on <see cref="CardLocation.InHand"/>
+        /// </summary>
+        /// <param name="stack"></param>
+        public void PlayedInstant(List<Card> stack) {
+            if (Location != CardLocation.InHand || _cardType != ECardType.Instant)
+                throw new InvalidOperationException("Card can't be played as instant because is not instant card.");
+            if (Player == null)
+                throw new InvalidOperationException(CardInHandPlayerNull);
+            if (!Player.Hand.Remove(this))
+                throw new InvalidOperationException("Played card is not located in hand.");
+            stack.Add(this);
+        }
+
+        /// <summary>
+        /// Execute instant card -> instant effect is special effect which
+        /// all work is done in <see cref="AEffect.InvokeEffect(GameController)"/>
+        /// </summary>
+        /// <param name="gameController"></param>
+        public void ExecuteInstant(GameController gameController) {
+            if (Location != CardLocation.InHand || _cardType != ECardType.Instant)
+                throw new InvalidOperationException("Card can't be played as instant because is not instant card.");
+            foreach (var effectFactory in oneTimeFactoryEffects) {
+                var effect = effectFactory(this);
+                effect.InvokeEffect(gameController);
+            }
         }
 
         public void CardPlayed(GameController gameController, APlayer newCardOwner) {
