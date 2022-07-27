@@ -48,7 +48,7 @@ namespace UnstableUnicornCore.BasicEffects {
                     throw new InvalidOperationException($"Card {card.Name} have not allowed card type");
                 if (!copyPlayerHand.Remove(card))
                     throw new InvalidOperationException($"Card {card.Name} not in player hand!");
-                if (gameController.cardsWhichAreTargeted.Contains(card))
+                if (gameController.CardsWhichAreTargeted.Contains(card))
                     throw new InvalidOperationException($"Card {card.Name} is targeted by another effect");
             }
             CardTargets.AddRange(selectedCards);
@@ -70,7 +70,7 @@ namespace UnstableUnicornCore.BasicEffects {
                 // player to discard a card
                 if (card == OwningCard && checkPrePlayConditions)
                     continue;
-                if (_allowedCardTypes.Contains(card.CardType) && !gameController.cardsWhichAreTargeted.Contains(card))
+                if (_allowedCardTypes.Contains(card.CardType) && !gameController.CardsWhichAreTargeted.Contains(card))
                     validTargets++;
             }
             return validTargets;

@@ -40,7 +40,7 @@ namespace UnstableUnicornCore.BasicEffects {
                     throw new InvalidOperationException("Selected a card which is not on table");
                 if (!_allowedCardTypes.Contains(card.CardType) || !card.CanBeDestroyed())
                     throw new InvalidOperationException($"Card {card.Name} have not allowed card type or can't be destroyed");
-                if (gameController.cardsWhichAreTargeted.Contains(card))
+                if (gameController.CardsWhichAreTargeted.Contains(card))
                     throw new InvalidOperationException($"Card {card.Name} is targeted by another effect");
             }
         }

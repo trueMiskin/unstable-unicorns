@@ -20,7 +20,7 @@ namespace UnstableUnicornCore {
         /// </summary>
         /// <returns>Card to play or null</returns>
         public abstract Card? WhichCardToPlay();
-        public abstract List<Card> WhichCardsToSacrifice(int number, List<ECardType> allowedCardTypes);
+        public abstract List<Card> WhichCardsToSacrifice(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
         public abstract List<Card> WhichCardsToDestroy(int number, List<ECardType> allowedCardTypes);
 
         public abstract List<Card> WhichCardsToReturn(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);

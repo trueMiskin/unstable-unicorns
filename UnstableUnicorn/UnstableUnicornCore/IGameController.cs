@@ -35,7 +35,7 @@ namespace UnstableUnicornCore {
         public int DrawExtraCards { get; set; } = 0;
         public bool SkipToEndTurnPhase { get; set; } = false;
 
-        public HashSet<Card> cardsWhichAreTargeted { get; set; } = new();
+        public HashSet<Card> CardsWhichAreTargeted { get; set; } = new();
 
         private bool _willTakeExtraTurn = false;
 
@@ -116,7 +116,7 @@ namespace UnstableUnicornCore {
 
         private void ResolveChainLink() {
             while (_nextChainLink.Count > 0) {
-                cardsWhichAreTargeted = new HashSet<Card>();
+                CardsWhichAreTargeted = new HashSet<Card>();
 
                 _actualChainLink = _nextChainLink;
                 _nextChainLink = new List<AEffect>();

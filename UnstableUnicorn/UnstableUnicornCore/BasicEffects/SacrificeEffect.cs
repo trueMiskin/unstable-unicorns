@@ -19,15 +19,15 @@ namespace UnstableUnicornCore.BasicEffects {
             TargetLocation = CardLocation.DiscardPile;
         }
 
-        private int numberValidTargets(GameController gameController, APlayer player) {
-            int numberValidTargets = 0;
-
+        private List<Card> validTargets(GameController gameController, APlayer player) {
             List<Card> cards = gameController.GetCardsOnTable();
-            foreach (Card c in cards)
-                if (_allowedCardTypes.Contains(c.CardType) && c.CanBeSacriced() && c.Player == player)
-                    numberValidTargets++;
+            List<Card> validtargets = new();
 
-            return numberValidTargets;
+            foreach (Card card in cards)
+                if (_allowedCardTypes.Contains(card.CardType) && card.CanBeSacriced() && card.Player == player)
+                    validtargets.Add(card);
+
+            return validtargets;
         }
 
         public override void ChooseTargets(GameController gameController) {
@@ -42,24 +42,19 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         private void ChooseTargetForPlayer(GameController gameController, APlayer player) {
-            int numCardsSacrifice = numberValidTargets(gameController, player);
+            List<Card> availableSelection = validTargets(gameController, player);
 
-            int numberCardsToSelect = Math.Min(_cardCount, numCardsSacrifice);
+            int numberCardsToSelect = Math.Min(_cardCount, availableSelection.Count);
 
-            var selectedCards = player.WhichCardsToSacrifice(numberCardsToSelect, _allowedCardTypes);
+            var selectedCards = player.WhichCardsToSacrifice(numberCardsToSelect, this, availableSelection);
 
-            if (selectedCards.Count != numberCardsToSelect)
-                throw new InvalidOperationException($"Not selected enough cards to discard");
 
-            foreach (var card in CardTargets) {
-                if (card.Player != OwningPlayer || card.Location != CardLocation.OnTable)
-                    throw new InvalidOperationException("Selected other player's card or card which is not on table");
-                if (!_allowedCardTypes.Contains(card.CardType) || !card.CanBeSacriced())
-                    throw new InvalidOperationException($"Card {card.Name} have not allowed card type or can't be sacrificed");
-                if (gameController.cardsWhichAreTargeted.Contains(card))
-                    throw new InvalidOperationException($"Card {card.Name} is targeted by another effect");
-            }
+            ValidatePlayerSelection(numberCardsToSelect, selectedCards, availableSelection);
+
+            var old = new List<Card>(CardTargets);
             CardTargets.AddRange(selectedCards);
+
+            CheckAndUpdateSelectionInActualLink(old, CardTargets, gameController);
         }
 
         public override void InvokeEffect(GameController gameController) {
@@ -68,7 +63,7 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            return numberValidTargets(gameController, OwningPlayer) >= _cardCount
+            return validTargets(gameController, OwningPlayer).Count >= _cardCount
                 || _cardCount == Int32.MaxValue /* For sacrifice all */;
         }
     }

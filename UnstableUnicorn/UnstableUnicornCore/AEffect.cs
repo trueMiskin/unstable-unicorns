@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnstableUnicornCore.BasicContinuousEffects;
 
 namespace UnstableUnicornCore {
@@ -100,6 +101,50 @@ namespace UnstableUnicornCore {
         /// <param name="effect"></param>
         public virtual void InvokeReactionEffect(GameController gameController, AEffect effect) {
             throw new NotImplementedException($"{this} is not reaction effect or is not implemented.");
+        }
+
+        /// <summary>
+        /// Check if player don't select items more times, check if is selected enough items
+        /// and check if selected items are from available selection (not selected some random items)
+        /// </summary>
+        /// <typeparam name="T">Item type (typically <see cref="APlayer"/> or <see cref="Card"/>)</typeparam>
+        /// <param name="requiredSelectionSize"></param>
+        /// <param name="playerSelection"></param>
+        /// <param name="availableSelection"></param>
+        protected void ValidatePlayerSelection<T>(int requiredSelectionSize, List<T> playerSelection, List<T> availableSelection) {
+            // check if player don't select same card/player more times
+            // if is found first duplication -> stop adding to Hashset
+            var nonDuplicateSelection = new HashSet<T>();
+            playerSelection.Any(item => !nonDuplicateSelection.Add(item));
+
+            if (nonDuplicateSelection.Count != playerSelection.Count)
+                throw new InvalidOperationException("Selected items have duplication.");
+
+            if (playerSelection.Count != requiredSelectionSize)
+                throw new InvalidOperationException("Not selected enough items.");
+
+            if (!playerSelection.All(item => availableSelection.Contains(item)))
+                throw new InvalidOperationException("Selected item which is not from available selection.");
+        }
+
+        /// <summary>
+        /// Check if card is not already selected and update which cards are selected now
+        /// <br/>
+        /// Should be called after <see cref="ValidatePlayerSelection{T}(int, List{T}, List{T})"/>
+        /// </summary>
+        /// <param name="previousSelection"></param>
+        /// <param name="selectionNow"></param>
+        /// <param name="gameController"></param>
+        protected void CheckAndUpdateSelectionInActualLink(List<Card> previousSelection, List<Card> selectionNow, GameController gameController) {
+            var cardSet = gameController.CardsWhichAreTargeted;
+
+            foreach (var card in previousSelection)
+                if (!cardSet.Remove(card))
+                    throw new InvalidOperationException("Something goes wrong...");
+
+            foreach (var card in selectionNow)
+                if (!cardSet.Add(card))
+                    throw new InvalidOperationException("Selected card is already targeted by another effect");
         }
     }
 }

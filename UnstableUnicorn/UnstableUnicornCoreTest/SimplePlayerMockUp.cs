@@ -61,18 +61,8 @@ namespace UnstableUnicornCoreTest {
             return SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override List<Card> WhichCardsToSacrifice(int number, List<ECardType> allowedCardTypes) {
-            List<Card> selection = new();
-            foreach (var card in GameController.GetCardsOnTable()) {
-                if (selection.Count == number)
-                    break;
-                if (( (card.CanBeSacriced() && card.Player == this) || ChooseCardsWhichCantBeSacrificed) 
-                    && allowedCardTypes.Contains(card.CardType))
-                {
-                    selection.Add(card);
-                }
-            }
-            return selection;
+        public override List<Card> WhichCardsToSacrifice(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            return SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
         public override List<Card> WhichCardsToSave(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
