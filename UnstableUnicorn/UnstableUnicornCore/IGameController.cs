@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UnstableUnicornCore {
     public interface IGameController {
@@ -62,15 +60,39 @@ namespace UnstableUnicornCore {
         }
 
         public void SimulateGame() {
-            int index = 0;
-            while (true) {
-                APlayer player = Players[index];
-                SimulateOneTurn(player);
+            try {
+                // set up game
+                foreach (var player in Players) {
+                    PlayerGetBabyUnicornOnTable(player);
+                    PlayerDrawCards(player, 5);
+                }
 
-                if (_willTakeExtraTurn)
-                    _willTakeExtraTurn = false;
-                else
-                    index = (index + 1) % Players.Count;
+                // game
+                int index = 0;
+                while (true) {
+                    Console.WriteLine($"Player on turn {index}");
+
+                    APlayer player = Players[index];
+                    SimulateOneTurn(player);
+
+                    if (_willTakeExtraTurn)
+                        _willTakeExtraTurn = false;
+                    else
+                        index = (index + 1) % Players.Count;
+                }
+            } catch(EndGameException ex) {
+                Console.WriteLine(ex.Message);
+                var scoreBoard = from player in Players
+                                 let unicornValue = player.Stable.Sum(card => card.UnicornValue)
+                                 let unicornLen = player.Stable.Sum(card => card.Name.Replace(" ", string.Empty).Length)
+                                 select (unicornValue, unicornLen, player)
+                                 ;
+                var finalScoreBoard = scoreBoard.ToList()
+                    .OrderByDescending(item => item.unicornValue)
+                    .OrderByDescending(item => item.unicornLen);
+
+                foreach(var f in finalScoreBoard)
+                    Console.WriteLine($"Player id: {Players.IndexOf(f.player)}, value: {f.unicornValue}, len: {f.unicornLen}");
             }
         }
 
@@ -220,9 +242,23 @@ namespace UnstableUnicornCore {
                         }
                 }
             }
+
+            CheckIfSomeoneWinGame();
+        }
+
+        public void CheckIfSomeoneWinGame() {
+            foreach (var player in Players) {
+                int value = player.Stable.Sum(card => card.UnicornValue);
+                if (value == 6) {
+                    throw new EndGameException("Someone have 6 unicorns -> ending game");
+                }
+            }
         }
 
         public void PlayerDrawCard(APlayer player) {
+            if (Pile.Count == 0)
+                throw new EndGameException("Pile empty -> ending game");
+
             Card topCard = Pile[^1];
             Pile.RemoveAt(Pile.Count - 1);
             topCard.MoveCard(this, player, CardLocation.InHand);
