@@ -38,11 +38,9 @@ namespace UnstableUnicornCore.BasicEffects {
             var selectedCards = player.WhichCardsToDiscard(numberCardsToSelect, this, availableSelection);
 
             ValidatePlayerSelection(numberCardsToSelect, selectedCards, availableSelection);
+            CheckAndUpdateSelectionInActualLink(new List<Card>(), selectedCards, gameController);
 
-            var old = new List<Card>(CardTargets);
             CardTargets.AddRange(selectedCards);
-
-            CheckAndUpdateSelectionInActualLink(old, CardTargets, gameController);
         }
 
         private List<Card> validTargets(GameController gameController, APlayer player, bool checkPrePlayConditions = false) {

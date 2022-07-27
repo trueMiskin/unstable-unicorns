@@ -50,11 +50,9 @@ namespace UnstableUnicornCore.BasicEffects {
 
 
             ValidatePlayerSelection(numberCardsToSelect, selectedCards, availableSelection);
+            CheckAndUpdateSelectionInActualLink(new List<Card>(), selectedCards, gameController);
 
-            var old = new List<Card>(CardTargets);
             CardTargets.AddRange(selectedCards);
-
-            CheckAndUpdateSelectionInActualLink(old, CardTargets, gameController);
         }
 
         public override void InvokeEffect(GameController gameController) {
