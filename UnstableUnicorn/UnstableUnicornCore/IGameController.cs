@@ -60,6 +60,7 @@ namespace UnstableUnicornCore {
         }
 
         public void SimulateGame() {
+            int turnNumber = 1;
             try {
                 // set up game
                 foreach (var player in Players) {
@@ -79,6 +80,7 @@ namespace UnstableUnicornCore {
                         _willTakeExtraTurn = false;
                     else
                         index = (index + 1) % Players.Count;
+                    turnNumber++;
                 }
             } catch(EndGameException ex) {
                 Console.WriteLine(ex.Message);
@@ -91,8 +93,10 @@ namespace UnstableUnicornCore {
                     .OrderByDescending(item => item.unicornValue)
                     .OrderByDescending(item => item.unicornLen);
 
+                Console.WriteLine($"Game ended after {turnNumber} turns");
                 foreach(var f in finalScoreBoard)
                     Console.WriteLine($"Player id: {Players.IndexOf(f.player)}, value: {f.unicornValue}, len: {f.unicornLen}");
+                Console.WriteLine("----------------");
             }
         }
 
