@@ -88,5 +88,9 @@ namespace UnstableUnicornCoreTest {
         public override List<Card> WhichCardsToReturn(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
         }
+
+        public override APlayer WhereShouldBeCardPlayed(Card card) {
+            return this;
+        }
     }
 }

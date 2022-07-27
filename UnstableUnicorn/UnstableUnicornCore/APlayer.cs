@@ -20,6 +20,22 @@ namespace UnstableUnicornCore {
         /// </summary>
         /// <returns>Card to play or null</returns>
         public abstract Card? WhichCardToPlay();
+
+        /// <summary>
+        /// When you decide to play a card, then this method will be called
+        /// <br/>
+        /// Cards can be played to any player's stable, but if card is spell,
+        /// then "target" owner must be player who own this card (you)
+        /// <br/>
+        /// In <see cref="WhichCardToPlay"/> you could decide what and where to play
+        /// and then here return cached data.
+        /// To this method is passed card which you decided to play,
+        /// but to method will be always passed last card which you returned from
+        /// <see cref="WhichCardToPlay"/>
+        /// </summary>
+        /// <param name="card">Card which you decided to play</param>
+        /// <returns>Target owner</returns>
+        public abstract APlayer WhereShouldBeCardPlayed(Card card);
         public abstract List<Card> WhichCardsToSacrifice(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
         public abstract List<Card> WhichCardsToDestroy(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
@@ -33,14 +49,5 @@ namespace UnstableUnicornCore {
         public abstract List<Card> WhichCardsToMove(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
         public abstract AEffect WhichEffectToSelect(List<AEffect> effectsVariants);
         public abstract bool ActivateEffect(AEffect effect);
-        
-        /// <summary>
-        /// Enter card on table of current player
-        /// </summary>
-        /// <param name="effect"></param>
-        /// <param name="effectedCard"></param>
-        public void CardEnterOnTable(AEffect effect, Card effectedCard) {
-
-        }
     }
 }

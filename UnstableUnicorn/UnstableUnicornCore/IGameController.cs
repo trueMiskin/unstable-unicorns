@@ -95,7 +95,8 @@ namespace UnstableUnicornCore {
                     // interative resolving instant cards
                     // stack chain resolve
 
-                    card.CardPlayed(this, playerOnTurn);
+                    APlayer targetPlayer = playerOnTurn.WhereShouldBeCardPlayed(card);
+                    card.CardPlayed(this, targetPlayer);
                 }
             }
 
