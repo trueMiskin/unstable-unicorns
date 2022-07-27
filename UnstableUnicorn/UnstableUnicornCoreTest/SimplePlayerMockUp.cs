@@ -34,13 +34,6 @@ namespace UnstableUnicornCoreTest {
             return ret;
         }
 
-        public List<Card> SimpleSelection(int number) {
-            List<Card> list = new();
-            for (int i = 0; i < number; i++)
-                list.Add(Hand[i]);
-            return list;
-        }
-
         public override List<Card> WhichCardsToDestroy(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             var ret = SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
 
@@ -59,8 +52,8 @@ namespace UnstableUnicornCoreTest {
             return ret;
         }
 
-        public override List<Card> WhichCardsToDiscard(int number, List<ECardType> allowedCardTypes) {
-            return SimpleSelection(number);
+        public override List<Card> WhichCardsToDiscard(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            return SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
         public override List<Card> WhichCardsToGet(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {

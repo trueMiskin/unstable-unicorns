@@ -31,37 +31,23 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         private void ChooseTargetForPlayer(GameController gameController, APlayer player) {
-            int validTargets = numberValidTarget(gameController, player);
+            List<Card> availableSelection = validTargets(gameController, player);
 
-            int numberCardsToSelect = Math.Min(_cardCount, validTargets);
+            int numberCardsToSelect = Math.Min(_cardCount, availableSelection.Count);
 
-            var selectedCards = player.WhichCardsToDiscard(numberCardsToSelect, _allowedCardTypes);
+            var selectedCards = player.WhichCardsToDiscard(numberCardsToSelect, this, availableSelection);
 
-            if (selectedCards.Count != numberCardsToSelect)
-                throw new InvalidOperationException($"Not selected enough cards to discard");
+            ValidatePlayerSelection(numberCardsToSelect, selectedCards, availableSelection);
 
-            var copyPlayerHand = new List<Card>(player.Hand);
-            foreach (var card in selectedCards) {
-                if (card == null)
-                    throw new InvalidOperationException($"Card was not selected");
-                if (!_allowedCardTypes.Contains(card.CardType))
-                    throw new InvalidOperationException($"Card {card.Name} have not allowed card type");
-                if (!copyPlayerHand.Remove(card))
-                    throw new InvalidOperationException($"Card {card.Name} not in player hand!");
-                if (gameController.CardsWhichAreTargeted.Contains(card))
-                    throw new InvalidOperationException($"Card {card.Name} is targeted by another effect");
-            }
+            var old = new List<Card>(CardTargets);
             CardTargets.AddRange(selectedCards);
+
+            CheckAndUpdateSelectionInActualLink(old, CardTargets, gameController);
         }
 
-        private int numberValidTarget(GameController gameController, APlayer player, bool checkPrePlayConditions = false) {
-            if (_playerTargeting != PlayerTargeting.EachPlayer
-                && _playerTargeting != PlayerTargeting.PlayerOwner
-                && checkPrePlayConditions)
-                // requirements are always met, if player targeting don't include owner of card
-                return _cardCount;
+        private List<Card> validTargets(GameController gameController, APlayer player, bool checkPrePlayConditions = false) {
+            List<Card> validtargets = new();
 
-            int validTargets = 0;
             foreach (var card in player.Hand) {
                 // if this card is not played - only checking requirements, then
                 // don't count this card as valid target, but when this is presented
@@ -71,9 +57,10 @@ namespace UnstableUnicornCore.BasicEffects {
                 if (card == OwningCard && checkPrePlayConditions)
                     continue;
                 if (_allowedCardTypes.Contains(card.CardType) && !gameController.CardsWhichAreTargeted.Contains(card))
-                    validTargets++;
+                    validtargets.Add(card);
             }
-            return validTargets;
+
+            return validtargets;
         }
 
         public override void InvokeEffect(GameController gameController) {
@@ -90,7 +77,12 @@ namespace UnstableUnicornCore.BasicEffects {
         public override bool MeetsRequirementsToPlay(GameController gameController) => MeetsRequirementsToPlayInner(gameController);
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            return numberValidTarget(gameController, OwningPlayer, true) >= _cardCount;
+            if (_playerTargeting != PlayerTargeting.EachPlayer
+                && _playerTargeting != PlayerTargeting.PlayerOwner)
+                // requirements are always met, if player targeting don't include owner of card
+                return true;
+
+            return validTargets(gameController, OwningPlayer, true).Count >= _cardCount;
         }
     }
 }
