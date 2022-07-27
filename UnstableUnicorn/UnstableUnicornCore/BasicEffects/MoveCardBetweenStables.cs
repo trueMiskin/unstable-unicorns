@@ -25,11 +25,14 @@ namespace UnstableUnicornCore.BasicEffects {
 
             ValidatePlayerSelection(numberCardsToSelect, CardTargets, cards);
 
+            List<APlayer> availablePlayers = new List<APlayer>(gameController.Players);
+            if (!canOwningPlayerGetCard)
+                availablePlayers.Remove(OwningPlayer);
+            availablePlayers.Remove(CardTargets[0].Player);
 
-            var players = OwningPlayer.ChoosePlayers(1, canOwningPlayerGetCard, this);
+            var players = OwningPlayer.ChoosePlayers(1, this, availablePlayers);
 
-            if (players.Count != 1)
-                throw new InvalidOperationException("Selected wrong number of players");
+            ValidatePlayerSelection(1, players, availablePlayers);
             
             APlayer player = players[0];
             if (player == OwningPlayer && !canOwningPlayerGetCard)

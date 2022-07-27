@@ -14,12 +14,12 @@ namespace UnstableUnicornCoreTest {
 
         public override bool ActivateEffect(AEffect effect) => true;
 
-        public override List<APlayer> ChoosePlayers(int number, bool canChooseMyself, AEffect effect) {
+        public override List<APlayer> ChoosePlayers(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected) {
             List<APlayer> selectedPlayers = new();
             if (ChooseMyself)
                 selectedPlayers.Add(this);
 
-            foreach (var player in GameController.Players)
+            foreach (var player in playersWhichCanBeSelected)
                 if (player != this && selectedPlayers.Count < number)
                     selectedPlayers.Add(player);
 

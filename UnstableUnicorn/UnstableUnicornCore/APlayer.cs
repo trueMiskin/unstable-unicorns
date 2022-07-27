@@ -52,7 +52,15 @@ namespace UnstableUnicornCore {
         public abstract List<Card> WhichCardsToDiscard(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
         public abstract List<Card> WhichCardsToSave(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
-        public abstract List<APlayer> ChoosePlayers(int number, bool canChooseMyself, AEffect effect);
+
+        public List<APlayer> ChoosePlayers(int number, bool canChooseMyself, AEffect effect) {
+            var players = GameController.Players;
+            if (!canChooseMyself)
+                players.Remove(this);
+            return ChoosePlayers(number, effect, players);
+        }
+
+        public abstract List<APlayer> ChoosePlayers(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected);
         public abstract List<Card> WhichCardsToGet(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
         public abstract List<Card> WhichCardsToMove(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
         public abstract AEffect WhichEffectToSelect(List<AEffect> effectsVariants);
