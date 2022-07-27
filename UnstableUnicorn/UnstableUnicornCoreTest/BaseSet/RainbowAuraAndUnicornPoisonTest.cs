@@ -132,7 +132,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             // can be selected only his own basic unicorn
             // but player althought select player's one unicorn which cannot be selected
             var exception = Assert.Throws<InvalidOperationException>(act);
-            Assert.Equal($"Card {basicUnicornSecond.Name} have not allowed card type or can't be destroyed", exception.Message);
+            Assert.Equal("Selected item which is not from available selection.", exception.Message);
         }
 
         private static void prepareData(out SimplePlayerMockUp playerOne, out SimplePlayerMockUp playerTwo, out GameController controller, out Card basicUnicorn, out Card rainbowAura, out Card basicUnicornSecond, out Card unicornPoison) {

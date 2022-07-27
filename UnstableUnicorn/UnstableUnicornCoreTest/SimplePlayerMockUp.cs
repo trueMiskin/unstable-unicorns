@@ -41,16 +41,22 @@ namespace UnstableUnicornCoreTest {
             return list;
         }
 
-        public override List<Card> WhichCardsToDestroy(int number, List<ECardType> allowedCardTypes) {
-            List<Card> selection = new();
-            foreach(var card in GameController.GetCardsOnTable()) {
-                if (selection.Count == number)
-                    break;
-                if( (card.CanBeDestroyed() || ChooseCardsWhichCantBeDestroy) && allowedCardTypes.Contains(card.CardType) ) {
-                    selection.Add(card);
+        public override List<Card> WhichCardsToDestroy(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            var ret = SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
+
+            if (ChooseCardsWhichCantBeDestroy) {
+                foreach (var card in GameController.GetCardsOnTable()) {
+                    if (!card.CanBeDestroyed()) {
+                        ret.Add(card);
+                    }
                 }
             }
-            return selection;
+
+            ret.Reverse();
+            while (ret.Count > number)
+                ret.RemoveAt(ret.Count - 1);
+
+            return ret;
         }
 
         public override List<Card> WhichCardsToDiscard(int number, List<ECardType> allowedCardTypes) {

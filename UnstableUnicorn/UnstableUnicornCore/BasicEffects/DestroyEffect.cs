@@ -12,37 +12,32 @@ namespace UnstableUnicornCore.BasicEffects {
             _allowedCardTypes = targetType;
         }
 
-        private int numberValidTargets(GameController gameController) {
+        private List<Card> validTargets(GameController gameController) {
             List<Card> cards = gameController.GetCardsOnTable();
-            int numberValidTargets = 0;
+            List<Card> validtargets = new();
 
-            foreach (Card c in cards)
-                if (_allowedCardTypes.Contains(c.CardType) && c.CanBeDestroyed())
-                    numberValidTargets++;
+            foreach (Card card in cards)
+                if (_allowedCardTypes.Contains(card.CardType) && card.CanBeDestroyed())
+                    validtargets.Add(card);
 
-            return numberValidTargets;
+            return validtargets;
         }
 
         public override void ChooseTargets(GameController gameController) {
-            int numCardsOnTable = numberValidTargets(gameController);
+            List<Card> availableSelection = validTargets(gameController);
 
-            if (_cardCount > numCardsOnTable)
-                _cardCount = numCardsOnTable;
+            int numberCardsToSelect = Math.Min(_cardCount, availableSelection.Count);
             
             // owner choose which card should be destroyed
-            CardTargets = OwningPlayer.WhichCardsToDestroy(_cardCount, _allowedCardTypes);
-            
-            if (CardTargets.Count != _cardCount)
-                throw new InvalidOperationException($"Not selected enough cards to destroy");
+            var selectedCards = OwningPlayer.WhichCardsToDestroy(numberCardsToSelect, this, availableSelection);
 
-            foreach (var card in CardTargets) {
-                if (card.Location != CardLocation.OnTable)
-                    throw new InvalidOperationException("Selected a card which is not on table");
-                if (!_allowedCardTypes.Contains(card.CardType) || !card.CanBeDestroyed())
-                    throw new InvalidOperationException($"Card {card.Name} have not allowed card type or can't be destroyed");
-                if (gameController.CardsWhichAreTargeted.Contains(card))
-                    throw new InvalidOperationException($"Card {card.Name} is targeted by another effect");
-            }
+
+            ValidatePlayerSelection(numberCardsToSelect, selectedCards, availableSelection);
+
+            var old = new List<Card>(CardTargets);
+            CardTargets = selectedCards;
+
+            CheckAndUpdateSelectionInActualLink(old, CardTargets, gameController);
         }
 
         public override void InvokeEffect(GameController gameController) {
@@ -51,7 +46,7 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            return numberValidTargets(gameController) >= _cardCount;
+            return validTargets(gameController).Count >= _cardCount;
         }
     }
 }
