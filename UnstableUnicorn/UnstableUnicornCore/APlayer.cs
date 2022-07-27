@@ -54,7 +54,7 @@ namespace UnstableUnicornCore {
         public abstract List<Card> WhichCardsToSave(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
         public List<APlayer> ChoosePlayers(int number, bool canChooseMyself, AEffect effect) {
-            var players = GameController.Players;
+            var players = new List<APlayer>(GameController.Players);
             if (!canChooseMyself)
                 players.Remove(this);
             return ChoosePlayers(number, effect, players);

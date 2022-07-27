@@ -234,10 +234,11 @@ namespace UnstableUnicornCore {
             foreach (var effect in triggerEffects)
                 effect.UnsubscribeToEvent(Player.GameController);
 
-            foreach (var effect in _oneTimeTriggerEffects)
+            foreach (var effect in new List<TriggerEffect>(_oneTimeTriggerEffects))
                 effect.UnsubscribeToEvent(Player.GameController);
 
-            _oneTimeTriggerEffects.Clear();
+            if (_oneTimeTriggerEffects.Count != 0)
+                throw new InvalidOperationException("This should be every time empty - UnsubscribeToEvent removes one time effect");
 
             foreach (var effect in continuousEffects)
                 Player.GameController.RemoveContinuousEffect(effect);
