@@ -27,7 +27,7 @@ namespace UnstableUnicornCore.BasicEffects {
                 if (_allowedCardTypes.Contains(card.CardType) && card.CanBeSacriced() && card.Player == player)
                     validtargets.Add(card);
 
-            return validtargets;
+            return RemoveCardsWhichAreTargeted(validtargets, gameController);
         }
 
         public override void ChooseTargets(GameController gameController) {

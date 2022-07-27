@@ -104,6 +104,17 @@ namespace UnstableUnicornCore {
         }
 
         /// <summary>
+        /// Helper function that removes cards that are targeted by another effect
+        /// </summary>
+        /// <param name="cards"></param>
+        /// <param name="gameController"></param>
+        /// <returns></returns>
+        protected List<Card> RemoveCardsWhichAreTargeted(List<Card> cards, GameController gameController) {
+            cards.RemoveAll(card => gameController.CardsWhichAreTargeted.Contains(card));
+            return cards;
+        }
+
+        /// <summary>
         /// Check if player don't select items more times, check if is selected enough items
         /// and check if selected items are from available selection (not selected some random items)
         /// </summary>

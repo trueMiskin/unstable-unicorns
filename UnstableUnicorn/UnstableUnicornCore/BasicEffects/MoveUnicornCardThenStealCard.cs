@@ -13,8 +13,11 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         private List<Card> GetValidTargets(GameController gameController) =>
-            gameController.GetCardsOnTable().FindAll(
-                card => card.Player == OwningPlayer && ECardTypeUtils.UnicornTarget.Contains(card.CardType)
+            RemoveCardsWhichAreTargeted(
+                gameController.GetCardsOnTable().FindAll(
+                    card => card.Player == OwningPlayer && ECardTypeUtils.UnicornTarget.Contains(card.CardType)
+                ),
+                gameController
             );
 
         public override void ChooseTargets(GameController gameController) {

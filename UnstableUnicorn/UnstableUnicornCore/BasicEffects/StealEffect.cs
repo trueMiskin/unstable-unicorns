@@ -22,7 +22,7 @@ namespace UnstableUnicornCore.BasicEffects {
         private List<Card> GetValidTargets(GameController gameController) {
             List<Card> cards = gameController.GetCardsOnTable();
 
-            return cards.FindAll(CardPredicate);
+            return RemoveCardsWhichAreTargeted(cards.FindAll(CardPredicate), gameController);
         }
 
         public override void ChooseTargets(GameController gameController) {

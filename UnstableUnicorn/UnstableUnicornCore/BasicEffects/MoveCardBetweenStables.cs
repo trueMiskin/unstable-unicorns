@@ -16,7 +16,7 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         private List<Card> GetValidTargets(GameController gameController)
-            => gameController.GetCardsOnTable().FindAll(whichCardMovePredicate);
+            => RemoveCardsWhichAreTargeted(gameController.GetCardsOnTable().FindAll(whichCardMovePredicate), gameController);
         public override void ChooseTargets(GameController gameController) {
             var cards = GetValidTargets(gameController);
 

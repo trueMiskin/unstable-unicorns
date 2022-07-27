@@ -29,7 +29,7 @@ namespace UnstableUnicornCore.BasicEffects {
                 if (predicate(card, player))
                     validtargets.Add(card);
 
-            return validtargets;
+            return RemoveCardsWhichAreTargeted(validtargets, gameController);
         }
 
         public override void ChooseTargets(GameController gameController) {
