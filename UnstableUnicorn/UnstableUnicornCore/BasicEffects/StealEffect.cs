@@ -31,17 +31,15 @@ namespace UnstableUnicornCore.BasicEffects {
                 _cardCount = stealableCards.Count;
 
             // owner choose target cards to steal
-            CardTargets = OwningPlayer.WhichCardsToSteal(_cardCount, this, stealableCards);
+            var selection = OwningPlayer.WhichCardsToSteal(_cardCount, this, stealableCards);
 
-            if (CardTargets.Count != _cardCount)
-                throw new InvalidOperationException($"Not selected enough cards to steal");
-            
-            // TODO: Check if cards are not same
-            // TODO: Check if card is not target of another affect
-            foreach (var card in CardTargets) {
-                if (!stealableCards.Contains(card))
-                    throw new InvalidCastException("Selected unknown card");
-            }
+
+            ValidatePlayerSelection(_cardCount, selection, stealableCards);
+
+            var old = new List<Card>(CardTargets);
+            CardTargets = selection;
+
+            CheckAndUpdateSelectionInActualLink(old, CardTargets, gameController);
         }
 
         public override void InvokeEffect(GameController gameController) {

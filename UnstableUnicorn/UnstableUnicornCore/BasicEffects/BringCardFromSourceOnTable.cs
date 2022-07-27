@@ -28,9 +28,7 @@ namespace UnstableUnicornCore.BasicEffects {
             // maybe a little bit wrong used this method for selection
             CardTargets = OwningPlayer.WhichCardsToGet(_cardCount, this, cards);
 
-            foreach (var card in CardTargets)
-                if (!cards.Contains(card))
-                    throw new InvalidOperationException("Selected unknown card");
+            ValidatePlayerSelection(_cardCount, CardTargets, cards);
         }
 
         public override void InvokeEffect(GameController gameController) {

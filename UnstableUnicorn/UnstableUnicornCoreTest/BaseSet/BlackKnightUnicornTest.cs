@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnstableUnicornCore;
 using UnstableUnicornCore.BaseSet;
 using Xunit;
@@ -81,6 +77,44 @@ namespace UnstableUnicornCoreTest.BaseSet {
             Assert.Equal(2, controller.DiscardPile.Count);
         }
 
-        // TODO: Add test one for two card
+        [Fact]
+        public void TestInteractionWithTwoForOne() {
+            SimplePlayerMockUp playerOne = new(), playerTwo = new();
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+
+            // protection before shuffling
+            Card secondBasicUnicorn = new BasicUnicorn().GetCardTemplate().CreateCard();
+            controller.Pile.Add(secondBasicUnicorn);
+            Card twoForOne = new TwoForOne().GetCardTemplate().CreateCard();
+            controller.Pile.Add(twoForOne);
+            Card basicUnicorn = new BasicUnicorn().GetCardTemplate().CreateCard();
+            controller.Pile.Add(basicUnicorn);
+            Card blackKnightUnicron = new BlackKnightUnicorn().GetCardTemplate().CreateCard();
+            controller.Pile.Add(blackKnightUnicron);
+
+            controller.PlayerDrawCard(playerOne);
+            controller.PlayerDrawCard(playerOne);
+            controller.PlayerDrawCard(playerTwo);
+            controller.PlayerDrawCard(playerTwo);
+
+            TestUtils.CheckPlayerPileSizes(playerOne, handSize: 2, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
+            TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 2, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
+            Assert.Equal(playerOne.Hand[0], blackKnightUnicron);
+            Assert.Equal(playerOne.Hand[1], basicUnicorn);
+            Assert.Equal(playerTwo.Hand[0], twoForOne);
+            Assert.Equal(playerTwo.Hand[1], secondBasicUnicorn);
+
+            controller.PlayCardAndResolveChainLink(basicUnicorn, playerOne);
+            controller.PlayCardAndResolveChainLink(blackKnightUnicron, playerOne);
+            controller.PlayCardAndResolveChainLink(secondBasicUnicorn, playerTwo);
+
+            controller.PlayCardAndResolveChainLink(twoForOne, playerTwo);
+
+            // black knight unicorn can't be selected twice (even with his ability)
+            TestUtils.CheckPlayerPileSizes(playerOne, handSize: 0, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
+            TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 0, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
+
+            Assert.Equal(4, controller.DiscardPile.Count);
+        }
     }
 }

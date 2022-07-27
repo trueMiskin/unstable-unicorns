@@ -13,6 +13,11 @@ namespace UnstableUnicornCore.BasicEffects {
 
         public override void ChooseTargets(GameController gameController) {
             playerList = OwningPlayer.ChoosePlayers(_numberSelectPlayers, false, this);
+
+            var availableSelection = new List<APlayer>(gameController.Players);
+            availableSelection.Remove(OwningPlayer);
+
+            ValidatePlayerSelection(_numberSelectPlayers, playerList, availableSelection);
         }
 
         public override void InvokeEffect(GameController gameController) {

@@ -55,20 +55,13 @@ namespace UnstableUnicornCore.BasicEffects {
         private void ChooseTargetForPlayer(GameController gameController, APlayer player, Predicate predicate) {
             var targets = validTargets(gameController, player, predicate);
 
-            int validTargetsToReturn = _cardCount;
-            if (validTargetsToReturn > targets.Count)
-                validTargetsToReturn = targets.Count;
+            int validTargetsToReturn = Math.Min(_cardCount, targets.Count);
 
             // owner choose which card should be returned
             var cardsToReturn = player.WhichCardsToReturn(validTargetsToReturn, this, targets);
 
-            if (cardsToReturn.Count != validTargetsToReturn)
-                throw new InvalidOperationException($"Not selected enough cards to return");
-
-            foreach (var card in cardsToReturn) {
-                if (!targets.Contains(card))
-                    throw new InvalidOperationException("Selected unknown card");
-            }
+            ValidatePlayerSelection(validTargetsToReturn, cardsToReturn, targets);
+            CheckAndUpdateSelectionInActualLink(new List<Card>(), cardsToReturn, gameController);
 
             CardTargets.AddRange(cardsToReturn);
         }

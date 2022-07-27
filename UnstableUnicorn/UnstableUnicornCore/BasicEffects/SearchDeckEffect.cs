@@ -33,6 +33,8 @@ namespace UnstableUnicornCore.BasicEffects {
             _cardCount = Math.Min(_cardCount, cards.Count);
             CardTargets = OwningPlayer.WhichCardsToGet(_cardCount, this, cards);
 
+            ValidatePlayerSelection(_cardCount, CardTargets, cards);
+
             foreach (var card in CardTargets) {
                 card.MoveCard(gameController, TargetOwner, TargetLocation);
 

@@ -22,8 +22,8 @@ namespace UnstableUnicornCore.BasicEffects {
 
         public override void ChooseTargets(GameController gameController) {
             var players = OwningPlayer.ChoosePlayers(1, true, this);
-            if (players.Count != 1 || players[0] == null)
-                throw new InvalidOperationException("Selected wrong player");
+
+            ValidatePlayerSelection(1, players, gameController.Players);
 
             TargetOwner = players[0];
             CardTargets = gameController.GetCardsOnTable().FindAll(card => card.Player == TargetOwner &&

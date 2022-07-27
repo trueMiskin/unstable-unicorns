@@ -20,11 +20,11 @@ namespace UnstableUnicornCore.BasicEffects {
         public override void ChooseTargets(GameController gameController) {
             var cards = GetValidTargets(gameController);
 
-            CardTargets = OwningPlayer.WhichCardsToMove(_cardCount, this, cards);
+            int numberCardsToSelect = Math.Min(_cardCount, cards.Count);
+            CardTargets = OwningPlayer.WhichCardsToMove(numberCardsToSelect, this, cards);
 
-            foreach (var card in CardTargets)
-                if (!cards.Contains(card))
-                    throw new InvalidOperationException("Selected unknown card");
+            ValidatePlayerSelection(numberCardsToSelect, CardTargets, cards);
+
 
             var players = OwningPlayer.ChoosePlayers(1, canOwningPlayerGetCard, this);
 
