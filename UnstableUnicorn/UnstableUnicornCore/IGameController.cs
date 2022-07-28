@@ -1,4 +1,5 @@
-﻿using System;
+﻿// #define DEBUG_PRINT
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -71,7 +72,10 @@ namespace UnstableUnicornCore {
                 // game
                 int index = 0;
                 while (true) {
-                    Console.WriteLine($"Player on turn {index}");
+                    //Console.WriteLine($"Player on turn {index}");
+#if DEBUG_PRINT
+                    Console.WriteLine("------> Start turn <-------");
+#endif
 
                     APlayer player = Players[index];
                     SimulateOneTurn(player);
@@ -81,6 +85,10 @@ namespace UnstableUnicornCore {
                     else
                         index = (index + 1) % Players.Count;
                     turnNumber++;
+
+#if DEBUG_PRINT
+                    Console.WriteLine("------> End turn <-------");
+#endif
                 }
             } catch(EndGameException ex) {
                 Console.WriteLine(ex.Message);
@@ -96,7 +104,6 @@ namespace UnstableUnicornCore {
                 Console.WriteLine($"Game ended after {turnNumber} turns");
                 foreach(var f in finalScoreBoard)
                     Console.WriteLine($"Player id: {Players.IndexOf(f.player)}, value: {f.unicornValue}, len: {f.unicornLen}");
-                Console.WriteLine("----------------");
             }
         }
 
@@ -160,6 +167,9 @@ namespace UnstableUnicornCore {
 
                     // if card is played -> was not neigh
                     if (Stack.Count == 1) {
+#if DEBUG_PRINT
+                        Console.WriteLine($"Played {card.Name}");
+#endif
                         APlayer targetPlayer = playerOnTurn.WhereShouldBeCardPlayed(card);
                         card.CardPlayed(this, targetPlayer);
                         ResolveChainLink();
@@ -220,6 +230,11 @@ namespace UnstableUnicornCore {
                     var effect = _actualChainLink[i];
                     PublishEvent(ETriggerSource.PreCardLeftStable, effect.OwningCard, effect);
                 }
+
+#if DEBUG_PRINT
+                foreach(var effect in _actualChainLink)
+                    Console.WriteLine($"{effect}, owner {effect.OwningCard.Name} and targets {string.Join(",", effect.CardTargets.Select(card => card.Name))}");
+#endif
 
                 // unregister affects of targets cards then moves
                 // the cards which published card leave and card enter events

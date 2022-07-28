@@ -23,13 +23,14 @@ namespace UnstableUnicornCore {
         }
 
         public static void Main(string[] args) {
-            for (int i = 0; i < 100; i++) {
+            for (int id = 21153;; id++) {
+                Console.WriteLine($"---------> Starting game {id+1} <---------");
                 List<APlayer> players = new();
                 for (int x = 0; x < 6; x++) {
                     players.Add(new RandomPlayer());
                 }
 
-                var game = CreateGame(new SecondPrintDeck(), players, i*10);
+                var game = CreateGame(new SecondPrintDeck(), players, id);
 
                 game.SimulateGame();
             }

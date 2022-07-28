@@ -32,13 +32,20 @@ namespace UnstableUnicornCore {
         private Card.FactoryEffect factoryEffect;
         private bool oneTimeUseEffect;
 
+        /// <summary>
+        /// Sometimes is needed execute effect in actual chain link but beware in which
+        /// state <see cref="ETriggerSource"/> is this effect triggered!!!
+        /// </summary>
+        private bool executeEffectInActualChainLink;
+
         public TriggerEffect(Card owningCard, TriggerPredicate triggerPredicate, List<ETriggerSource> triggers,
-                             Card.FactoryEffect factoryEffect, bool oneTimeUseEffect = false) {
+                             Card.FactoryEffect factoryEffect, bool oneTimeUseEffect = false, bool executeEffectInActualChainLink = false) {
             OwningCard = owningCard;
             this.triggerPredicate = triggerPredicate;
             this.triggers = triggers;
             this.factoryEffect = factoryEffect;
             this.oneTimeUseEffect = oneTimeUseEffect;
+            this.executeEffectInActualChainLink = executeEffectInActualChainLink;
         }
 
         public void SubscribeToEvent(GameController gameController) {
@@ -76,9 +83,13 @@ namespace UnstableUnicornCore {
                         throw new InvalidOperationException($"{triggerSource} must have not null effect");
 
                     triggeredEffect.InvokeReactionEffect(gameController, effectWhichTriggerEffect);
-                }else
-                    // TOD: add info about effect to effectToTrigger
-                    gameController.AddNewEffectToChainLink(triggeredEffect);
+                } else {
+                    // TODO: add info about effect to effectToTrigger
+                    if (executeEffectInActualChainLink)
+                        gameController.AddEffectToActualChainLink(triggeredEffect);
+                    else
+                        gameController.AddNewEffectToChainLink(triggeredEffect);
+                }
 
                 if (oneTimeUseEffect)
                     // self destruction of trigger effect

@@ -11,9 +11,10 @@ namespace UnstableUnicornCore.BasicEffects {
                 new TriggerEffect(
                     card,
                     (AEffect? effect, Card? causedCard, Card owningCard, GameController controller) => causedCard == OwningCard,
-                    new List<ETriggerSource> { ETriggerSource.CardLeftStable },
+                    new List<ETriggerSource> { ETriggerSource.PreCardLeftStable },
                     (Card _) => new MoveCardBackToPreviousStable(card, previousOwner),
-                    oneTimeUseEffect: true
+                    oneTimeUseEffect: true,
+                    executeEffectInActualChainLink: true
                 ).SubscribeToEvent(gameController);
             }
         }
