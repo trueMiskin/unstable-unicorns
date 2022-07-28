@@ -110,7 +110,7 @@ namespace UnstableUnicornCore {
         /// <param name="gameController"></param>
         /// <returns></returns>
         protected List<Card> RemoveCardsWhichAreTargeted(List<Card> cards, GameController gameController) {
-            cards.RemoveAll(card => gameController.CardsWhichAreTargeted.Contains(card));
+            cards.RemoveAll(card => gameController.CardsWhichAreTargeted.ContainsKey(card));
             return cards;
         }
 
@@ -153,9 +153,11 @@ namespace UnstableUnicornCore {
                 if (!cardSet.Remove(card))
                     throw new InvalidOperationException("Something goes wrong...");
 
-            foreach (var card in selectionNow)
-                if (!cardSet.Add(card))
+            foreach (var card in selectionNow) {
+                if (cardSet.ContainsKey(card))
                     throw new InvalidOperationException("Selected card is already targeted by another effect");
+                cardSet.Add(card, this);
+            }
         }
     }
 }

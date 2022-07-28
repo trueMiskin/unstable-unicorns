@@ -54,7 +54,7 @@ namespace UnstableUnicornCore.BasicEffects {
                 // player to discard a card
                 if (card == OwningCard && checkPrePlayConditions)
                     continue;
-                if (_allowedCardTypes.Contains(card.CardType) && !gameController.CardsWhichAreTargeted.Contains(card))
+                if (_allowedCardTypes.Contains(card.CardType) && !gameController.CardsWhichAreTargeted.ContainsKey(card))
                     validtargets.Add(card);
             }
 

@@ -11,7 +11,7 @@ namespace UnstableUnicornCore.BaseSet {
                 .TriggerEffect(
                     (effect, causedCard, owningCard, controller) =>
                         TriggerPredicates.IfUnicornInYourStableWouldBeDestroyd(effect, causedCard, owningCard, controller) &&
-                        !controller.CardsWhichAreTargeted.Contains(owningCard),
+                        !controller.CardsWhichAreTargeted.ContainsKey(owningCard),
                     new List<ETriggerSource> { ETriggerSource.ChangeTargeting },
                     (Card owningCard) => new ActivatableEffect(owningCard,
                         new SacrificeThisCardInsteadOtherCard(owningCard, ECardTypeUtils.UnicornTarget)

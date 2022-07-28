@@ -1,4 +1,6 @@
-﻿namespace UnstableUnicornCore.BasicEffects {
+﻿using System;
+
+namespace UnstableUnicornCore.BasicEffects {
     public class MoveCardBackToPreviousStable : AEffect {
         /// <summary>
         /// Helper effect which return card back to previous stable
@@ -19,8 +21,21 @@
                 // if card is not on table => do nothing
                 // can happen when Seductive unicorn steal some unicorn
                 // and both are destroyed in same chain link
-                if (card.Location == CardLocation.OnTable)
+                if (card.Location == CardLocation.OnTable) {
                     card.MoveCard(gameController, TargetOwner, TargetLocation);
+
+                    // if this card was targeted by another effect in actual chain link, then
+                    // card effect must be registered only once !!!
+                    if (gameController.CardsWhichAreTargeted.TryGetValue(card, out AEffect? effect)){
+                        if (effect == null)
+                            throw new NullReferenceException("Should not happen.");
+
+                        effect.CardTargets.Remove(card);
+                        gameController.CardsWhichAreTargeted[card] = this;
+                    } else {
+                        gameController.CardsWhichAreTargeted.Add(card, this);
+                    }
+                }
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;

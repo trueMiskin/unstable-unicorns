@@ -12,6 +12,8 @@ namespace UnstableUnicornCoreTest {
         public bool ChooseMyself { get; set; } = false;
         public int WhichEffectShouldBeSelected { get; set; } = 0;
 
+        public string PrimarilyStealThisCard = null;
+
         public override bool ActivateEffect(AEffect effect) => true;
 
         public override List<APlayer> ChoosePlayers(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected) {
@@ -70,7 +72,13 @@ namespace UnstableUnicornCoreTest {
         }
 
         public override List<Card> WhichCardsToSteal(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
-            return SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
+            var ret = SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
+
+            var card = cardsWhichCanBeSelected.Find(card => card.Name == PrimarilyStealThisCard); ;
+            if (card != null)
+                ret[^1] = card;
+
+            return ret;
         }
 
         public override Card WhichCardToPlay() {

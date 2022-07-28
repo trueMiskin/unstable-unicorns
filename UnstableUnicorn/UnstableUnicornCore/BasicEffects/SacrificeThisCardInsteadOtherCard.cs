@@ -24,7 +24,7 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override void InvokeReactionEffect(GameController gameController, AEffect effect) {
-            if (gameController.CardsWhichAreTargeted.Contains(OwningCard))
+            if (gameController.CardsWhichAreTargeted.ContainsKey(OwningCard))
                 throw new InvalidOperationException("This method should not be called!!!");
             
             List<Card> cardsCanBeSelected = new();
