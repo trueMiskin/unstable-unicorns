@@ -72,8 +72,8 @@ namespace UnstableUnicornCore {
                 // game
                 int index = 0;
                 while (true) {
-                    //Console.WriteLine($"Player on turn {index}");
 #if DEBUG_PRINT
+                    Console.WriteLine($"Player on turn {index}, actual turn: {turnNumber}");
                     Console.WriteLine("------> Start turn <-------");
 #endif
 
@@ -228,7 +228,8 @@ namespace UnstableUnicornCore {
                 // because in this time are triggers unregistered
                 for (int i = 0; i < _actualChainLink.Count; i++) {
                     var effect = _actualChainLink[i];
-                    PublishEvent(ETriggerSource.PreCardLeftStable, effect.OwningCard, effect);
+                    foreach(var card in effect.CardTargets)
+                        PublishEvent(ETriggerSource.PreCardLeftStable, card, effect);
                 }
 
 #if DEBUG_PRINT
@@ -354,6 +355,10 @@ namespace UnstableUnicornCore {
                 triggerList = new List<TriggerEffect> { };
                 EventsPool.Add(_event, triggerList);
             }
+
+            if (triggerList.Contains(effect))
+                throw new InvalidOperationException("Request for add duplicate trigger effect!");
+
             triggerList.Add(effect);
         }
 
