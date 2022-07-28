@@ -16,7 +16,11 @@
 
         public override void InvokeEffect(GameController gameController) {
             foreach (var card in CardTargets)
-                card.MoveCard(gameController, TargetOwner, TargetLocation);
+                // if card is not on table => do nothing
+                // can happen when Seductive unicorn steal some unicorn
+                // and both are destroyed in same chain link
+                if (card.Location == CardLocation.OnTable)
+                    card.MoveCard(gameController, TargetOwner, TargetLocation);
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;
