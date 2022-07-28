@@ -29,7 +29,9 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestMovingDowngrade() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            playerOne.WhichEffectShouldBeSelected = 1; // move downgrade
+
+            // normally move downgrade is second effects but requirements for first effect is not met
+            playerOne.WhichEffectShouldBeSelected = 0;
 
             GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
 

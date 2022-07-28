@@ -42,7 +42,9 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestChooseSacrificeDowngrade() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            playerTwo.WhichEffectShouldBeSelected = 1; // sacrifice downgrade
+            
+            // normally sacrifice downgrade is second effects but requirements for first effect is not met
+            playerTwo.WhichEffectShouldBeSelected = 0;
 
             GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
 
