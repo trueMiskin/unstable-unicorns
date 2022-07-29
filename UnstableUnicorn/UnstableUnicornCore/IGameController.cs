@@ -1,4 +1,4 @@
-﻿// #define DEBUG_PRINT
+﻿#define DEBUG_PRINT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -193,7 +193,10 @@ namespace UnstableUnicornCore {
         public void AddNewEffectToChainLink(AEffect effect) => _nextChainLink.Add(effect);
 
         private void ResolveChainLink() {
-            while (_nextChainLink.Count > 0) {
+            for (int chainNumber = 1; _nextChainLink.Count > 0; chainNumber++) {
+#if DEBUG_PRINT
+                Console.WriteLine("-- Resolving chain link {0}", chainNumber);
+#endif
                 CardsWhichAreTargeted = new Dictionary<Card, AEffect>();
 
                 _actualChainLink = _nextChainLink;
