@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.32228.343
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnstableUnicornCore", "UnstableUnicornCore\UnstableUnicornCore.csproj", "{37078C93-9220-4018-A437-0F1B02670788}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnstableUnicornCoreTest", "UnstableUnicornCoreTest\UnstableUnicornCoreTest.csproj", "{682B3906-58A3-4747-BA74-CA007E18F6D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnstableUnicornCoreTest", "UnstableUnicornCoreTest\UnstableUnicornCoreTest.csproj", "{682B3906-58A3-4747-BA74-CA007E18F6D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPluginDeck", "TestPluginDeck\TestPluginDeck.csproj", "{8552B325-0C68-4D25-8B29-2BF3A3F7024D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{682B3906-58A3-4747-BA74-CA007E18F6D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{682B3906-58A3-4747-BA74-CA007E18F6D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{682B3906-58A3-4747-BA74-CA007E18F6D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8552B325-0C68-4D25-8B29-2BF3A3F7024D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8552B325-0C68-4D25-8B29-2BF3A3F7024D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8552B325-0C68-4D25-8B29-2BF3A3F7024D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8552B325-0C68-4D25-8B29-2BF3A3F7024D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
