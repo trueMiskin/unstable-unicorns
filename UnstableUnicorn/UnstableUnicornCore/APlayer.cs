@@ -55,7 +55,16 @@ namespace UnstableUnicornCore {
 
         public abstract List<Card> WhichCardsToReturn(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
         public abstract List<Card> WhichCardsToSteal(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
-        public abstract List<Card> WhichCardsToDiscard(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
+
+        /// <summary>
+        /// Which card should be discarded, effect could be null when this method is called from <see cref="GameController"/>
+        /// when you have more cards on hand on end of your turn
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="effect"></param>
+        /// <param name="cardsWhichCanBeSelected"></param>
+        /// <returns></returns>
+        public abstract List<Card> WhichCardsToDiscard(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected);
 
         public abstract List<Card> WhichCardsToSave(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 

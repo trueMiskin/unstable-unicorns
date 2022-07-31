@@ -184,7 +184,7 @@ namespace UnstableUnicornCore {
             );
         }
 
-        public override List<Card> WhichCardsToDiscard(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        public override List<Card> WhichCardsToDiscard(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
                 effect == null ? "Which cards should be discarded (end of turn)?" :
                 String.Format("Which card(s) should be discarded by effect of card {0}?", effect.OwningCard.Name),

@@ -335,7 +335,6 @@ namespace UnstableUnicornCore {
             ResolveChainLink();
 
             if (player.Hand.Count > 7) {
-                // TODO: what effect give to the method??
                 List<Card> cards = player.WhichCardsToDiscard(player.Hand.Count - 7, null, player.Hand);
                 foreach (var card in cards) {
                     if (!player.Hand.Remove(card))

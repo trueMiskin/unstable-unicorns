@@ -46,7 +46,7 @@ namespace UnstableUnicornCore {
             return RandomSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override List<Card> WhichCardsToDiscard(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        public override List<Card> WhichCardsToDiscard(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected) {
             return RandomSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
