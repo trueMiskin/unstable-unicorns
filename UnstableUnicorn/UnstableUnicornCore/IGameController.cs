@@ -9,6 +9,7 @@ namespace UnstableUnicornCore {
     }
 
     public class GameController : IGameController, IPublisher {
+        public EGameState State { get; private set; } = EGameState.NotStarted;
         public Random Random { get; set; }
         public List<Card> Pile;
         public List<Card> DiscardPile = new();
@@ -62,49 +63,47 @@ namespace UnstableUnicornCore {
 
         public void SimulateGame() {
             int turnNumber = 1;
-            try {
-                // set up game
-                foreach (var player in Players) {
-                    PlayerGetBabyUnicornOnTable(player);
-                    PlayerDrawCards(player, 5);
-                }
-
-                // game
-                int index = 0;
-                while (true) {
-#if DEBUG_PRINT
-                    Console.WriteLine($"Player on turn {index}, actual turn: {turnNumber}");
-                    Console.WriteLine("------> Start turn <-------");
-#endif
-
-                    APlayer player = Players[index];
-                    SimulateOneTurn(player);
-
-                    if (_willTakeExtraTurn)
-                        _willTakeExtraTurn = false;
-                    else
-                        index = (index + 1) % Players.Count;
-                    turnNumber++;
-
-#if DEBUG_PRINT
-                    Console.WriteLine("------> End turn <-------");
-#endif
-                }
-            } catch(EndGameException ex) {
-                Console.WriteLine(ex.Message);
-                var scoreBoard = from player in Players
-                                 let unicornValue = player.Stable.Sum(card => card.UnicornValue)
-                                 let unicornLen = player.Stable.Sum(card => card.Name.Replace(" ", string.Empty).Length)
-                                 select (unicornValue, unicornLen, player)
-                                 ;
-                var finalScoreBoard = scoreBoard.ToList()
-                    .OrderByDescending(item => item.unicornValue)
-                    .OrderByDescending(item => item.unicornLen);
-
-                Console.WriteLine($"Game ended after {turnNumber} turns");
-                foreach(var f in finalScoreBoard)
-                    Console.WriteLine($"Player id: {Players.IndexOf(f.player)}, value: {f.unicornValue}, len: {f.unicornLen}");
+            // set up game
+            foreach (var player in Players) {
+                PlayerGetBabyUnicornOnTable(player);
+                PlayerDrawCards(player, 5);
             }
+
+            // game
+            State = EGameState.Running;
+            int index = 0;
+            while (State != EGameState.Ended) {
+#if DEBUG_PRINT
+                Console.WriteLine($"Player on turn {index}, actual turn: {turnNumber}");
+                Console.WriteLine("------> Start turn <-------");
+#endif
+
+                APlayer player = Players[index];
+                SimulateOneTurn(player);
+
+                if (_willTakeExtraTurn)
+                    _willTakeExtraTurn = false;
+                else
+                    index = (index + 1) % Players.Count;
+                turnNumber++;
+
+#if DEBUG_PRINT
+                Console.WriteLine("------> End turn <-------");
+#endif
+            }
+
+            var scoreBoard = from player in Players
+                                let unicornValue = player.Stable.Sum(card => card.UnicornValue)
+                                let unicornLen = player.Stable.Sum(card => card.Name.Replace(" ", string.Empty).Length)
+                                select (unicornValue, unicornLen, player)
+                                ;
+            var finalScoreBoard = scoreBoard.ToList()
+                .OrderByDescending(item => item.unicornValue)
+                .OrderByDescending(item => item.unicornLen);
+
+            Console.WriteLine($"Game ended after {turnNumber} turns");
+            foreach(var f in finalScoreBoard)
+                    Console.WriteLine($"Player id: {Players.IndexOf(f.player)}, value: {f.unicornValue}, len: {f.unicornLen}");
         }
 
         internal void SimulateOneTurn(APlayer playerOnTurn) {
@@ -114,6 +113,7 @@ namespace UnstableUnicornCore {
             ActualPlayerOnTurn = playerOnTurn;
 
             OnBeginTurn(playerOnTurn);
+            if (State == EGameState.Ended) return;
 
             for (int cardIdx = 0; cardIdx < MaxCardsToPlayInOneTurn; cardIdx++) {
                 if (SkipToEndTurnPhase)
@@ -172,12 +172,15 @@ namespace UnstableUnicornCore {
 #endif
                         APlayer targetPlayer = playerOnTurn.WhereShouldBeCardPlayed(card);
                         card.CardPlayed(this, targetPlayer);
+
                         ResolveChainLink();
+                        if (State == EGameState.Ended) return;
                     }
                 }
             }
 
             OnEndTurn(playerOnTurn);
+            if (State == EGameState.Ended) return;
         }
 
         public void ThisPlayerTakeExtraTurn() => _willTakeExtraTurn = true;
@@ -273,14 +276,20 @@ namespace UnstableUnicornCore {
             foreach (var player in Players) {
                 int value = player.Stable.Sum(card => card.UnicornValue);
                 if (value == 6) {
-                    throw new EndGameException("Someone have 6 unicorns -> ending game");
+                    State = EGameState.Ended;
+                    return;
                 }
             }
         }
 
         public void PlayerDrawCard(APlayer player) {
-            if (Pile.Count == 0)
-                throw new EndGameException("Pile empty -> ending game");
+            if (Pile.Count == 0) {
+#if DEBUG_PRINT
+                Console.WriteLine("Pile empty -> ending game");
+#endif
+                State = EGameState.Ended;
+                return;
+            }
 
             Card topCard = Pile[^1];
             Pile.RemoveAt(Pile.Count - 1);
