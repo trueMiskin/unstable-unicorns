@@ -8,6 +8,8 @@ namespace TestPluginDeck {
     /// Test deck - smaller deck than <see cref="SecondPrintDeck"/>
     /// </summary>
     public class TestDeck : Deck {
+        public override string Name => "Test plugin deck";
+
         public override IEnumerable<(CardTemplateSource card, int count)> BabyUnicorns() {
             yield return (new BabyNarwhal(), 1);
             yield return (new BabyUnicorn(), 12);

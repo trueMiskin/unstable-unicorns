@@ -2,6 +2,8 @@
 
 namespace UnstableUnicornCore.BaseSet {
     public class SecondPrintDeck : Deck {
+        public override string Name => "Base set (mainly second version of text effects)";
+
         public override IEnumerable<(CardTemplateSource card, int count)> BabyUnicorns() {
             yield return (new BabyNarwhal(), 1);
             yield return (new BabyUnicorn(), 12);

@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy $(TargetPath) &quot;$(SolutionDir)\UnstableUnicornCore\bin\Debug\net6.0\plugin-decks\&quot;" />
+    <Exec Command="xcopy $(TargetPath) &quot;$(SolutionDir)\UnstableUnicornCore\bin\Debug\net6.0\plugin-decks\&quot; /d /y" />
   </Target>
 
 </Project>
