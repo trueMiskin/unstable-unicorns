@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UnstableUnicornCore {
     
@@ -11,7 +8,16 @@ namespace UnstableUnicornCore {
         public List<Card> Stable     = new();
         public List<Card> Upgrades   = new();
         public List<Card> Downgrades = new();
-        public GameController GameController { get; set; }
+
+        private GameController? gameController;
+        public GameController GameController {
+            get {
+                if (gameController == null)
+                    throw new InvalidOperationException("Internal error: GameController should set this variable in constructor!");
+                return gameController;
+            }
+            set => gameController = value;
+        }
 
         /// <summary>
         /// Which card from should be played

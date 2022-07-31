@@ -7,10 +7,10 @@ namespace UnstableUnicornCore {
         public override bool ActivateEffect(AEffect effect) {
             Console.WriteLine("Do you want activate effect {0} of card {1}?", effect, effect.OwningCard.Name);
             
-            string ans = "";
+            string? ans = "";
             while (ans == "") {
                 Console.Write("Activate? Y/N: ");
-                ans = Console.ReadLine().ToLower();
+                ans = Console.ReadLine()?.ToLower();
 
                 switch (ans) {
                     case "y":
@@ -53,7 +53,7 @@ namespace UnstableUnicornCore {
                 else
                     Console.Write("Selection: ");
 
-                string answer = Console.ReadLine();
+                string? answer = Console.ReadLine();
                 if (Int32.TryParse(answer, out int selectedNumber)) {
                     if (selectedNumber >= 1 && selectedNumber <= players.Count)
                         if (!selected[selectedNumber - 1])
@@ -105,7 +105,7 @@ namespace UnstableUnicornCore {
                 else
                     Console.Write("Selection: ");
 
-                string answer = Console.ReadLine();
+                string? answer = Console.ReadLine();
                 if (Int32.TryParse(answer, out int selectedNumber)) {
                     if (selectionNothingAvailable && selectedNumber == cards.Count + 1)
                         return new List<Card>();
@@ -265,7 +265,7 @@ namespace UnstableUnicornCore {
 
                 Console.Write("Selection: ");
 
-                string answer = Console.ReadLine();
+                string? answer = Console.ReadLine();
                 if (Int32.TryParse(answer, out int selectedNumber)) {
                     if (selectedNumber >= 1 && selectedNumber <= effectsVariants.Count)
                         return effectsVariants[selectedNumber-1];

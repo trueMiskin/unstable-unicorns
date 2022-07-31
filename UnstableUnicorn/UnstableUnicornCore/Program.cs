@@ -70,7 +70,7 @@ namespace UnstableUnicornCore {
                 Console.WriteLine(msg);
                 Console.WriteLine("Choose number from {0} to {1} (inclusive)", from, to);
                 Console.Write("Your choose: ");
-                string answer = Console.ReadLine();
+                string? answer = Console.ReadLine();
                 if (Int32.TryParse(answer, out int selectedNumber)) {
                     if (selectedNumber >= from && selectedNumber <= to)
                         return selectedNumber;
@@ -84,11 +84,11 @@ namespace UnstableUnicornCore {
         }
 
         public static bool yesNoQuestion(string msg) {
-            string ans = "";
+            string? ans = "";
             while (ans == "") {
                 Console.WriteLine(msg);
                 Console.Write("Your answer? Y/N: ");
-                ans = Console.ReadLine().ToLower();
+                ans = Console.ReadLine()?.ToLower();
 
                 switch (ans) {
                     case "y":
@@ -124,7 +124,7 @@ namespace UnstableUnicornCore {
                 Console.WriteLine("{0} - End deck selection", decks.Count + 1);
                 Console.Write("Selection: ");
 
-                string answer = Console.ReadLine();
+                string? answer = Console.ReadLine();
                 if (Int32.TryParse(answer, out int selectedNumber)) {
                     if (selectedNumber >= 1 && selectedNumber <= decks.Count + 1)
                         if (selectedNumber == decks.Count + 1) {
