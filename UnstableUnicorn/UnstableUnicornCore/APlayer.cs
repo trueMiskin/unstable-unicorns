@@ -25,7 +25,10 @@ namespace UnstableUnicornCore {
         /// If function return null then no card will be played
         /// </summary>
         /// <returns>Card to play or null</returns>
-        public abstract Card? WhichCardToPlay();
+        public Card? WhichCardToPlay() {
+            return WhichCardToPlayCore();
+        }
+        protected abstract Card? WhichCardToPlayCore();
 
         /// <summary>
         /// When you decide to play a card, then this method will be called
@@ -41,7 +44,10 @@ namespace UnstableUnicornCore {
         /// </summary>
         /// <param name="card">Card which you decided to play</param>
         /// <returns>Target owner</returns>
-        public abstract APlayer WhereShouldBeCardPlayed(Card card);
+        public APlayer WhereShouldBeCardPlayed(Card card) {
+            return WhereShouldBeCardPlayedCore(card);
+        }
+        protected abstract APlayer WhereShouldBeCardPlayedCore(Card card);
 
         /// <summary>
         /// Return null if you don't want play instant card on stack
@@ -49,12 +55,30 @@ namespace UnstableUnicornCore {
         /// </summary>
         /// <param name="stack"></param>
         /// <returns></returns>
-        public abstract Card? PlayInstantOnStack(List<Card> stack);
-        public abstract List<Card> WhichCardsToSacrifice(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
-        public abstract List<Card> WhichCardsToDestroy(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
+        public Card? PlayInstantOnStack(List<Card> stack) {
+            return PlayInstantOnStackCore(stack);
+        }
+        protected abstract Card? PlayInstantOnStackCore(List<Card> stack);
 
-        public abstract List<Card> WhichCardsToReturn(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
-        public abstract List<Card> WhichCardsToSteal(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
+        public List<Card> WhichCardsToSacrifice(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            return WhichCardsToSacrificeCore(number, effect, cardsWhichCanBeSelected);
+        }
+        protected abstract List<Card> WhichCardsToSacrificeCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
+
+        public List<Card> WhichCardsToDestroy(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            return WhichCardsToDestroyCore(number, effect, cardsWhichCanBeSelected);
+        }
+        protected abstract List<Card> WhichCardsToDestroyCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
+
+        public List<Card> WhichCardsToReturn(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            return WhichCardsToReturnCore(number, effect, cardsWhichCanBeSelected);
+        }
+        protected abstract List<Card> WhichCardsToReturnCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
+
+        public List<Card> WhichCardsToSteal(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            return WhichCardsToStealCore(number, effect, cardsWhichCanBeSelected);
+        }
+        protected abstract List<Card> WhichCardsToStealCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
         /// <summary>
         /// Which card should be discarded, effect could be null when this method is called from <see cref="GameController"/>
@@ -64,9 +88,15 @@ namespace UnstableUnicornCore {
         /// <param name="effect"></param>
         /// <param name="cardsWhichCanBeSelected"></param>
         /// <returns></returns>
-        public abstract List<Card> WhichCardsToDiscard(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected);
+        public List<Card> WhichCardsToDiscard(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected) {
+            return WhichCardsToDiscardCore(number, effect, cardsWhichCanBeSelected);
+        }
+        protected abstract List<Card> WhichCardsToDiscardCore(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected);
 
-        public abstract List<Card> WhichCardsToSave(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
+        public List<Card> WhichCardsToSave(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            return WhichCardsToSaveCore(number, effect, cardsWhichCanBeSelected);
+        }
+        protected abstract List<Card> WhichCardsToSaveCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
         public List<APlayer> ChoosePlayers(int number, bool canChooseMyself, AEffect effect) {
             var players = new List<APlayer>(GameController.Players);
@@ -74,11 +104,29 @@ namespace UnstableUnicornCore {
                 players.Remove(this);
             return ChoosePlayers(number, effect, players);
         }
+        public List<APlayer> ChoosePlayers(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected) {
+            return ChoosePlayersCore(number, effect, playersWhichCanBeSelected);
+        }
+        protected abstract List<APlayer> ChoosePlayersCore(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected);
 
-        public abstract List<APlayer> ChoosePlayers(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected);
-        public abstract List<Card> WhichCardsToGet(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
-        public abstract List<Card> WhichCardsToMove(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
-        public abstract AEffect WhichEffectToSelect(List<AEffect> effectsVariants);
-        public abstract bool ActivateEffect(AEffect effect);
+        public List<Card> WhichCardsToGet(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            return WhichCardsToGetCore(number, effect, cardsWhichCanBeSelected);
+        }
+        protected abstract List<Card> WhichCardsToGetCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
+
+        public List<Card> WhichCardsToMove(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            return WhichCardsToMoveCore(number, effect, cardsWhichCanBeSelected);
+        }
+        protected abstract List<Card> WhichCardsToMoveCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
+
+        public AEffect WhichEffectToSelect(List<AEffect> effectsVariants) {
+            return WhichEffectToSelectCore(effectsVariants);
+        }
+        protected abstract AEffect WhichEffectToSelectCore(List<AEffect> effectsVariants);
+
+        public bool ActivateEffect(AEffect effect) {
+            return ActivateEffectCore(effect);
+        }
+        protected abstract bool ActivateEffectCore(AEffect effect);
     }
 }

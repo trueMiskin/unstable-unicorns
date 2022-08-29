@@ -14,9 +14,9 @@ namespace UnstableUnicornCoreTest {
 
         public string PrimarilyStealThisCard = null;
 
-        public override bool ActivateEffect(AEffect effect) => true;
+        protected override bool ActivateEffectCore(AEffect effect) => true;
 
-        public override List<APlayer> ChoosePlayers(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected) {
+        protected override List<APlayer> ChoosePlayersCore(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected) {
             List<APlayer> selectedPlayers = new();
             if (ChooseMyself)
                 selectedPlayers.Add(this);
@@ -36,7 +36,7 @@ namespace UnstableUnicornCoreTest {
             return ret;
         }
 
-        public override List<Card> WhichCardsToDestroy(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToDestroyCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             var ret = SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
 
             if (ChooseCardsWhichCantBeDestroy) {
@@ -55,23 +55,23 @@ namespace UnstableUnicornCoreTest {
             return ret;
         }
 
-        public override List<Card> WhichCardsToDiscard(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToDiscardCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override List<Card> WhichCardsToGet(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToGetCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override List<Card> WhichCardsToSacrifice(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToSacrificeCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override List<Card> WhichCardsToSave(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToSaveCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override List<Card> WhichCardsToSteal(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToStealCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             var ret = SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
 
             var card = cardsWhichCanBeSelected.Find(card => card.Name == PrimarilyStealThisCard); ;
@@ -81,27 +81,27 @@ namespace UnstableUnicornCoreTest {
             return ret;
         }
 
-        public override Card WhichCardToPlay() {
+        protected override Card WhichCardToPlayCore() {
             return Hand[0];
         }
 
-        public override AEffect WhichEffectToSelect(List<AEffect> effectsVariants) {
+        protected override AEffect WhichEffectToSelectCore(List<AEffect> effectsVariants) {
             return effectsVariants[WhichEffectShouldBeSelected];
         }
 
-        public override List<Card> WhichCardsToMove(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToMoveCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override List<Card> WhichCardsToReturn(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToReturnCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return SimpleSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override APlayer WhereShouldBeCardPlayed(Card card) {
+        protected override APlayer WhereShouldBeCardPlayedCore(Card card) {
             return this;
         }
 
-        public override Card PlayInstantOnStack(List<Card> stack) {
+        protected override Card PlayInstantOnStackCore(List<Card> stack) {
             return null;
         }
     }

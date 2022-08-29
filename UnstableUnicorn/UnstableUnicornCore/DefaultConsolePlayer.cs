@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace UnstableUnicornCore {
     public class DefaultConsolePlayer : APlayer {
-        public override bool ActivateEffect(AEffect effect) {
+        protected override bool ActivateEffectCore(AEffect effect) {
             Console.WriteLine("Do you want activate effect {0} of card {1}?", effect, effect.OwningCard.Name);
             
             string? ans = "";
@@ -139,7 +139,7 @@ namespace UnstableUnicornCore {
             return ans;
         }
 
-        public override List<APlayer> ChoosePlayers(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected) {
+        protected override List<APlayer> ChoosePlayersCore(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected) {
             return AskOnPlayerSelection(
                 String.Format("Which players should be selected for effect {0} of card {1}?", effect, effect.OwningCard.Name),
                 number,
@@ -147,7 +147,7 @@ namespace UnstableUnicornCore {
             );
         }
 
-        public override Card? PlayInstantOnStack(List<Card> stack) {
+        protected override Card? PlayInstantOnStackCore(List<Card> stack) {
             var instants = Hand.FindAll(card => card.CardType == ECardType.Instant).ToList();
 
             if (instants.Count == 0)
@@ -165,7 +165,7 @@ namespace UnstableUnicornCore {
             return selection[0];
         }
 
-        public override APlayer WhereShouldBeCardPlayed(Card card) {
+        protected override APlayer WhereShouldBeCardPlayedCore(Card card) {
             if (card.CardType == ECardType.Spell)
                 return this;
 
@@ -176,7 +176,7 @@ namespace UnstableUnicornCore {
             )[0];
         }
 
-        public override List<Card> WhichCardsToDestroy(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToDestroyCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
                 String.Format("Which card(s) should be destroyed by effect of card {0}?", effect.OwningCard.Name),
                 number,
@@ -184,7 +184,7 @@ namespace UnstableUnicornCore {
             );
         }
 
-        public override List<Card> WhichCardsToDiscard(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToDiscardCore(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
                 effect == null ? "Which cards should be discarded (end of turn)?" :
                 String.Format("Which card(s) should be discarded by effect of card {0}?", effect.OwningCard.Name),
@@ -193,7 +193,7 @@ namespace UnstableUnicornCore {
             );
         }
 
-        public override List<Card> WhichCardsToGet(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToGetCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
                 String.Format("Which card(s) cards you want to get from effect of card {0}?", effect.OwningCard.Name),
                 number,
@@ -201,7 +201,7 @@ namespace UnstableUnicornCore {
             );
         }
 
-        public override List<Card> WhichCardsToMove(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToMoveCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
                 String.Format("Which card(s) cards to move by effect of card {0}?", effect.OwningCard.Name),
                 number,
@@ -209,7 +209,7 @@ namespace UnstableUnicornCore {
             );
         }
 
-        public override List<Card> WhichCardsToReturn(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToReturnCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
                 String.Format("Which card(s) should be returned by effect of card {0}?", effect.OwningCard.Name),
                 number,
@@ -217,7 +217,7 @@ namespace UnstableUnicornCore {
             );
         }
 
-        public override List<Card> WhichCardsToSacrifice(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToSacrificeCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
                 String.Format("Which card(s) should be sacrificed by effect of card {0}?", effect.OwningCard.Name),
                 number,
@@ -225,7 +225,7 @@ namespace UnstableUnicornCore {
             );
         }
 
-        public override List<Card> WhichCardsToSave(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToSaveCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
                 String.Format("Which card(s) should be saved (from effect which are targeted) by effect of card {0}?", effect.OwningCard.Name),
                 number,
@@ -233,7 +233,7 @@ namespace UnstableUnicornCore {
             );
         }
 
-        public override List<Card> WhichCardsToSteal(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToStealCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
                 String.Format("Which card(s) should be stolen by effect of card {0}?", effect.OwningCard.Name),
                 number,
@@ -241,7 +241,7 @@ namespace UnstableUnicornCore {
             );
         }
 
-        public override Card? WhichCardToPlay() {
+        protected override Card? WhichCardToPlayCore() {
             var selection = AskOnCardSelection(
                 String.Format("Which card should be played?"),
                 1,
@@ -255,7 +255,7 @@ namespace UnstableUnicornCore {
             return selection[0];
         }
 
-        public override AEffect WhichEffectToSelect(List<AEffect> effectsVariants) {
+        protected override AEffect WhichEffectToSelectCore(List<AEffect> effectsVariants) {
             Console.WriteLine("Which effect to select?");
                 
             while(true) {

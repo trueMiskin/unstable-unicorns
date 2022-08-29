@@ -3,11 +3,11 @@ using System.Linq;
 
 namespace UnstableUnicornCore {
     public class RandomPlayer : APlayer {
-        public override bool ActivateEffect(AEffect effect) {
+        protected override bool ActivateEffectCore(AEffect effect) {
             return GameController.Random.Next(2) == 1;
         }
 
-        public override List<APlayer> ChoosePlayers(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected) {
+        protected override List<APlayer> ChoosePlayersCore(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected) {
             HashSet<int> selectedPlayers = new();
 
             while (selectedPlayers.Count != number) {
@@ -17,11 +17,11 @@ namespace UnstableUnicornCore {
             return (from idx in selectedPlayers select playersWhichCanBeSelected[idx]).ToList();
         }
 
-        public override Card? PlayInstantOnStack(List<Card> stack) {
+        protected override Card? PlayInstantOnStackCore(List<Card> stack) {
             return null;
         }
 
-        public override APlayer WhereShouldBeCardPlayed(Card card) {
+        protected override APlayer WhereShouldBeCardPlayedCore(Card card) {
             if (card.CardType == ECardType.Instant || card.CardType == ECardType.Spell)
                 return this;
 
@@ -42,31 +42,31 @@ namespace UnstableUnicornCore {
             return (from idx in selectedCards select cardsWhichCanBeSelected[idx]).ToList();
         }
 
-        public override List<Card> WhichCardsToDestroy(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToDestroyCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return RandomSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override List<Card> WhichCardsToDiscard(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToDiscardCore(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected) {
             return RandomSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override List<Card> WhichCardsToGet(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToGetCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return RandomSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override List<Card> WhichCardsToSacrifice(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToSacrificeCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return RandomSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override List<Card> WhichCardsToSave(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToSaveCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return RandomSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override List<Card> WhichCardsToSteal(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToStealCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return RandomSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override Card? WhichCardToPlay() {
+        protected override Card? WhichCardToPlayCore() {
             if (Hand.Count == 0 || Hand.All(card => card.CardType == ECardType.Instant || !card.CanBePlayed(this) ))
                 return null;
 
@@ -79,15 +79,15 @@ namespace UnstableUnicornCore {
             return selectedCard;
         }
 
-        public override AEffect WhichEffectToSelect(List<AEffect> effectsVariants) {
+        protected override AEffect WhichEffectToSelectCore(List<AEffect> effectsVariants) {
             return effectsVariants[GameController.Random.Next(effectsVariants.Count)];
         }
 
-        public override List<Card> WhichCardsToMove(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToMoveCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return RandomSelectionFromCards(number, cardsWhichCanBeSelected);
         }
 
-        public override List<Card> WhichCardsToReturn(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+        protected override List<Card> WhichCardsToReturnCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return RandomSelectionFromCards(number, cardsWhichCanBeSelected);
         }
     }
