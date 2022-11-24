@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("UnstableUnicornCoreTest")]
@@ -331,9 +332,11 @@ namespace UnstableUnicornCore {
                     gameController.DiscardPile.Remove(this);
                     break;
                 case CardLocation.InHand:
+                    Debug.Assert(Player != null);
                     Player.Hand.Remove(this);
                     break;
                 case CardLocation.OnTable:
+                    Debug.Assert(Player != null);
                     if (ECardTypeUtils.UnicornTarget.Contains(_cardType))
                         Player.Stable.Remove(this);
                     else if (_cardType == ECardType.Upgrade)
@@ -365,9 +368,11 @@ namespace UnstableUnicornCore {
                     gameController.DiscardPile.Add(this);
                     break;
                 case CardLocation.InHand:
+                    Debug.Assert(Player != null);
                     Player.Hand.Add(this);
                     break;
                 case CardLocation.OnTable:
+                    Debug.Assert(Player != null);
                     if (ECardTypeUtils.UnicornTarget.Contains(_cardType))
                         Player.Stable.Add(this);
                     else if (_cardType == ECardType.Upgrade)
