@@ -226,23 +226,23 @@ namespace UnstableUnicornCore {
         }
 
         /// <summary>
+        /// Unregister all (one time, trigger, continuous) card effect.
+        /// 
         /// Calling <see cref="Card.UnregisterAllEffects"/> multiple times is a safe operation
         /// </summary>
-        internal void UnregisterAllEffects() {
-            if (Player == null)
-                throw new InvalidOperationException("Can't unregister effects without knowing who owning card");
-
+        /// <param name="gameController"></param>
+        internal void UnregisterAllEffects(GameController gameController) {
             foreach (var effect in triggerEffects)
-                effect.UnsubscribeToEvent(Player.GameController);
+                effect.UnsubscribeToEvent(gameController);
 
             foreach (var effect in new List<TriggerEffect>(_oneTimeTriggerEffects))
-                effect.UnsubscribeToEvent(Player.GameController);
+                effect.UnsubscribeToEvent(gameController);
 
             if (_oneTimeTriggerEffects.Count != 0)
                 throw new InvalidOperationException("This should be every time empty - UnsubscribeToEvent removes one time effect");
 
             foreach (var effect in continuousEffects)
-                Player.GameController.RemoveContinuousEffect(effect);
+                gameController.RemoveContinuousEffect(effect);
             
             this.continuousEffects.Clear();
         }

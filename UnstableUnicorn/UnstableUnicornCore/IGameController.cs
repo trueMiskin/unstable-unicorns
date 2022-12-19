@@ -249,7 +249,7 @@ namespace UnstableUnicornCore {
                 foreach (var effect in _actualChainLink)
                     foreach (var card in effect.CardTargets)
                         if (card.Location == CardLocation.OnTable)
-                            card.UnregisterAllEffects();
+                            card.UnregisterAllEffects(this);
 
                 // move cards to new location, trigger leave card and
                 foreach (var effect in _actualChainLink)
@@ -265,6 +265,10 @@ namespace UnstableUnicornCore {
                             // because this effects are not trigger effects but one time effects
                             // -> this will prevent interaction of cards in same chain link
                             card.RegisterAllEffects();
+                        } else if (card.OneTimeTriggerEffects.Count > 0){
+                            // sometimes more cards can target same card and some effects add to card
+                            // one time effects which must be removed 
+                            card.UnregisterAllEffects(this);
                         }
                 }
             }
