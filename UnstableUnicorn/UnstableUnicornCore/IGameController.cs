@@ -1,6 +1,7 @@
 ﻿#define DEBUG_PRINT
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace UnstableUnicornCore {
@@ -61,6 +62,11 @@ namespace UnstableUnicornCore {
             ActualPlayerOnTurn = Players[0];
         }
 
+        [Conditional("DEBUG_PRINT")]
+        private void DebugPrint(String text) {
+            Console.WriteLine(text);
+        }
+
         public void SimulateGame() {
             int turnNumber = 1;
             // set up game
@@ -73,10 +79,8 @@ namespace UnstableUnicornCore {
             State = EGameState.Running;
             int index = 0;
             while (State != EGameState.Ended) {
-#if DEBUG_PRINT
-                Console.WriteLine($"Player on turn {index}, actual turn: {turnNumber}");
-                Console.WriteLine("------> Start turn <-------");
-#endif
+                DebugPrint($"Player on turn {index}, actual turn: {turnNumber}");
+                DebugPrint("------> Start turn <-------");
 
                 APlayer player = Players[index];
                 SimulateOneTurn(player);
@@ -87,9 +91,7 @@ namespace UnstableUnicornCore {
                     index = (index + 1) % Players.Count;
                 turnNumber++;
 
-#if DEBUG_PRINT
-                Console.WriteLine("------> End turn <-------");
-#endif
+                DebugPrint("------> End turn <-------");
             }
 
             var scoreBoard = from player in Players
@@ -167,9 +169,8 @@ namespace UnstableUnicornCore {
 
                     // if card is played -> was not neigh
                     if (Stack.Count == 1) {
-#if DEBUG_PRINT
-                        Console.WriteLine($"Played {card.Name}");
-#endif
+                        DebugPrint($"Played {card.Name}");
+
                         APlayer targetPlayer = playerOnTurn.WhereShouldBeCardPlayed(card);
                         card.CardPlayed(this, targetPlayer);
 
@@ -197,9 +198,8 @@ namespace UnstableUnicornCore {
 
         private void ResolveChainLink() {
             for (int chainNumber = 1; _nextChainLink.Count > 0; chainNumber++) {
-#if DEBUG_PRINT
-                Console.WriteLine("-- Resolving chain link {0}", chainNumber);
-#endif
+                DebugPrint($"-- Resolving chain link {chainNumber}");
+
                 CardsWhichAreTargeted = new Dictionary<Card, AEffect>();
 
                 _actualChainLink = _nextChainLink;
@@ -238,10 +238,8 @@ namespace UnstableUnicornCore {
                         PublishEvent(ETriggerSource.PreCardLeftStable, card, effect);
                 }
 
-#if DEBUG_PRINT
                 foreach(var effect in _actualChainLink)
-                    Console.WriteLine($"{effect}, owner {effect.OwningCard.Name} and targets {string.Join(",", effect.CardTargets.Select(card => card.Name))}");
-#endif
+                    DebugPrint($"{effect}, owner {effect.OwningCard.Name} and targets {string.Join(",", effect.CardTargets.Select(card => card.Name))}");
 
                 // unregister affects of targets cards then moves
                 // the cards which published card leave and card enter events
@@ -288,9 +286,8 @@ namespace UnstableUnicornCore {
 
         public void PlayerDrawCard(APlayer player) {
             if (Pile.Count == 0) {
-#if DEBUG_PRINT
-                Console.WriteLine("Pile empty -> ending game");
-#endif
+                DebugPrint("Pile empty -> ending game");
+
                 State = EGameState.Ended;
                 return;
             }
