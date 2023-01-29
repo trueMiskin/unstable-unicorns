@@ -46,6 +46,7 @@ namespace UnstableUnicornCore
         public Dictionary<Card, AEffect> CardsWhichAreTargeted { get; set; } = new();
 
         private bool _willTakeExtraTurn = false;
+        private int _playerOnTurn = 0, _turnNumber = 1;
 
         public GameController(List<Card> pile, List<Card> nursery, List<APlayer> players, int seed = 42) {
             Random = new Random(seed);
@@ -72,28 +73,28 @@ namespace UnstableUnicornCore
         }
 
         public void SimulateGame() {
-            int turnNumber = 1;
-            // set up game
-            foreach (var player in Players) {
-                PlayerGetBabyUnicornOnTable(player);
-                PlayerDrawCards(player, 5);
+            if (State == EGameState.NotStarted) {
+                // set up game
+                foreach (var player in Players) {
+                    PlayerGetBabyUnicornOnTable(player);
+                    PlayerDrawCards(player, 5);
+                }
             }
 
             // game
             State = EGameState.Running;
-            int index = 0;
             while (State != EGameState.Ended) {
-                DebugPrint($"Player on turn {index}, actual turn: {turnNumber}");
+                DebugPrint($"Player on turn {_playerOnTurn}, actual turn: {_turnNumber}");
                 DebugPrint("------> Start turn <-------");
 
-                APlayer player = Players[index];
+                APlayer player = Players[_playerOnTurn];
                 SimulateOneTurn(player);
 
                 if (_willTakeExtraTurn)
                     _willTakeExtraTurn = false;
                 else
-                    index = (index + 1) % Players.Count;
-                turnNumber++;
+                    _playerOnTurn = (_playerOnTurn + 1) % Players.Count;
+                _turnNumber++;
 
                 DebugPrint("------> End turn <-------");
             }
@@ -107,50 +108,76 @@ namespace UnstableUnicornCore
                 .OrderByDescending(item => item.unicornValue)
                 .OrderByDescending(item => item.unicornLen);
 
-            Console.WriteLine($"Game ended after {turnNumber} turns");
+            Console.WriteLine($"Game ended after {_turnNumber} turns");
             foreach(var f in finalScoreBoard)
                     Console.WriteLine($"Player id: {Players.IndexOf(f.player)}, value: {f.unicornValue}, len: {f.unicornLen}");
         }
 
+        private int _cardIdx = 0, _playersIterIdx = 0;
+        private bool _cardSelected = false, _targetPlayerSelected = false, _stackResolved = false;
+        private bool _cardPlayed = false, _cardResolved = false;
+        private bool _beforeTurnStarted = false, _publishedOnBeginningTurn = false, _beginningTurnResolved = false;
+        private bool _publishedOnEndTurn = false, _endTurnResolved = false;
+        private Card? _card;
+        private APlayer? targetPlayer;
         internal void SimulateOneTurn(APlayer playerOnTurn) {
-            SkipToEndTurnPhase = false;
-            MaxCardsToPlayInOneTurn = 1;
-            DrawExtraCards = 0;
-            ActualPlayerOnTurn = playerOnTurn;
+            if (!_beforeTurnStarted) {
+                SkipToEndTurnPhase = false;
+                MaxCardsToPlayInOneTurn = 1;
+                DrawExtraCards = 0;
+                ActualPlayerOnTurn = playerOnTurn;
+
+                _beforeTurnStarted = true;
+            }
 
             OnBeginTurn(playerOnTurn);
             if (State == EGameState.Ended) return;
 
-            for (int cardIdx = 0; cardIdx < MaxCardsToPlayInOneTurn; cardIdx++) {
+            for (; _cardIdx < MaxCardsToPlayInOneTurn; _cardIdx++) {
                 if (SkipToEndTurnPhase)
                     break;
 
-                Card? card = playerOnTurn.WhichCardToPlay();
-                if (card == null) {
-                    if(cardIdx == 0)
+                if (!_cardSelected) {
+                    _card = playerOnTurn.WhichCardToPlay();
+                    _cardSelected = true;
+                }
+
+                if (_card == null) {
+                    if(_cardIdx == 0)
                         PlayerDrawCard(playerOnTurn);
+
+                    _cardIdx = int.MaxValue; _cardSelected = false;
                     break;
                 } else {
-                    if (!playerOnTurn.Hand.Remove(card))
-                        throw new InvalidOperationException($"Card {card.Name} not in player hand!");
-                    if (card.CardType == ECardType.Instant)
+                    if (!playerOnTurn.Hand.Remove(_card))
+                        throw new InvalidOperationException($"Card {_card.Name} not in player hand!");
+                    if (_card.CardType == ECardType.Instant)
                         throw new InvalidOperationException("Instant card cannot be played this way.");
 
                     // choose target player and check if card can be played
                     // before resolving the stack
-                    APlayer targetPlayer = playerOnTurn.WhereShouldBeCardPlayed(card);
-                    if (!card.CanBePlayed(targetPlayer))
-                        throw new InvalidOperationException(Card.CardCannotBePlayed);
 
-                    Stack = new List<Card>{ card };
-                    while (Stack.Count != 0) {
+                    if (!_targetPlayerSelected) {
+                        targetPlayer = playerOnTurn.WhereShouldBeCardPlayed(_card);
+
+                        if (!_card.CanBePlayed(targetPlayer))
+                            throw new InvalidOperationException(Card.CardCannotBePlayed);
+                        _targetPlayerSelected = true;
+
+                        Stack = new List<Card> { _card };
+                    }
+                    
+                    Debug.Assert(targetPlayer != null);
+                    
+                    while (Stack.Count != 0 && !_stackResolved) {
                         Card topCard = Stack[Stack.Count - 1];
                         List<Card> instantCards = new();
 
                         // if card cannot be neigh -> resolve this card
                         if (topCard.CanBeNeigh()) {
                             // check if any player wants to play instant card
-                            foreach (APlayer player in Players) {
+                            for (; _playersIterIdx < Players.Count; _playersIterIdx++) {
+                                var player = Players[_playersIterIdx];
                                 var cardToPlayOnStack = player.PlayInstantOnStack(Stack);
 
                                 // TODO: move CanPlayInstantCards to player class
@@ -161,6 +188,7 @@ namespace UnstableUnicornCore
 
                                 instantCards.Add(cardToPlayOnStack);
                             }
+                            _playersIterIdx = 0;
                         }
 
                         if (instantCards.Count == 0) {
@@ -175,22 +203,41 @@ namespace UnstableUnicornCore
                             instantCards[firstPlayedCard].PlayedInstant(Stack);
                         }
                     }
+                    _stackResolved = true;
                     // stack chain resolve
 
                     // if card is played -> was not neigh
                     if (Stack.Count == 1) {
-                        DebugPrint($"Played {card.Name}");
+                        DebugPrint($"Played {_card.Name}");
 
-                        card.CardPlayed(this, targetPlayer);
+                        if (!_cardPlayed) {
+                            _card.CardPlayed(this, targetPlayer);
+                            
+                            _cardPlayed = true;
+                        }
 
-                        ResolveChainLink();
+                        if (!_cardResolved) {
+                            ResolveChainLink();
+                            
+                            _cardResolved = true;
+                        }
                         if (State == EGameState.Ended) return;
                     }
                 }
+
+                _card = null; targetPlayer = null;
+                _cardSelected = _targetPlayerSelected = _stackResolved = false;
+                _cardPlayed = _cardResolved = false;
             }
 
             OnEndTurn(playerOnTurn);
+
             if (State == EGameState.Ended) return;
+
+            // reset all state variables
+            _cardIdx = 0;
+            _beforeTurnStarted = _publishedOnBeginningTurn = _beginningTurnResolved = false;
+            _publishedOnEndTurn = _endTurnResolved = false;
         }
 
         public void ThisPlayerTakeExtraTurn() => _willTakeExtraTurn = true;
@@ -205,26 +252,34 @@ namespace UnstableUnicornCore
         public void AddEffectToActualChainLink(AEffect effect) => _actualChainLink.Add(effect);
         public void AddNewEffectToChainLink(AEffect effect) => _nextChainLink.Add(effect);
 
+        private int _chooseTargetIdx = -1, _changeTargetingIdx = 0, _changeCardLocation = 0;
+        private int _preCardLeft = 0, _preCardLeftPerEffectIdx = 0, _invokeEffectsIdx = 0;
+        private bool _effectsUnregistered = false;
         private void ResolveChainLink() {
             for (int chainNumber = 1; _nextChainLink.Count > 0; chainNumber++) {
-                DebugPrint($"-- Resolving chain link {chainNumber}");
+                if (_chooseTargetIdx == -1) {
+                    DebugPrint($"-- Resolving chain link {chainNumber}");
 
-                CardsWhichAreTargeted = new Dictionary<Card, AEffect>();
+                    CardsWhichAreTargeted = new Dictionary<Card, AEffect>();
+                    _actualChainLink = _nextChainLink;
+                    _nextChainLink = new List<AEffect>();
 
-                _actualChainLink = _nextChainLink;
-                _nextChainLink = new List<AEffect>();
+                    _chooseTargetIdx++;
+                }
 
                 // choosing targets of effects
-                for (int i = 0; i < _actualChainLink.Count; i++) {
-                    var effect = _actualChainLink[i];
+                for (; _chooseTargetIdx < _actualChainLink.Count; _chooseTargetIdx++) {
+                    var effect = _actualChainLink[_chooseTargetIdx];
                     effect.ChooseTargets(this);
                 }
+                _chooseTargetIdx = int.MaxValue;
 
                 // trigger all ChangeTargeting
-                for (int i = 0; i < _actualChainLink.Count; i++) {
-                    var effect = _actualChainLink[i];
+                for (; _changeTargetingIdx < _actualChainLink.Count; _changeTargetingIdx++) {
+                    var effect = _actualChainLink[_changeTargetingIdx];
                     PublishEvent(ETriggerSource.ChangeTargeting, effect.OwningCard, effect);
                 }
+                _changeTargetingIdx = int.MaxValue;
 
                 // trigger change card location
                 // actual redirection work in this way
@@ -233,34 +288,46 @@ namespace UnstableUnicornCore
                 //    -  If this card would be sacrificed or destroyed, return it to your hand instead.
                 //    then card will be moved on discard pile and then will be moved back to owner's hand
                 //    in same chain link
-                for (int i = 0; i < _actualChainLink.Count; i++) {
-                    var effect = _actualChainLink[i];
+                for (; _changeCardLocation < _actualChainLink.Count; _changeCardLocation++) {
+                    var effect = _actualChainLink[_changeCardLocation];
                     PublishEvent(ETriggerSource.ChangeLocationOfCard, effect.OwningCard, effect);
                 }
+                _changeCardLocation = int.MaxValue;
 
                 // effect which trigger on leaving but they not change targeting or location
                 // this event is primary used for cards which can't be triggered by CardLeftStable
                 // because in this time are triggers unregistered
-                for (int i = 0; i < _actualChainLink.Count; i++) {
-                    var effect = _actualChainLink[i];
-                    foreach(var card in effect.CardTargets)
+                for (; _preCardLeft < _actualChainLink.Count; _preCardLeft++) {
+                    var effect = _actualChainLink[_preCardLeft];
+                    for (; _preCardLeftPerEffectIdx < effect.CardTargets.Count; _preCardLeftPerEffectIdx++) {
+                        var card = effect.CardTargets[_preCardLeftPerEffectIdx];
                         PublishEvent(ETriggerSource.PreCardLeftStable, card, effect);
+                    }
+                    _preCardLeftPerEffectIdx = 0;
+                }
+                _preCardLeft = int.MaxValue;
+
+                if (!_effectsUnregistered) {
+                    foreach (var effect in _actualChainLink)
+                        DebugPrint($"{effect}, owner {effect.OwningCard.Name} and targets {string.Join(",", effect.CardTargets.Select(card => card.Name))}");
+
+                    // unregister affects of targets cards then moves
+                    // the cards which published card leave and card enter events
+                    // for example barbed wire could cause trouble
+                    foreach (var effect in _actualChainLink)
+                        foreach (var card in effect.CardTargets)
+                            if (card.Location == CardLocation.OnTable)
+                                card.UnregisterAllEffects(this);
+
+                    _effectsUnregistered = true;
                 }
 
-                foreach(var effect in _actualChainLink)
-                    DebugPrint($"{effect}, owner {effect.OwningCard.Name} and targets {string.Join(",", effect.CardTargets.Select(card => card.Name))}");
-
-                // unregister affects of targets cards then moves
-                // the cards which published card leave and card enter events
-                // for example barbed wire could cause trouble
-                foreach (var effect in _actualChainLink)
-                    foreach (var card in effect.CardTargets)
-                        if (card.Location == CardLocation.OnTable)
-                            card.UnregisterAllEffects(this);
-
                 // move cards to new location, trigger leave card and
-                foreach (var effect in _actualChainLink)
+                for(; _invokeEffectsIdx < _actualChainLink.Count; _invokeEffectsIdx++) {
+                    var effect = _actualChainLink[_invokeEffectsIdx];
                     effect.InvokeEffect(this);
+                }
+                _invokeEffectsIdx = int.MaxValue;
 
                 // delay card enter to new stable to next chain link - a.k.a. add to chainLink
                 // --> this i dont need to solve, nearly all trigger effects are by default delayed
@@ -278,6 +345,10 @@ namespace UnstableUnicornCore
                             card.UnregisterAllEffects(this);
                         }
                 }
+
+                _chooseTargetIdx = -1; _changeTargetingIdx = _changeCardLocation = 0;
+                _preCardLeft = _preCardLeftPerEffectIdx = _invokeEffectsIdx = 0;
+                _effectsUnregistered = false;
             }
 
             CheckIfSomeoneWinGame();
@@ -328,21 +399,36 @@ namespace UnstableUnicornCore
 
         private void OnBeginTurn(APlayer player) {
             // Trigger on begin turn effects
-            PublishEvent(ETriggerSource.BeginningTurn);
+            if (!_publishedOnBeginningTurn) {
+                PublishEvent(ETriggerSource.BeginningTurn);
+                _publishedOnBeginningTurn = true;
+            }
 
-            // resolve chain link
-            ResolveChainLink();
+            if (!_beginningTurnResolved) {
+                // resolve chain link
+                ResolveChainLink();
 
-            if(!SkipToEndTurnPhase)
-                PlayerDrawCards(player, 1 + DrawExtraCards);
+                if (!SkipToEndTurnPhase)
+                    PlayerDrawCards(player, 1 + DrawExtraCards);
+                
+                _beginningTurnResolved = true;
+            }
         }
 
         private void OnEndTurn(APlayer player) {
             // Trigger on end turn effects
-            PublishEvent(ETriggerSource.EndTurn);
+            if (!_publishedOnEndTurn) {
+                PublishEvent(ETriggerSource.EndTurn);
 
-            // resolve chain link
-            ResolveChainLink();
+                _publishedOnEndTurn = true;
+            }
+
+            if (!_endTurnResolved) {
+                // resolve chain link
+                ResolveChainLink();
+
+                _endTurnResolved = true;
+            }
 
             if (player.Hand.Count > 7) {
                 List<Card> cards = player.WhichCardsToDiscard(player.Hand.Count - 7, null, player.Hand);
@@ -354,12 +440,15 @@ namespace UnstableUnicornCore
             }
         }
 
+        private int _triggerListIdx = 0;
         public void PublishEvent(ETriggerSource _event, Card? card = null, AEffect? effect = null) {
             if (!EventsPool.TryGetValue(_event, out List<TriggerEffect>? triggerList))
                 return;
-            foreach (var trigger in triggerList) {
+            for (; _triggerListIdx < triggerList.Count; _triggerListIdx++) {
+                var trigger = triggerList[_triggerListIdx];
                 trigger.InvokeEffect(_event, card, effect, this);
             }
+            _triggerListIdx = 0;
 
             foreach (var trigger in triggersToRemove)
                 trigger.UnsubscribeToEvent(this);
