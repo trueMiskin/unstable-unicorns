@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace UnstableUnicornCore {
+namespace UnstableUnicornCore
+{
     public interface IGameController {
         void SimulateGame();
     }
@@ -17,6 +18,8 @@ namespace UnstableUnicornCore {
         public List<Card> Nursery;
         public List<APlayer> Players;
         public List<AContinuousEffect> ContinuousEffects = new();
+
+        public CardVisibilityTracker CardVisibilityTracker { get; private set; }
         private Dictionary<ETriggerSource, List<TriggerEffect>> EventsPool = new();
         private List<TriggerEffect> triggersToRemove = new();
 
@@ -48,8 +51,9 @@ namespace UnstableUnicornCore {
             Random = new Random(seed);
             Pile = pile.Shuffle(Random);
             Nursery = new List<Card>( nursery );
+            CardVisibilityTracker = new(players);
 
-            foreach(var babyUnicorn in Nursery) {
+            foreach (var babyUnicorn in Nursery) {
                 babyUnicorn.Player = null;
                 babyUnicorn.Location = CardLocation.Nursery;
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace UnstableUnicornCore.BasicEffects {
     /// <summary>
@@ -67,8 +68,12 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override void InvokeEffect(GameController gameController) {
-            foreach (var card in CardTargets)
+            foreach (var card in CardTargets) {
                 card.MoveCard(gameController, card.Player, TargetLocation);
+
+                Debug.Assert(card.Player != null);
+                gameController.CardVisibilityTracker.AllPlayersSawPlayerCard(card.Player, card);
+            }
         }
 
         public bool AnyPlayerPredicate(Card card, APlayer player) => _allowedCardTypes.Contains(card.CardType);

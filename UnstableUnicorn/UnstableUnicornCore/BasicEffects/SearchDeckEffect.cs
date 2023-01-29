@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace UnstableUnicornCore.BasicEffects {
     public class SearchDeckEffect : AEffect {
@@ -40,6 +41,9 @@ namespace UnstableUnicornCore.BasicEffects {
 
                 if(whereToSearchCards == CardLocation.Pile)
                     correctPile.Remove(card);
+
+                Debug.Assert(TargetOwner != null);
+                gameController.CardVisibilityTracker.AllPlayersSawPlayerCard(TargetOwner, card);
             }
         }
 

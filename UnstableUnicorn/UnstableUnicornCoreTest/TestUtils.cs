@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnstableUnicornCore;
 using Xunit;
 
@@ -22,6 +18,18 @@ namespace UnstableUnicornCoreTest {
             Action act = () => controller.PlayCardAndResolveChainLink(card, targetOwner);
             var exception = Assert.Throws<InvalidOperationException>(act);
             Assert.Equal(Card.CardCannotBePlayed, exception.Message);
+        }
+
+        public static void CheckKnownPlayerCardsOfTarget(GameController controller,
+                                                         APlayer player,
+                                                         APlayer targetPlayer,
+                                                         params Card[] expectedValues) {
+            var visibilityTracker = controller.CardVisibilityTracker;
+            var knowledgeAboutPlayer = visibilityTracker.GetKnownPlayerCardsOfTarget(player, targetPlayer);
+            Assert.Equal(expectedValues.Length, knowledgeAboutPlayer.Count);
+            
+            foreach (var card in expectedValues)
+                Assert.Contains(card, knowledgeAboutPlayer);
         }
     }
 }

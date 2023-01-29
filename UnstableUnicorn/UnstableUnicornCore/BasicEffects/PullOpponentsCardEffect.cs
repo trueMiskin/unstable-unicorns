@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace UnstableUnicornCore.BasicEffects {
     public sealed class PullOpponentsCardEffect : AEffect {
@@ -27,8 +28,14 @@ namespace UnstableUnicornCore.BasicEffects {
             foreach (APlayer player in playerList) {
                 int numberCardToSelect = Math.Min(_cardCount, player.Hand.Count);
                 for (int i = 0; i < numberCardToSelect; i++) {
-                    int selectedCard = player.GameController.Random.Next(player.Hand.Count);
-                    player.Hand[selectedCard].MoveCard(gameController, TargetOwner, TargetLocation);
+                    int selectedIndex = player.GameController.Random.Next(player.Hand.Count);
+                    Card selectedCard = player.Hand[selectedIndex];
+                    selectedCard.MoveCard(gameController, TargetOwner, TargetLocation);
+
+                    Debug.Assert(TargetOwner != null);
+                    gameController.CardVisibilityTracker.RemoveAllSeenCardsOfPlayer(player, new List<APlayer> { TargetOwner });
+                    gameController.CardVisibilityTracker.AddSeenCardToPlayerKnowledge(TargetOwner, TargetOwner, selectedCard);
+                    gameController.CardVisibilityTracker.AddSeenCardToPlayerKnowledge(player, TargetOwner, selectedCard);
                 }
             }
         }

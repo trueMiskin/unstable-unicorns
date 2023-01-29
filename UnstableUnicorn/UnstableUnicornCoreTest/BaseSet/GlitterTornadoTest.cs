@@ -60,6 +60,9 @@ namespace UnstableUnicornCoreTest.BaseSet {
                 TestUtils.CheckPlayerPileSizes(playerOne, handSize: 1, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
                 TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 0, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
                 TestUtils.CheckPlayerPileSizes(playerThree, handSize: 1, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
+
+                TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerThree);
+                TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerThree);
             } else {
                 controller.PlayCardAndResolveChainLink(unicornLasso, playerThree);
 
@@ -73,7 +76,19 @@ namespace UnstableUnicornCoreTest.BaseSet {
                 TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 0, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
                 TestUtils.CheckPlayerPileSizes(playerThree, handSize: 1, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
 
+                TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerThree, unicornLasso);
+                TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerThree, unicornLasso);
             }
+
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerOne, basicUnicorn);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerTwo);
+
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerOne, basicUnicorn);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerTwo);
+
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerThree, playerOne, basicUnicorn);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerThree, playerTwo);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerThree, playerThree, unicornLasso);
         }
     }
 }

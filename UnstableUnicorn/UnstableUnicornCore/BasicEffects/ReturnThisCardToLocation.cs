@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace UnstableUnicornCore.BasicEffects {
     /// <summary>
-    /// Specialized effect of return effect
+    /// Specialized effect of return effect - this is <b>reaction</b> effect
     /// 
     /// This effect get a card which should be return to:
     /// - owner's hand
@@ -10,7 +11,7 @@ namespace UnstableUnicornCore.BasicEffects {
     /// <br/>
     /// Since I wrote Black knight unicorn card, this effect move cards
     /// from table to hand without intermediate step moving to discard pile
-    /// 
+    /// <br/>
     /// This effect should be called on trigger <see cref="ETriggerSource.ChangeLocationOfCard"/>
     /// </summary>
     public class ReturnThisCardToLocation : ReturnEffect {
@@ -44,6 +45,12 @@ namespace UnstableUnicornCore.BasicEffects {
                 return;
 
             effect.CardTargets.Remove(OwningCard);
+
+            if (TargetLocation == CardLocation.InHand) {
+                Debug.Assert(OwningCard.Player != null);
+                gameController.CardVisibilityTracker.AllPlayersSawPlayerCard(OwningCard.Player, OwningCard);
+            }
+
             gameController.AddEffectToActualChainLink(this);
         }
 

@@ -334,6 +334,8 @@ namespace UnstableUnicornCore {
                 case CardLocation.InHand:
                     Debug.Assert(Player != null);
                     Player.Hand.Remove(this);
+
+                    gameController.CardVisibilityTracker.RemoveCardFromVisibility(Player, this);
                     break;
                 case CardLocation.OnTable:
                     Debug.Assert(Player != null);
@@ -370,6 +372,8 @@ namespace UnstableUnicornCore {
                 case CardLocation.InHand:
                     Debug.Assert(Player != null);
                     Player.Hand.Add(this);
+
+                    gameController.CardVisibilityTracker.AddSeenCardToPlayerKnowledge(Player, Player, this);
                     break;
                 case CardLocation.OnTable:
                     Debug.Assert(Player != null);

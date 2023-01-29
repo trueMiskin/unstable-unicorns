@@ -24,6 +24,11 @@ namespace UnstableUnicornCoreTest.BaseSet {
             TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 0, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
             Assert.Equal(playerOne.Hand[0], classyNarwhal);
 
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerOne, classyNarwhal);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerTwo);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerOne);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerTwo);
+
             // player one playes unicorn to his own stable
             controller.PlayCardAndResolveChainLink(classyNarwhal, playerOne);
 
@@ -34,6 +39,12 @@ namespace UnstableUnicornCoreTest.BaseSet {
 
             Assert.Empty(controller.Pile);
             Assert.Empty(controller.DiscardPile);
+
+            // both players know which card is chosen
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerOne, rainbowAura);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerTwo);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerOne, rainbowAura);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerTwo);
         }
 
         [Fact]
@@ -54,6 +65,11 @@ namespace UnstableUnicornCoreTest.BaseSet {
             TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 0, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
             Assert.Equal(playerOne.Hand[0], classyNarwhal);
 
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerOne, classyNarwhal);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerTwo);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerOne);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerTwo);
+
             // player one playes unicorn to his opponent's stable
             controller.PlayCardAndResolveChainLink(classyNarwhal, playerTwo);
 
@@ -61,6 +77,12 @@ namespace UnstableUnicornCoreTest.BaseSet {
             TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 1, stableSize: 1, numUpgrades: 0, numDowngrades: 0);
 
             Assert.Equal(rainbowAura, playerTwo.Hand[0]);
+
+            // both players know which card is chosen
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerOne);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerTwo, rainbowAura);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerOne);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerTwo, rainbowAura);
         }
 
         [Fact]
