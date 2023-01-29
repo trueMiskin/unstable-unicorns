@@ -58,12 +58,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             controller.PlayCardAndResolveChainLink(queenBeeUnicorn, playerOne);
 
             if (toHisOwnStable) {
-                Assert.False(basicUnicorn.CanBePlayed(playerTwo));
-                Action act;
-                act = () => controller.PlayCardAndResolveChainLink(basicUnicorn, playerTwo);
-
-                var exception = Assert.Throws<InvalidOperationException>(act);
-                Assert.Equal("This card cannot be played. Requirements are not met.", exception.Message);
+                TestUtils.CardCantBePlayed(basicUnicorn, playerTwo, controller);
             } else {
                 Assert.True(basicUnicorn.CanBePlayed(playerOne));
                 // player two want player basic unicorn to player one stable

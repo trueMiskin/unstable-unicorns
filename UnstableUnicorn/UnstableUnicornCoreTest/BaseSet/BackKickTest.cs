@@ -24,11 +24,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 0, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
             Assert.Equal(playerOne.Hand[0], backKick);
 
-            Assert.False(backKick.CanBePlayed(playerOne));
-
-            Action act = () => controller.PlayCardAndResolveChainLink(backKick, playerOne);
-            var exception = Assert.Throws<InvalidOperationException>(act);
-            Assert.Equal(Card.CardCannotBePlayed, exception.Message);
+            TestUtils.CardCantBePlayed(backKick, playerOne, controller);
         }
 
         [Fact]

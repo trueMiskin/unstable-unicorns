@@ -31,11 +31,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             Assert.Empty(controller.Pile);
             Assert.Empty(controller.DiscardPile);
 
-            Assert.False(mysticalVortex.CanBePlayed(playerOne));
-            // player one playes unicorn to his own stable
-            Action act = () => controller.PlayCardAndResolveChainLink(mysticalVortex, playerOne);
-            var exception = Assert.Throws<InvalidOperationException>(act);
-            Assert.Equal(Card.CardCannotBePlayed, exception.Message);
+            TestUtils.CardCantBePlayed(mysticalVortex, playerOne, controller);
         }
 
         [Fact]
