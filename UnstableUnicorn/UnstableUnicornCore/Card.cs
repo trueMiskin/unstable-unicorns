@@ -285,13 +285,23 @@ namespace UnstableUnicornCore {
             }
         }
 
+        /// <summary>
+        /// Play card to given stable / cast given spell card
+        /// 
+        /// This method check validity of <paramref name="newCardOwner"/>
+        /// but does not check if card can be played!!!
+        /// 
+        /// The check if card can be played, can pass before the stack is resolved,
+        /// but not after resolution.
+        /// </summary>
+        /// <param name="gameController"></param>
+        /// <param name="newCardOwner">To which stable will be card
+        /// played or who cast spell card</param>
         public void CardPlayed(GameController gameController, APlayer newCardOwner) {
             if (_cardType == ECardType.Instant)
                 throw new InvalidOperationException("Instant card cannot be used by calling CardPlayed");
             if (_cardType == ECardType.Spell && newCardOwner != Player)
                 throw new InvalidOperationException("A spell cannot have a new card owner while the spell is being cast.");
-            if (!CanBePlayed(newCardOwner))
-                throw new InvalidOperationException(CardCannotBePlayed);
 
             if (_cardType == ECardType.Spell) {
                 // set player for trigger effect, then cast spell

@@ -1,4 +1,4 @@
-﻿#define DEBUG_PRINT
+﻿//#define DEBUG_PRINT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -130,6 +130,12 @@ namespace UnstableUnicornCore {
                     if (card.CardType == ECardType.Instant)
                         throw new InvalidOperationException("Instant card cannot be played this way.");
 
+                    // choose target player and check if card can be played
+                    // before resolving the stack
+                    APlayer targetPlayer = playerOnTurn.WhereShouldBeCardPlayed(card);
+                    if (!card.CanBePlayed(targetPlayer))
+                        throw new InvalidOperationException(Card.CardCannotBePlayed);
+
                     Stack = new List<Card>{ card };
                     while (Stack.Count != 0) {
                         Card topCard = Stack[Stack.Count - 1];
@@ -170,7 +176,6 @@ namespace UnstableUnicornCore {
 #if DEBUG_PRINT
                         Console.WriteLine($"Played {card.Name}");
 #endif
-                        APlayer targetPlayer = playerOnTurn.WhereShouldBeCardPlayed(card);
                         card.CardPlayed(this, targetPlayer);
 
                         ResolveChainLink();
