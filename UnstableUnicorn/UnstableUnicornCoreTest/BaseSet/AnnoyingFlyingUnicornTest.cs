@@ -95,5 +95,61 @@ namespace UnstableUnicornCoreTest.BaseSet {
 
             Assert.Single(controller.DiscardPile);
         }
+
+        [Fact]
+        public void TestReturningCardAfterDestroyingWithCardVisibility() {
+            SimplePlayerMockUp playerOne = new(), playerTwo = new(), playerThree = new();
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree });
+
+            // protection before shuffling
+            Card unicornPoison = new UnicornPoison().GetCardTemplate().CreateCard();
+            controller.Pile.Add(unicornPoison);
+            Card annoyingUnicorn = new AnnoyingFlyingUnicorn().GetCardTemplate().CreateCard();
+            controller.Pile.Add(annoyingUnicorn);
+
+            controller.PlayerDrawCard(playerOne);
+
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerOne, annoyingUnicorn);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerTwo);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerThree);
+
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerOne);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerTwo);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerThree);
+
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerThree, playerOne);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerThree, playerTwo);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerThree, playerThree);
+
+            controller.PlayCardAndResolveChainLink(annoyingUnicorn, playerOne);
+            // draw spell after playing unicorn else this spell will be discarded
+            controller.PlayerDrawCard(playerTwo);
+
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerOne);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerTwo);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerThree);
+
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerOne);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerTwo, unicornPoison);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerThree);
+
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerThree, playerOne);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerThree, playerTwo);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerThree, playerThree);
+
+            controller.PlayCardAndResolveChainLink(unicornPoison, playerTwo);
+
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerOne, annoyingUnicorn);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerTwo);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerThree);
+
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerOne, annoyingUnicorn);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerTwo);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerThree);
+
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerThree, playerOne, annoyingUnicorn);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerThree, playerTwo);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerThree, playerThree);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace UnstableUnicornCore.BasicEffects {
     public class SwapHandsEffect : AEffect {
@@ -24,11 +25,17 @@ namespace UnstableUnicornCore.BasicEffects {
             var opponentsCards = new List<Card>(targetPlayerOfSwap.Hand);
             var playersHand = new List<Card>(OwningPlayer.Hand);
 
-            foreach (var card in opponentsCards)
-                card.MoveCard(gameController, OwningPlayer, TargetLocation);
+            gameController.CardVisibilityTracker.SwapPlayerKnownCards(OwningPlayer, targetPlayerOfSwap);
 
-            foreach (var card in playersHand)
+            foreach (var card in opponentsCards) {
+                card.MoveCard(gameController, OwningPlayer, TargetLocation);
+                gameController.CardVisibilityTracker.AddSeenCardToPlayerKnowledge(targetPlayerOfSwap, OwningPlayer, card);
+            }
+
+            foreach (var card in playersHand) {
                 card.MoveCard(gameController, targetPlayerOfSwap, TargetLocation);
+                gameController.CardVisibilityTracker.AddSeenCardToPlayerKnowledge(OwningPlayer, targetPlayerOfSwap, card);
+            }
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;

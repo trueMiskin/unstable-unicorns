@@ -27,6 +27,11 @@ namespace UnstableUnicornCoreTest.BaseSet {
             Assert.Empty(controller.Pile);
             Assert.Single(controller.DiscardPile);
 
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerOne, magicalFlyingUnicorn);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerTwo);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerOne);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerTwo);
+
             // player one playes unicorn to his own stable
             controller.PlayCardAndResolveChainLink(magicalFlyingUnicorn, playerOne);
 
@@ -37,6 +42,12 @@ namespace UnstableUnicornCoreTest.BaseSet {
 
             Assert.Empty(controller.Pile);
             Assert.Empty(controller.DiscardPile);
+            
+            // both players know which card is chosen
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerOne, unicornPoison);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerOne, playerTwo);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerOne, unicornPoison);
+            TestUtils.CheckKnownPlayerCardsOfTarget(controller, playerTwo, playerTwo);
         }
     }
 }

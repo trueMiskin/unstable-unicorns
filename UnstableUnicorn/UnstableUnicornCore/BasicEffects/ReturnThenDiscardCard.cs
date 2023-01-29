@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace UnstableUnicornCore.BasicEffects {
     /// <summary>
@@ -12,6 +13,10 @@ namespace UnstableUnicornCore.BasicEffects {
         public override void InvokeEffect(GameController gameController) {
             foreach (var card in CardTargets) {
                 card.MoveCard(gameController, card.Player, TargetLocation);
+
+                Debug.Assert(card.Player != null);
+                gameController.CardVisibilityTracker.AllPlayersSawPlayerCard(card.Player, card);
+                
                 // card owner must discard a card
                 gameController.AddNewEffectToChainLink(new DiscardEffect(card, 1, _allowedCardTypes, PlayerTargeting.PlayerOwner));
             }
