@@ -25,5 +25,36 @@ namespace UnstableUnicornCore {
             }
             return result;
         }
+
+        /// <summary>
+        /// Generate subsets of given length
+        /// 
+        /// Slightly edited: https://stackoverflow.com/questions/36328825/c-sharp-get-all-combinations-of-defined-length-or-less-from-a-list-of-object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="objects"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static IEnumerable<List<T>> Subsets<T>(this List<T> objects, int length) {
+            if (objects == null || length <= 0)
+                yield break;
+            var stack = new Stack<int>(length);
+            int i = 0;
+            while (stack.Count > 0 || i < objects.Count) {
+                if (i < objects.Count) {
+                    if (stack.Count == length)
+                        i = stack.Pop() + 1;
+                    stack.Push(i++);
+
+                    if (stack.Count == length)
+                        yield return (from index in stack.Reverse()
+                                      select objects[index]).ToList();
+                } else {
+                    i = stack.Pop() + 1;
+                    if (stack.Count > 0)
+                        i = stack.Pop() + 1;
+                }
+            }
+        }
     }
 }

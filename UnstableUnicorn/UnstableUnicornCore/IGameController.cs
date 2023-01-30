@@ -11,7 +11,7 @@ namespace UnstableUnicornCore
     }
 
     public class GameController : IGameController, IPublisher {
-        public EGameState State { get; private set; } = EGameState.NotStarted;
+        public EGameState State { get; internal set; } = EGameState.NotStarted;
         private List<Card> _allCards = new();
         public Random Random { get; set; }
         public List<Card> Pile;
@@ -520,7 +520,7 @@ namespace UnstableUnicornCore
         /// <param name="player"></param>
         /// <param name="playerMapper">Dictionary which maps all players to new players</param>
         /// <returns></returns>
-        public GameController Clone(APlayer player, Dictionary<APlayer, APlayer> playerMapper) {
+        public GameController Clone(APlayer? player, Dictionary<APlayer, APlayer> playerMapper) {
             GameController newGameController = (GameController) MemberwiseClone();
 
             Dictionary<TriggerEffect, TriggerEffect> triggerEffectMapper = new();
