@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace UnstableUnicornCore {
     /// <summary>
@@ -111,6 +112,18 @@ namespace UnstableUnicornCore {
                 knownCards[player1] = cards2;
                 knownCards[player2] = cards1;
             }
+        }
+
+        public CardVisibilityTracker Clone(Dictionary<Card, Card> cardMapper, Dictionary<APlayer, APlayer> playerMapper) {
+            var newCardVisibility = new CardVisibilityTracker(playerMapper.Values.ToList());
+            
+            foreach (var (knowledgeOfPlayerOld, knowledgeOfPlayerNew) in playerMapper)
+                foreach (var (oldP, newP) in playerMapper) {
+                    newCardVisibility.knownCardsInHand[knowledgeOfPlayerNew][newP] =
+                        knownCardsInHand[knowledgeOfPlayerOld][oldP].ToList().ConvertAll(c => cardMapper[c]).ToHashSet();
+                }
+
+            return newCardVisibility;
         }
     }
 }

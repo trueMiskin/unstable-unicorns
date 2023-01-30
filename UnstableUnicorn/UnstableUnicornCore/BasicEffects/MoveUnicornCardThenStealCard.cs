@@ -48,5 +48,15 @@ namespace UnstableUnicornCore.BasicEffects {
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController)
             => GetValidTargets(gameController).Count >= _cardCount;
+
+        public override AEffect Clone(Dictionary<Card, Card> cardMapper,
+                                      Dictionary<AEffect, AEffect> effectMapper,
+                                      Dictionary<APlayer, APlayer> playerMapper) {
+            var newEffect = (MoveUnicornCardThenStealCard)base.Clone(cardMapper, effectMapper, playerMapper);
+            newEffect.thenEffect = (StealEffect)thenEffect.Clone(cardMapper, effectMapper, playerMapper);
+            effectMapper.Add(thenEffect, newEffect.thenEffect);
+
+            return newEffect;
+        }
     }
 }

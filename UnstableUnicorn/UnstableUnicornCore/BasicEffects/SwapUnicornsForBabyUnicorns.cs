@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnstableUnicornCore.BasicContinuousEffects;
 
 namespace UnstableUnicornCore.BasicEffects {
@@ -42,7 +43,16 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;
+        
+        public override AEffect Clone(Dictionary<Card, Card> cardMapper,
+                                      Dictionary<AEffect, AEffect> effectMapper,
+                                      Dictionary<APlayer, APlayer> playerMapper) {
+            var newEffect = (SwapUnicornsForBabyUnicorns)base.Clone(cardMapper, effectMapper, playerMapper);
+            newEffect.thenEffect = (MoveBabyUnicornsToStable)thenEffect.Clone(cardMapper, effectMapper, playerMapper);
+            effectMapper.Add(thenEffect, newEffect.thenEffect);
 
+            return newEffect;
+        }
 
         class MoveBabyUnicornsToStable : AEffect {
             public MoveBabyUnicornsToStable(Card owningCard) : base(owningCard, 0) {

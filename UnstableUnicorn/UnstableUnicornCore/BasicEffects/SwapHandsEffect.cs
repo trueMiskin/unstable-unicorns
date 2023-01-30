@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace UnstableUnicornCore.BasicEffects {
     public class SwapHandsEffect : AEffect {
@@ -39,5 +38,14 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;
+
+        public override AEffect Clone(Dictionary<Card, Card> cardMapper,
+                                      Dictionary<AEffect, AEffect> effectMapper,
+                                      Dictionary<APlayer, APlayer> playerMapper) {
+            var newEffect = (SwapHandsEffect)base.Clone(cardMapper, effectMapper, playerMapper);
+            newEffect.targetPlayerOfSwap = targetPlayerOfSwap == null ? null : playerMapper[targetPlayerOfSwap];
+
+            return newEffect;
+        }
     }
 }

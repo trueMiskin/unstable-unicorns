@@ -1,4 +1,6 @@
-﻿namespace UnstableUnicornCore.BasicEffects {
+﻿using System.Collections.Generic;
+
+namespace UnstableUnicornCore.BasicEffects {
     public sealed class ActivatableEffect : AEffect {
         private AEffect _effect;
 
@@ -24,6 +26,16 @@
         public override void InvokeReactionEffect(GameController gameController, AEffect effect) {
             if (OwningPlayer.ActivateEffect(_effect))
                 _effect.InvokeReactionEffect(gameController, effect);
+        }
+
+        public override AEffect Clone(Dictionary<Card, Card> cardMapper,
+                                      Dictionary<AEffect, AEffect> effectMapper,
+                                      Dictionary<APlayer, APlayer> playerMapper) {
+            var newEffect = (ActivatableEffect)base.Clone(cardMapper, effectMapper, playerMapper);
+            newEffect._effect = _effect.Clone(cardMapper, effectMapper, playerMapper);
+            effectMapper.Add(_effect, newEffect._effect);
+            
+            return newEffect;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -405,6 +406,37 @@ namespace UnstableUnicornCore {
 
             if (Location == CardLocation.OnTable)
                 gameController.PublishEvent(ETriggerSource.CardEnteredStable, this);
+        }
+
+        /// <summary>
+        /// Deep copy card
+        /// 
+        /// - resetting player
+        /// - deep copy trigger effects and continous effects
+        /// </summary>
+        /// <param name="triggerEffectMapper"></param>
+        /// <param name="continuousEffectMapper"></param>
+        /// <param name="playerMapper"></param>
+        /// <returns></returns>
+        public Card Clone(Dictionary<TriggerEffect, TriggerEffect> triggerEffectMapper,
+                          Dictionary<AContinuousEffect, AContinuousEffect> continuousEffectMapper,
+                          Dictionary<APlayer, APlayer> playerMapper) {
+            Card newCard = (Card)MemberwiseClone();
+
+            newCard.Player = Player == null ? null : playerMapper[Player];
+
+            foreach (var effect in triggerEffects)
+                triggerEffectMapper.Add(effect, effect.Clone(newCard));
+            foreach (var effect in _oneTimeTriggerEffects)
+                triggerEffectMapper.Add(effect, effect.Clone(newCard));
+            foreach (var effect in continuousEffects)
+                continuousEffectMapper.Add(effect, effect.Clone(newCard, playerMapper));
+
+            newCard.triggerEffects = (from effect in triggerEffects select triggerEffectMapper[effect]).ToList();
+            newCard._oneTimeTriggerEffects = (from effect in _oneTimeTriggerEffects select triggerEffectMapper[effect]).ToList();
+            newCard.continuousEffects = (from effect in continuousEffects select continuousEffectMapper[effect]).ToList();
+
+            return newCard;
         }
     }
 }

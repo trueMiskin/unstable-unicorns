@@ -31,5 +31,20 @@ namespace UnstableUnicornCore.BasicEffects {
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
             return GetAvailableEffects(gameController).Count > 0;
         }
+
+        public override AEffect Clone(Dictionary<Card, Card> cardMapper,
+                                      Dictionary<AEffect, AEffect> effectMapper,
+                                      Dictionary<APlayer, APlayer> playerMapper) {
+            var newEffect = (ChooseEffect)base.Clone(cardMapper, effectMapper, playerMapper);
+
+            newEffect.effectVariants = new();
+            foreach (var effect in effectVariants) {
+                var newEff = effect.Clone(cardMapper, effectMapper, playerMapper);
+                newEffect.effectVariants.Add(newEff);
+                effectMapper.Add(effect, newEff);
+            }
+
+            return newEffect;
+        }
     }
 }

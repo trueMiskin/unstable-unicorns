@@ -7,7 +7,7 @@ namespace UnstableUnicornCore {
         /// <summary>
         /// Which card belongs this affect
         /// </summary>
-        public Card OwningCard { get; init; }
+        public Card OwningCard { get => _owningCard; init => _owningCard = value; }
 
         /// <summary>
         /// Predicate which determines if effect is triggered or not.
@@ -37,6 +37,7 @@ namespace UnstableUnicornCore {
         /// state <see cref="ETriggerSource"/> is this effect triggered!!!
         /// </summary>
         private bool executeEffectInActualChainLink;
+        private Card _owningCard;
 
         public TriggerEffect(Card owningCard, TriggerPredicate triggerPredicate, List<ETriggerSource> triggers,
                              Card.FactoryEffect factoryEffect, bool oneTimeUseEffect = false, bool executeEffectInActualChainLink = false) {
@@ -49,8 +50,8 @@ namespace UnstableUnicornCore {
         }
 
         public void SubscribeToEvent(GameController gameController) {
-            foreach(var trigger in triggers)
-                gameController.SubscribeEvent( trigger, this );
+            foreach (var trigger in triggers)
+                gameController.SubscribeEvent(trigger, this);
 
             if (oneTimeUseEffect)
                 OwningCard.AddOneTimeTriggerEffect(this);
@@ -69,13 +70,13 @@ namespace UnstableUnicornCore {
             // if effect, which cause trigger, is blocking triggering of unicorns cards
             if (effectWhichTriggerEffect != null &&
                 effectWhichTriggerEffect.IsBlockTriggeringUnicornCards(OwningCard, OwningCard.CardType))
-                    return;
+                return;
 
             if (!OwningCard.CanBeActivatedTriggerEffect(OwningCard.CardType))
                 return;
 
             AEffect triggeredEffect = factoryEffect(OwningCard);
-            if (triggerPredicate(effectWhichTriggerEffect, cardWhichTriggerEffect, OwningCard, gameController) ) {
+            if (triggerPredicate(effectWhichTriggerEffect, cardWhichTriggerEffect, OwningCard, gameController)) {
                 // execute `ChangeTargeting` and `ChangeLocationOfCard` immediately because this event should be used
                 // only on effects which saving unicorns from leaving stable (for example: to discard pile)
                 if (triggerSource == ETriggerSource.ChangeTargeting || triggerSource == ETriggerSource.ChangeLocationOfCard) {
@@ -95,6 +96,21 @@ namespace UnstableUnicornCore {
                     // self destruction of trigger effect
                     gameController.UnsubscribeEventAfterEndOfPublishing(this);
             }
+        }
+
+        /// <summary>
+        /// Deep copy and resetting the owning card
+        /// 
+        /// Actually it is shallow copy but anything didn't need to be deep copied
+        /// </summary>
+        /// <param name="owningCard"></param>
+        /// <returns></returns>
+        public TriggerEffect Clone(Card owningCard) {
+            TriggerEffect newTriggerEffect = (TriggerEffect)MemberwiseClone();
+
+            newTriggerEffect._owningCard = owningCard;
+
+            return newTriggerEffect;
         }
     }
 

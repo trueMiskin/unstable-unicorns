@@ -8,7 +8,7 @@ namespace UnstableUnicornCore {
         /// <summary>
         /// Which card belongs this affect
         /// </summary>
-        public Card OwningCard { get; init; }
+        public Card OwningCard { get; private set; }
 
         /// <summary>
         /// Player who owned this card in time, when this card
@@ -17,7 +17,7 @@ namespace UnstableUnicornCore {
         /// DON'T USE `OwningCard.Player` because when card is spell
         /// than this value will be resetted on null!
         /// </summary>
-        public APlayer OwningPlayer { get; init; }
+        public APlayer OwningPlayer { get; private set; }
 
         /// <summary>
         /// Number card to discard
@@ -158,6 +158,31 @@ namespace UnstableUnicornCore {
                     throw new InvalidOperationException("Selected card is already targeted by another effect");
                 cardSet.Add(card, this);
             }
+        }
+
+        /// <summary>
+        /// Deep copy effect
+        /// 
+        /// Method doesn't reset the <see cref="OwningPlayer"/> and <see cref="TargetOwner"/>
+        /// 
+        /// Effects can have stored inner effect so <paramref name="effectMapper"/> is needed
+        /// </summary>
+        /// <param name="cardMapper"></param>
+        /// <param name="effectMapper"></param>
+        /// <param name="playerMapper"></param>
+        /// <returns></returns>
+        public virtual AEffect Clone(Dictionary<Card, Card> cardMapper,
+                                     Dictionary<AEffect, AEffect> effectMapper,
+                                     Dictionary<APlayer, APlayer> playerMapper) {
+            AEffect newEffect = (AEffect)MemberwiseClone();
+
+            newEffect.OwningCard = cardMapper[newEffect.OwningCard];
+            newEffect.CardTargets = CardTargets.ConvertAll(c => cardMapper[c]);
+
+            newEffect.OwningPlayer = playerMapper[OwningPlayer];
+            newEffect.TargetOwner = TargetOwner == null ? null : playerMapper[TargetOwner];
+
+            return newEffect;
         }
     }
 }

@@ -12,6 +12,7 @@ namespace UnstableUnicornCore
 
     public class GameController : IGameController, IPublisher {
         public EGameState State { get; private set; } = EGameState.NotStarted;
+        private List<Card> _allCards = new();
         public Random Random { get; set; }
         public List<Card> Pile;
         public List<Card> DiscardPile = new();
@@ -50,6 +51,10 @@ namespace UnstableUnicornCore
 
         public GameController(List<Card> pile, List<Card> nursery, List<APlayer> players, int seed = 42) {
             Random = new Random(seed);
+
+            _allCards.AddRange(pile);
+            _allCards.AddRange(nursery);
+            
             Pile = pile.Shuffle(Random);
             Nursery = new List<Card>( nursery );
             CardVisibilityTracker = new(players);
@@ -119,7 +124,7 @@ namespace UnstableUnicornCore
         private bool _beforeTurnStarted = false, _publishedOnBeginningTurn = false, _beginningTurnResolved = false;
         private bool _publishedOnEndTurn = false, _endTurnResolved = false;
         private Card? _card;
-        private APlayer? targetPlayer;
+        private APlayer? _targetPlayer;
         internal void SimulateOneTurn(APlayer playerOnTurn) {
             if (!_beforeTurnStarted) {
                 SkipToEndTurnPhase = false;
@@ -158,16 +163,16 @@ namespace UnstableUnicornCore
                     // before resolving the stack
 
                     if (!_targetPlayerSelected) {
-                        targetPlayer = playerOnTurn.WhereShouldBeCardPlayed(_card);
+                        _targetPlayer = playerOnTurn.WhereShouldBeCardPlayed(_card);
 
-                        if (!_card.CanBePlayed(targetPlayer))
+                        if (!_card.CanBePlayed(_targetPlayer))
                             throw new InvalidOperationException(Card.CardCannotBePlayed);
                         _targetPlayerSelected = true;
 
                         Stack = new List<Card> { _card };
                     }
                     
-                    Debug.Assert(targetPlayer != null);
+                    Debug.Assert(_targetPlayer != null);
                     
                     while (Stack.Count != 0 && !_stackResolved) {
                         Card topCard = Stack[Stack.Count - 1];
@@ -211,7 +216,7 @@ namespace UnstableUnicornCore
                         DebugPrint($"Played {_card.Name}");
 
                         if (!_cardPlayed) {
-                            _card.CardPlayed(this, targetPlayer);
+                            _card.CardPlayed(this, _targetPlayer);
                             
                             _cardPlayed = true;
                         }
@@ -225,7 +230,7 @@ namespace UnstableUnicornCore
                     }
                 }
 
-                _card = null; targetPlayer = null;
+                _card = null; _targetPlayer = null;
                 _cardSelected = _targetPlayerSelected = _stackResolved = false;
                 _cardPlayed = _cardResolved = false;
             }
@@ -505,6 +510,100 @@ namespace UnstableUnicornCore
                 card.MoveCard(this, null, CardLocation.Pile);
             
             Pile.AddRange(listCopy);
+        }
+
+        /// <summary>
+        /// Clone Gamecontroller / game state with player perspective
+        /// 
+        /// If <paramref name="player"/> is null then is copied actual gamecontroller / game state
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="playerMapper">Dictionary which maps all players to new players</param>
+        /// <returns></returns>
+        public GameController Clone(APlayer player, Dictionary<APlayer, APlayer> playerMapper) {
+            GameController newGameController = (GameController) MemberwiseClone();
+
+            Dictionary<TriggerEffect, TriggerEffect> triggerEffectMapper = new();
+            Dictionary<AContinuousEffect, AContinuousEffect> continuousEffectMapper = new();
+            Dictionary<Card, Card> cardMapper = new();
+            foreach (var card in _allCards)
+                cardMapper.Add(card, card.Clone(triggerEffectMapper, continuousEffectMapper, playerMapper));
+
+            Dictionary<AEffect, AEffect> effectMapper = new();
+            foreach (var effect in _actualChainLink)
+                if (!effectMapper.ContainsKey(effect))
+                    effectMapper.Add(effect, effect.Clone(cardMapper, effectMapper, playerMapper));
+            foreach (var effect in _nextChainLink)
+                if (!effectMapper.ContainsKey(effect))
+                    effectMapper.Add(effect, effect.Clone(cardMapper, effectMapper, playerMapper));
+
+            newGameController._allCards = cardMapper.Values.ToList();
+            
+            newGameController.Random = new Random(42);
+
+            // shuffle pile to avoid cheating
+            newGameController.Pile = Pile.ConvertAll(x => cardMapper[x]).Shuffle(newGameController.Random);
+            newGameController.DiscardPile = DiscardPile.ConvertAll(x => cardMapper[x]);
+            newGameController.Nursery = Nursery.ConvertAll(x => cardMapper[x]);
+
+            newGameController.Players = Players.ConvertAll(p => playerMapper[p]);
+            foreach (var (oldP, newP) in playerMapper) {
+                newP.Hand = oldP.Hand.ConvertAll(x => cardMapper[x]);
+                newP.Stable = oldP.Stable.ConvertAll(x => cardMapper[x]);
+                newP.Upgrades = oldP.Upgrades.ConvertAll(x => cardMapper[x]);
+                newP.Downgrades = oldP.Downgrades.ConvertAll(x => cardMapper[x]);
+            }
+
+            newGameController.ContinuousEffects = ContinuousEffects.ConvertAll(x => continuousEffectMapper[x]);
+            newGameController.CardVisibilityTracker = CardVisibilityTracker.Clone(cardMapper, playerMapper);
+
+            newGameController.EventsPool = new();
+            foreach (var (key, value) in EventsPool) {
+                var events = value.ConvertAll(x => triggerEffectMapper[x]);
+
+                newGameController.EventsPool.Add(key, events);
+            }
+            newGameController.triggersToRemove = triggersToRemove.ConvertAll(x => triggerEffectMapper[x]);
+
+            newGameController._actualChainLink = _actualChainLink.ConvertAll(x => effectMapper[x]);
+            newGameController._nextChainLink = _nextChainLink.ConvertAll(x => effectMapper[x]);
+            newGameController.Stack = Stack.ConvertAll(x => cardMapper[x]);
+
+            newGameController.ActualPlayerOnTurn = playerMapper[ActualPlayerOnTurn];
+
+            newGameController.CardsWhichAreTargeted = new();
+            foreach (var (card, effect) in CardsWhichAreTargeted) {
+                newGameController.CardsWhichAreTargeted.Add(cardMapper[card], effectMapper[effect]);
+            }
+
+            newGameController._card = _card == null ? null : cardMapper[_card];
+            newGameController._targetPlayer = _targetPlayer == null ? null : playerMapper[_targetPlayer];
+
+            if (player == null)
+                return newGameController;
+
+            // leave opponents cards in hand which are known and rest of them randomly replace
+            var playerKnowledge = newGameController.CardVisibilityTracker.GetKnownPlayerCardsOfAllPlayers(player);
+            Dictionary<APlayer, int> howManyCardsLost = Players.ToDictionary(x => x, x => 0);
+            
+            foreach (var p in Players) {
+                var knowledgeAboutP = playerKnowledge[p];
+                foreach (var card in p.Hand) {
+                    if (!knowledgeAboutP.Contains(card)) {
+                        howManyCardsLost[p] += 1;
+                        card.MoveCard(newGameController, null, CardLocation.Pile);
+                        newGameController.Pile.Add(card);
+                    }
+                }
+            }
+
+            newGameController.Pile = Pile.Shuffle(newGameController.Random);
+
+            foreach (var (p, num) in howManyCardsLost) {
+                newGameController.PlayerDrawCards(p, num);
+            }
+
+            return newGameController;
         }
     }
 }

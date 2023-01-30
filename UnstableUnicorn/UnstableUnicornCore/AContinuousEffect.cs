@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnstableUnicornCore.BaseSet;
 
 namespace UnstableUnicornCore {
     public abstract class AContinuousEffect {
+        private Card _owningCard;
+        private APlayer _owningPlayer;
+
         /// <summary>
         /// Which card belongs this affect
         /// </summary>
-        public Card OwningCard { get; init; }
+        public Card OwningCard { get => _owningCard; }
 
         /// <summary>
         /// Player who owned this card in time, when this card
@@ -15,15 +19,15 @@ namespace UnstableUnicornCore {
         /// DON'T USE `OwningCard.Player` because when card is spell
         /// than this value will be resetted on null!
         /// </summary>
-        public APlayer OwningPlayer { get; init; }
+        public APlayer OwningPlayer { get => _owningPlayer; }
 
         protected AContinuousEffect(Card owningCard) {
-            OwningCard = owningCard;
+            _owningCard = owningCard;
 
             if (owningCard.Player == null)
                 throw new InvalidOperationException("When constructing continuous effect player who owns card must be setted!");
 
-            OwningPlayer = owningCard.Player;
+            _owningPlayer = owningCard.Player;
         }
 
         // public abstract bool IsEnabledTriggeringEffects(AEffect effect);
@@ -60,6 +64,22 @@ namespace UnstableUnicornCore {
         public virtual bool CanBePlayedInstantCards(APlayer player) => true;
 
         public virtual bool IsCardNeighable(Card card) => true;
-        public virtual ECardType GetCardType(ECardType actualCardType, APlayer playerOwner) => actualCardType; 
+        public virtual ECardType GetCardType(ECardType actualCardType, APlayer playerOwner) => actualCardType;
+
+        /// <summary>
+        /// Deep copy continuous effect
+        /// 
+        /// - resetting owningCard and player
+        /// </summary>
+        /// <param name="newOwningCard"></param>
+        /// <returns></returns>
+        public virtual AContinuousEffect Clone(Card newOwningCard, Dictionary<APlayer, APlayer> playerMapper) {
+            AContinuousEffect newEffect = (AContinuousEffect)MemberwiseClone();
+
+            newEffect._owningCard = newOwningCard;
+            newEffect._owningPlayer = playerMapper[_owningPlayer];
+
+            return newEffect;
+        }
     }
 }

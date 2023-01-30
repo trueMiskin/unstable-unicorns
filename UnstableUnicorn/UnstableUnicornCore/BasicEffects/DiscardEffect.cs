@@ -83,5 +83,14 @@ namespace UnstableUnicornCore.BasicEffects {
 
             return validTargets(gameController, OwningPlayer, true).Count >= _cardCount;
         }
+        
+        public override AEffect Clone(Dictionary<Card, Card> cardMapper,
+                                      Dictionary<AEffect, AEffect> effectMapper,
+                                      Dictionary<APlayer, APlayer> playerMapper) {
+            var newEffect = (DiscardEffect)base.Clone(cardMapper, effectMapper, playerMapper);
+            newEffect.players = players == null ? null : players.ConvertAll(p => playerMapper[p]);
+
+            return newEffect;
+        }
     }
 }
