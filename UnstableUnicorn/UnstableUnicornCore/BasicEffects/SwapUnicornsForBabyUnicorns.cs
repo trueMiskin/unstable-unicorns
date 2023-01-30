@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnstableUnicornCore.BasicContinuousEffects;
 
 namespace UnstableUnicornCore.BasicEffects {
     /// <summary>
-    /// Swap unicorns for baby unicorns, but this effect
+    /// Swap all unicorns for baby unicorns, but this effect
     /// blocking triggering of unicorns effect except baby unicorns
-    /// <see cref="UnicornTriggerEffectsCantBeActivated.IsBlockTriggeringUnicornCards"/>
+    /// <see cref="AEffect.IsBlockTriggeringUnicornCards(Card, ECardType)"/>
     /// 
     /// This effect extends destroy effect, because original cards are in discard pile
     /// </summary>
