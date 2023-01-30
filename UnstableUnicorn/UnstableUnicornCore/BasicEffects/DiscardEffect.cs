@@ -62,13 +62,16 @@ namespace UnstableUnicornCore.BasicEffects {
             return validtargets;
         }
 
+        private int _playerIdx = 0;
         public override void InvokeEffect(GameController gameController) {
             if (players == null)
                 throw new NullReferenceException();
 
             // choosing what should be discarded right before perfoming this action
-            foreach (APlayer player in players)
+            for (; _playerIdx < players.Count; _playerIdx++) {
+                var player = players[_playerIdx];
                 ChooseTargetForPlayer(gameController, player);
+            }
             foreach (var card in CardTargets)
                 card.MoveCard(gameController, TargetOwner, TargetLocation);
         }

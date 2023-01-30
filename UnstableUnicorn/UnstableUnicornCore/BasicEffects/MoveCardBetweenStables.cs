@@ -17,13 +17,18 @@ namespace UnstableUnicornCore.BasicEffects {
 
         private List<Card> GetValidTargets(GameController gameController)
             => RemoveCardsWhichAreTargeted(gameController.GetCardsOnTable().FindAll(whichCardMovePredicate), gameController);
+
+        private bool _cardTargetsSelected = false;
         public override void ChooseTargets(GameController gameController) {
-            var cards = GetValidTargets(gameController);
+            if (!_cardTargetsSelected) {
+                var cards = GetValidTargets(gameController);
 
-            int numberCardsToSelect = Math.Min(_cardCount, cards.Count);
-            CardTargets = OwningPlayer.WhichCardsToMove(numberCardsToSelect, this, cards);
+                int numberCardsToSelect = Math.Min(_cardCount, cards.Count);
+                CardTargets = OwningPlayer.WhichCardsToMove(numberCardsToSelect, this, cards);
 
-            ValidatePlayerSelection(numberCardsToSelect, CardTargets, cards);
+                ValidatePlayerSelection(numberCardsToSelect, CardTargets, cards);
+                _cardTargetsSelected = true;
+            }
 
             List<APlayer> availablePlayers = new List<APlayer>(gameController.Players);
             if (!canOwningPlayerGetCard)

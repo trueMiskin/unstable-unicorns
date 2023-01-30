@@ -30,6 +30,7 @@ namespace UnstableUnicornCore.BasicEffects {
             return RemoveCardsWhichAreTargeted(validtargets, gameController);
         }
 
+        private int _playerIdx = 0;
         public override void ChooseTargets(GameController gameController) {
             List<APlayer> players = _playerTargeting switch {
                 PlayerTargeting.PlayerOwner => new List<APlayer> { OwningPlayer },
@@ -37,8 +38,10 @@ namespace UnstableUnicornCore.BasicEffects {
                 _ => throw new NotImplementedException(),
             };
 
-            foreach (APlayer player in players)
+            for (; _playerIdx < players.Count; _playerIdx++) {
+                APlayer player = players[_playerIdx];
                 ChooseTargetForPlayer(gameController, player);
+            }
         }
 
         private void ChooseTargetForPlayer(GameController gameController, APlayer player) {

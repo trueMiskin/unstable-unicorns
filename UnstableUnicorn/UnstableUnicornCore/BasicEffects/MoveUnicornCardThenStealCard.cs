@@ -20,12 +20,18 @@ namespace UnstableUnicornCore.BasicEffects {
                 gameController
             );
 
+        private bool _cardTargetsSelected = false;
         public override void ChooseTargets(GameController gameController) {
-            var cards = GetValidTargets(gameController);
-            var selectedCards = OwningPlayer.WhichCardsToMove(1, this, cards);
+            if (!_cardTargetsSelected) {
+                var cards = GetValidTargets(gameController);
+                var selectedCards = OwningPlayer.WhichCardsToMove(1, this, cards);
 
-            if (selectedCards.Count != 1 || !cards.Contains(selectedCards[0]))
-                throw new InvalidOperationException("Invalid card selection.");
+                if (selectedCards.Count != 1 || !cards.Contains(selectedCards[0]))
+                    throw new InvalidOperationException("Invalid card selection.");
+                CardTargets = selectedCards;
+
+                _cardTargetsSelected = true;
+            }
 
             var players = OwningPlayer.ChoosePlayers(1, false, this);
 
@@ -34,7 +40,6 @@ namespace UnstableUnicornCore.BasicEffects {
 
             TargetOwner = players[0];
             TargetLocation = CardLocation.OnTable;
-            CardTargets = selectedCards;
 
             thenEffect.CardPredicate = card => card.Player == TargetOwner && ECardTypeUtils.UnicornTarget.Contains(card.CardType);
         }
