@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UnstableUnicornCore {
     public static class ListExtensions {
@@ -55,6 +53,22 @@ namespace UnstableUnicornCore {
                         i = stack.Pop() + 1;
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns a specified number of randomly selected elements from the list
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="availableSelection"></param>
+        /// <param name="rng">Random generator to be used for selection</param>
+        /// <param name="count">Number of selected elements</param>
+        /// <returns></returns>
+        public static List<T> RandomSelection<T>(this List<T> availableSelection, Random rng, int count) {
+            return Enumerable.Range(0, availableSelection.Count)
+                .ToList().Shuffle(rng)
+                .Take(count)
+                .Select(i => availableSelection[i])
+                .ToList();
         }
     }
 }

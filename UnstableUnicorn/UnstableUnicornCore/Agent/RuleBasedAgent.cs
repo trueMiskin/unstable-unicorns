@@ -32,32 +32,25 @@ namespace UnstableUnicornCore.Agent {
             return players;
         }
 
-        protected override Card? PlayInstantOnStackCore(List<Card> stack) {
+        protected override Card? PlayInstantOnStackCore(List<Card> stack, List<Card> availableInstantCards) {
             Debug.Assert(stack.Count > 0);
             Debug.Assert(stack[0].Player != null);
             APlayer player = stack[0].Player;
             Card card = stack[0];
             Tiers tier = GetCardTier(card);
-            var neighCards = from c in Hand
-                                    where c.CardType == ECardType.Instant
-                                    select c;
-
-            // any instant card in hand?
-            if (!neighCards.Any())
-                return null;
 
             if (player == this){
                 // i don't want react on my card
                 if (stack.Count % 2 == 1)
                     return null;
                 if (tier >= Tiers.AA)
-                    return neighCards.First();
+                    return availableInstantCards.First();
             }else{
                 // i want react only opponent card
                 if (stack.Count % 2 == 0)
                     return null;
                 if (tier >= Tiers.AA)
-                    return neighCards.First();
+                    return availableInstantCards.First();
             }
 
             return null;

@@ -147,16 +147,11 @@ namespace UnstableUnicornCore {
             );
         }
 
-        protected override Card? PlayInstantOnStackCore(List<Card> stack) {
-            var instants = Hand.FindAll(card => card.CardType == ECardType.Instant).ToList();
-
-            if (instants.Count == 0)
-                return null;
-
+        protected override Card? PlayInstantOnStackCore(List<Card> stack, List<Card> availableInstantCards) {
             var selection = AskOnCardSelection(
                 String.Format("Play instant card on stack? Current stack: {0}", string.Join(", ", stack.Select(card => card.Name))),
                 1,
-                instants,
+                availableInstantCards,
                 selectionNothingAvailable: true
             );
             if (selection.Count == 0)

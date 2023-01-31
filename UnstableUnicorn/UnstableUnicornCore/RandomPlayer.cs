@@ -17,7 +17,9 @@ namespace UnstableUnicornCore {
             return (from idx in selectedPlayers select playersWhichCanBeSelected[idx]).ToList();
         }
 
-        protected override Card? PlayInstantOnStackCore(List<Card> stack) {
+        protected override Card? PlayInstantOnStackCore(List<Card> stack, List<Card> availableInstantCards) {
+            if (GameController.Random.Next() <= 0.5)
+                return availableInstantCards.RandomSelection(GameController.Random, 1)[0];
             return null;
         }
 

@@ -56,9 +56,15 @@ namespace UnstableUnicornCore {
         /// <param name="stack"></param>
         /// <returns></returns>
         public Card? PlayInstantOnStack(List<Card> stack) {
-            return PlayInstantOnStackCore(stack);
+            var instants = Hand.FindAll(card => card.CardType == ECardType.Instant);
+
+            // any instant card in hand?
+            if (instants.Count == 0)
+                return null;
+
+            return PlayInstantOnStackCore(stack, instants);
         }
-        protected abstract Card? PlayInstantOnStackCore(List<Card> stack);
+        protected abstract Card? PlayInstantOnStackCore(List<Card> stack, List<Card> availableInstantCards);
 
         public List<Card> WhichCardsToSacrifice(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return WhichCardsToSacrificeCore(number, effect, cardsWhichCanBeSelected);

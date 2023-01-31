@@ -101,7 +101,7 @@ namespace UnstableUnicornCoreTest {
             return this;
         }
 
-        protected override Card PlayInstantOnStackCore(List<Card> stack) {
+        protected override Card PlayInstantOnStackCore(List<Card> stack, List<Card> availableInstantCards) {
             return null;
         }
     }
