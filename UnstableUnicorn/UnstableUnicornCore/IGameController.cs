@@ -96,10 +96,10 @@ namespace UnstableUnicornCore
                     PlayerGetBabyUnicornOnTable(player);
                     PlayerDrawCards(player, 5);
                 }
+                State = EGameState.Running;
             }
 
             // game
-            State = EGameState.Running;
             while (State != EGameState.Ended) {
                 DebugPrint($"Player on turn {_playerOnTurn}, actual turn: {_turnNumber}");
                 DebugPrint("------> Start turn <-------");
@@ -156,6 +156,13 @@ namespace UnstableUnicornCore
                 if (!_cardSelected) {
                     _card = playerOnTurn.WhichCardToPlay();
                     _cardSelected = true;
+
+                    if (_card != null) {
+                        if (!playerOnTurn.Hand.Remove(_card))
+                            throw new InvalidOperationException($"Card {_card.Name} not in player hand!");
+                        if (_card.CardType == ECardType.Instant)
+                            throw new InvalidOperationException("Instant card cannot be played this way.");
+                    }
                 }
 
                 if (_card == null) {
@@ -165,11 +172,6 @@ namespace UnstableUnicornCore
                     _cardIdx = int.MaxValue; _cardSelected = false;
                     break;
                 } else {
-                    if (!playerOnTurn.Hand.Remove(_card))
-                        throw new InvalidOperationException($"Card {_card.Name} not in player hand!");
-                    if (_card.CardType == ECardType.Instant)
-                        throw new InvalidOperationException("Instant card cannot be played this way.");
-
                     // choose target player and check if card can be played
                     // before resolving the stack
 
@@ -272,7 +274,7 @@ namespace UnstableUnicornCore
         private int _preCardLeft = 0, _preCardLeftPerEffectIdx = 0, _invokeEffectsIdx = 0;
         private bool _effectsUnregistered = false;
         private void ResolveChainLink() {
-            for (int chainNumber = 1; _nextChainLink.Count > 0; chainNumber++) {
+            for (int chainNumber = 1; _actualChainLink.Count > 0 || _nextChainLink.Count > 0; chainNumber++) {
                 if (_chooseTargetIdx == -1) {
                     DebugPrint($"-- Resolving chain link {chainNumber}");
 
@@ -563,6 +565,7 @@ namespace UnstableUnicornCore
                 newP.Stable = oldP.Stable.ConvertAll(x => cardMapper[x]);
                 newP.Upgrades = oldP.Upgrades.ConvertAll(x => cardMapper[x]);
                 newP.Downgrades = oldP.Downgrades.ConvertAll(x => cardMapper[x]);
+                newP.GameController = newGameController;
             }
 
             newGameController.ContinuousEffects = ContinuousEffects.ConvertAll(x => continuousEffectMapper[x]);
@@ -594,21 +597,23 @@ namespace UnstableUnicornCore
                 return newGameController;
 
             // leave opponents cards in hand which are known and rest of them randomly replace
-            var playerKnowledge = newGameController.CardVisibilityTracker.GetKnownPlayerCardsOfAllPlayers(player);
-            Dictionary<APlayer, int> howManyCardsLost = Players.ToDictionary(x => x, x => 0);
-            
-            foreach (var p in Players) {
+            var playerKnowledge = newGameController.CardVisibilityTracker.GetKnownPlayerCardsOfAllPlayers(playerMapper[player]);
+            Dictionary<APlayer, int> howManyCardsLost = newGameController.Players.ToDictionary(x => x, x => 0);
+
+            foreach (var p in newGameController.Players) {
                 var knowledgeAboutP = playerKnowledge[p];
-                foreach (var card in p.Hand) {
+                for (int idx = 0; idx < p.Hand.Count; idx++) {
+                    var card = p.Hand[idx];
                     if (!knowledgeAboutP.Contains(card)) {
                         howManyCardsLost[p] += 1;
                         card.MoveCard(newGameController, null, CardLocation.Pile);
                         newGameController.Pile.Add(card);
+                        idx--;
                     }
                 }
             }
 
-            newGameController.Pile = Pile.Shuffle(newGameController.Random);
+            newGameController.Pile = newGameController.Pile.Shuffle(newGameController.Random);
 
             foreach (var (p, num) in howManyCardsLost) {
                 newGameController.PlayerDrawCards(p, num);
