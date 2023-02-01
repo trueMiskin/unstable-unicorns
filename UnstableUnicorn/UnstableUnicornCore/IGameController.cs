@@ -12,6 +12,18 @@ namespace UnstableUnicornCore
 
     public class GameController : IGameController, IPublisher {
         public EGameState State { get; internal set; } = EGameState.NotStarted;
+        private List<GameResult>? _gameResults;
+        public List<GameResult> GameResults {
+            get {
+                if (State != EGameState.Ended)
+                    throw new InvalidOperationException("Game doesn't ended!!!");
+                if (_gameResults == null)
+                    throw new InvalidOperationException("Game ended but no game result???");
+
+                return _gameResults;
+            }
+        }
+
         private List<Card> _allCards = new();
         public Random Random { get; set; }
         public List<Card> Pile;
@@ -109,13 +121,12 @@ namespace UnstableUnicornCore
                                 let unicornLen = player.Stable.Sum(card => card.Name.Replace(" ", string.Empty).Length)
                                 select (unicornValue, unicornLen, player)
                                 ;
-            var finalScoreBoard = scoreBoard.ToList()
+            _gameResults = scoreBoard
                 .OrderByDescending(item => item.unicornValue)
-                .OrderByDescending(item => item.unicornLen);
-
-            Console.WriteLine($"Game ended after {_turnNumber} turns");
-            foreach(var f in finalScoreBoard)
-                    Console.WriteLine($"Player id: {Players.IndexOf(f.player)}, value: {f.unicornValue}, len: {f.unicornLen}");
+                .ThenByDescending(item => item.unicornLen)
+                //.OrderByDescending(item => item.unicornLen)
+                .Select(item => new GameResult(Players.IndexOf(item.player), item.player, item.unicornValue, item.unicornLen))
+                .ToList();
         }
 
         private int _cardIdx = 0, _playersIterIdx = 0;
