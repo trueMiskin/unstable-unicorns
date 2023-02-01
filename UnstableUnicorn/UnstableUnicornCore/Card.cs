@@ -438,5 +438,9 @@ namespace UnstableUnicornCore {
 
             return newCard;
         }
+
+        public override string? ToString() {
+            return $"Card [{Name}]";
+        }
     }
 }

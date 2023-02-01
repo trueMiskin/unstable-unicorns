@@ -60,7 +60,8 @@ namespace UnstableUnicornCore
 
         private bool _willTakeExtraTurn = false;
         private int _playerOnTurn = 0, _turnNumber = 1;
-
+        public int TurnNumber => _turnNumber;
+        private int _debugIndentation = 0;
         public GameController(List<Card> pile, List<Card> nursery, List<APlayer> players, int seed = 42) {
             Random = new Random(seed);
 
@@ -86,6 +87,7 @@ namespace UnstableUnicornCore
 
         [Conditional("DEBUG_PRINT")]
         private void DebugPrint(String text) {
+            Console.Write(String.Join("", Enumerable.Repeat("*", _debugIndentation)));
             Console.WriteLine(text);
         }
 
@@ -436,6 +438,7 @@ namespace UnstableUnicornCore
         private void OnEndTurn(APlayer player) {
             // Trigger on end turn effects
             if (!_publishedOnEndTurn) {
+                DebugPrint("Publishing end turn");
                 PublishEvent(ETriggerSource.EndTurn);
 
                 _publishedOnEndTurn = true;
@@ -535,6 +538,7 @@ namespace UnstableUnicornCore
         /// <returns></returns>
         public GameController Clone(APlayer? player, Dictionary<APlayer, APlayer> playerMapper) {
             GameController newGameController = (GameController) MemberwiseClone();
+            newGameController._debugIndentation += 1;
 
             Dictionary<TriggerEffect, TriggerEffect> triggerEffectMapper = new();
             Dictionary<AContinuousEffect, AContinuousEffect> continuousEffectMapper = new();
