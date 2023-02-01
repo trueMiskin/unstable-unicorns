@@ -280,7 +280,6 @@ namespace UnstableUnicornCore
                 if (_chooseTargetIdx == -1) {
                     DebugPrint($"-- Resolving chain link {chainNumber}");
 
-                    CardsWhichAreTargeted = new Dictionary<Card, AEffect>();
                     _actualChainLink = _nextChainLink;
                     _nextChainLink = new List<AEffect>();
 
@@ -369,6 +368,7 @@ namespace UnstableUnicornCore
                 _chooseTargetIdx = -1; _changeTargetingIdx = _changeCardLocation = 0;
                 _preCardLeft = _preCardLeftPerEffectIdx = _invokeEffectsIdx = 0;
                 _effectsUnregistered = false;
+                CardsWhichAreTargeted = new Dictionary<Card, AEffect>();
             }
 
             CheckIfSomeoneWinGame();
