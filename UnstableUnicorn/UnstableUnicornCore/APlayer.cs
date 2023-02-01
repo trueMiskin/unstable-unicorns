@@ -67,21 +67,33 @@ namespace UnstableUnicornCore {
         protected abstract Card? PlayInstantOnStackCore(List<Card> stack, List<Card> availableInstantCards);
 
         public List<Card> WhichCardsToSacrifice(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            if (cardsWhichCanBeSelected.Count == 0)
+                return new List<Card>();
+
             return WhichCardsToSacrificeCore(number, effect, cardsWhichCanBeSelected);
         }
         protected abstract List<Card> WhichCardsToSacrificeCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
         public List<Card> WhichCardsToDestroy(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            if (cardsWhichCanBeSelected.Count == 0)
+                return new List<Card>();
+
             return WhichCardsToDestroyCore(number, effect, cardsWhichCanBeSelected);
         }
         protected abstract List<Card> WhichCardsToDestroyCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
         public List<Card> WhichCardsToReturn(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            if (cardsWhichCanBeSelected.Count == 0)
+                return new List<Card>();
+
             return WhichCardsToReturnCore(number, effect, cardsWhichCanBeSelected);
         }
         protected abstract List<Card> WhichCardsToReturnCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
         public List<Card> WhichCardsToSteal(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            if (cardsWhichCanBeSelected.Count == 0)
+                return new List<Card>();
+
             return WhichCardsToStealCore(number, effect, cardsWhichCanBeSelected);
         }
         protected abstract List<Card> WhichCardsToStealCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
@@ -95,6 +107,9 @@ namespace UnstableUnicornCore {
         /// <param name="cardsWhichCanBeSelected"></param>
         /// <returns></returns>
         public List<Card> WhichCardsToDiscard(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected) {
+            if (cardsWhichCanBeSelected.Count == 0)
+                return new List<Card>();
+
             return WhichCardsToDiscardCore(number, effect, cardsWhichCanBeSelected);
         }
         protected abstract List<Card> WhichCardsToDiscardCore(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected);
