@@ -4,15 +4,16 @@ using System.Collections.Generic;
 namespace UnstableUnicornCore.BasicEffects {
     public class StealEffect : AEffect {
         private List<ECardType> _allowedCardTypes;
-        public Predicate<Card> CardPredicate;
+        public Func<Card, GameController, bool> CardPredicate;
         public StealEffect(Card owningCard, int cardCount, List<ECardType> targetType) : base(owningCard, cardCount) {
             _allowedCardTypes = targetType;
             TargetOwner = owningCard.Player;
             TargetLocation = CardLocation.OnTable;
-            CardPredicate = card => _allowedCardTypes.Contains(card.CardType) && card.Player != OwningPlayer;
+            int owningPlayerIdx = OwningPlayer.PlayerIndex;
+            CardPredicate = (card, controller) => _allowedCardTypes.Contains(card.CardType) && card.Player != controller.Players[owningPlayerIdx];
         }
 
-        public StealEffect(Card owningCard, int cardCount, Predicate<Card> predicate) : base(owningCard, cardCount) {
+        public StealEffect(Card owningCard, int cardCount, Func<Card, GameController, bool> predicate) : base(owningCard, cardCount) {
             _allowedCardTypes = new();
             TargetOwner = owningCard.Player;
             TargetLocation = CardLocation.OnTable;
@@ -22,7 +23,8 @@ namespace UnstableUnicornCore.BasicEffects {
         private List<Card> GetValidTargets(GameController gameController) {
             List<Card> cards = gameController.GetCardsOnTable();
 
-            return RemoveCardsWhichAreTargeted(cards.FindAll(CardPredicate), gameController);
+            Predicate<Card> predicate = (card) => CardPredicate(card, gameController);
+            return RemoveCardsWhichAreTargeted(cards.FindAll(predicate), gameController);
         }
 
         public override void ChooseTargets(GameController gameController) {

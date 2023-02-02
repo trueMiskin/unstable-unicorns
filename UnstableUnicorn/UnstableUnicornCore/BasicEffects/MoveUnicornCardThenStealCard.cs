@@ -9,7 +9,7 @@ namespace UnstableUnicornCore.BasicEffects {
     public class MoveUnicornCardThenStealCard : AEffect {
         StealEffect thenEffect;
         public MoveUnicornCardThenStealCard(Card owningCard, int cardCount) : base(owningCard, cardCount) {
-            thenEffect = new StealEffect(owningCard, 1, _ => false);
+            thenEffect = new StealEffect(owningCard, 1, (_, _) => false);
         }
 
         private List<Card> GetValidTargets(GameController gameController) =>
@@ -41,7 +41,9 @@ namespace UnstableUnicornCore.BasicEffects {
             TargetOwner = players[0];
             TargetLocation = CardLocation.OnTable;
 
-            thenEffect.CardPredicate = card => card.Player == TargetOwner && ECardTypeUtils.UnicornTarget.Contains(card.CardType);
+            int targetOwnerIdx = TargetOwner.PlayerIndex;
+            thenEffect.CardPredicate = (card, controller) 
+                => card.Player == controller.Players[targetOwnerIdx] && ECardTypeUtils.UnicornTarget.Contains(card.CardType);
         }
 
         public override void InvokeEffect(GameController gameController) {

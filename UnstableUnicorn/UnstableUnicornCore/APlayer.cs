@@ -19,6 +19,15 @@ namespace UnstableUnicornCore {
             set => gameController = value;
         }
 
+        private int playerIndex = -1;
+        public int PlayerIndex {
+            get {
+                if (playerIndex == -1)
+                    playerIndex = GameController.Players.IndexOf(this);
+                return playerIndex;
+            }
+        }
+
         /// <summary>
         /// Which card from should be played
         /// 
