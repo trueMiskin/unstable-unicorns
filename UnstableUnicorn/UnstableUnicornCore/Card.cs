@@ -37,6 +37,7 @@ namespace UnstableUnicornCore {
 
     public sealed class Card {
         public delegate AEffect FactoryEffect(Card owningCard);
+        public delegate AEffect FactoryEffectForTriggerEffects(Card owningCard, GameController controller);
         public delegate TriggerEffect TriggerFactoryEffect(Card owningCard);
         public delegate AContinuousEffect ContinuousFactoryEffect(Card owningCard);
 
@@ -54,6 +55,12 @@ namespace UnstableUnicornCore {
         public static string CardOnTablePlayerNull = "Card on table but player is not set!";
         public static string CardCannotBePlayed = "This card cannot be played. Requirements are not met.";
 
+        private int _cardIndex = -1;
+        public int CardIndex(GameController controller) {
+            if (_cardIndex == -1)
+                _cardIndex = controller._allCards.IndexOf(this);
+            return _cardIndex;
+        }
         public string Name { get; init; }
 
         private int _extraUnicornValue;

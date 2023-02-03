@@ -24,7 +24,11 @@ namespace UnstableUnicornCore
             }
         }
 
-        private List<Card> _allCards = new();
+        /// <summary>
+        /// All cards in game - helpful when you want reference specific card but
+        /// without storing specific reference in effect -> be state cloneable
+        /// </summary>
+        internal List<Card> _allCards = new();
         public Random Random { get; set; }
         public List<Card> Pile;
         public List<Card> DiscardPile = new();

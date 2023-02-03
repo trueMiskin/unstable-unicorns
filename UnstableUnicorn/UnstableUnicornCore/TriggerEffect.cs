@@ -29,7 +29,7 @@ namespace UnstableUnicornCore {
         private TriggerPredicate triggerPredicate;
 
         private List<ETriggerSource> triggers;
-        private Card.FactoryEffect factoryEffect;
+        private Card.FactoryEffectForTriggerEffects factoryEffect;
         private bool oneTimeUseEffect;
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace UnstableUnicornCore {
         private Card _owningCard;
 
         public TriggerEffect(Card owningCard, TriggerPredicate triggerPredicate, List<ETriggerSource> triggers,
-                             Card.FactoryEffect factoryEffect, bool oneTimeUseEffect = false, bool executeEffectInActualChainLink = false) {
+                             Card.FactoryEffectForTriggerEffects factoryEffect, bool oneTimeUseEffect = false, bool executeEffectInActualChainLink = false) {
             OwningCard = owningCard;
             this.triggerPredicate = triggerPredicate;
             this.triggers = triggers;
@@ -75,7 +75,7 @@ namespace UnstableUnicornCore {
             if (!OwningCard.CanBeActivatedTriggerEffect(OwningCard.CardType))
                 return;
 
-            AEffect triggeredEffect = factoryEffect(OwningCard);
+            AEffect triggeredEffect = factoryEffect(OwningCard, gameController);
             if (triggerPredicate(effectWhichTriggerEffect, cardWhichTriggerEffect, OwningCard, gameController)) {
                 // execute `ChangeTargeting` and `ChangeLocationOfCard` immediately because this event should be used
                 // only on effects which saving unicorns from leaving stable (for example: to discard pile)

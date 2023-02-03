@@ -40,7 +40,11 @@ namespace UnstableUnicornCore {
         }
 
         public CardTemplate TriggerEffect(TriggerEffect.TriggerPredicate triggerPredicate, List<ETriggerSource> triggers, Card.FactoryEffect factoryEffect) {
-            triggerFactoryEffects.Add((Card owningCard) => new TriggerEffect(owningCard, triggerPredicate, triggers, factoryEffect));
+            triggerFactoryEffects.Add((Card owningCard) => new TriggerEffect(
+                owningCard,
+                triggerPredicate,
+                triggers,
+                (Card card, GameController _) => factoryEffect(card)));
             return this;
         }
 
