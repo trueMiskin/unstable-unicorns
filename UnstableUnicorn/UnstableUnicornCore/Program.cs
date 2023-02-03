@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using UnstableUnicornCore.Agent;
 using UnstableUnicornCore.BaseSet;
 
 namespace UnstableUnicornCore {
@@ -174,22 +175,55 @@ namespace UnstableUnicornCore {
         }
 
         public static void Main(string[] args) {
-            /**/
+            /*
             handleGameInteractively();
 
             // For bot testing
+            // 347516
+            // 2938278
+            // 8704718
             /*/
-            for (int id = 347516; ; id++) {
-                Console.WriteLine($"---------> Starting game {id+1} <---------");
+            //for (int id = 8704718; ; id++) {
+            //    Console.WriteLine($"---------> Starting game {id+1} <---------");
+            //    List<APlayer> players = new();
+            //    for (int x = 0; x < 6; x++) {
+            //        players.Add(new RandomPlayer());
+            //    }
+
+            //    var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id);
+
+            //    game.SimulateGame();
+            //}
+
+            int maxTurns = 100;
+            int ruleBasedAgentWins = 0, mctsAgentWins = 0;
+            for (int id = 0; id < maxTurns; id++) {
+                Console.WriteLine($"---------> Starting game {id + 1} <---------");
                 List<APlayer> players = new();
-                for (int x = 0; x < 6; x++) {
+                for (int x = 0; x < 4; x++) {
                     players.Add(new RandomPlayer());
+                }
+                for (int x = 0; x < 2; x++) {
+                    //players.Add(new RuleBasedAgent());
+                    players.Add(new MctsAgent());
                 }
 
                 var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id);
 
                 game.SimulateGame();
+
+                Console.WriteLine($"Game ended after {game.TurnNumber} turns");
+                foreach (var result in game.GameResults)
+                    Console.WriteLine($"Player id: {result.PlayerId}, value: {result.NumUnicorns}, len: {result.SumUnicornNames}");
+                
+                if (game.GameResults.First().Player is RuleBasedAgent)
+                    ruleBasedAgentWins++;
+                if (game.GameResults.First().Player is MctsAgent)
+                    mctsAgentWins++;
             }
+
+            Console.WriteLine($"RuleBasedAgent won {ruleBasedAgentWins} times from {maxTurns} games.");
+            Console.WriteLine($"MctsAgent won {mctsAgentWins} times from {maxTurns} games.");
             /**/
         }
     }
