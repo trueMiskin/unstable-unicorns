@@ -541,7 +541,7 @@ namespace UnstableUnicornCore
         /// <param name="playerMapper">Dictionary which maps all players to new players</param>
         /// <returns></returns>
         public GameController Clone(APlayer? player, Dictionary<APlayer, APlayer> playerMapper) {
-            GameController newGameController = (GameController) MemberwiseClone();
+            GameController newGameController = (GameController)MemberwiseClone();
             newGameController._debugIndentation += 1;
 
             Dictionary<TriggerEffect, TriggerEffect> triggerEffectMapper = new();
@@ -559,7 +559,7 @@ namespace UnstableUnicornCore
                     effectMapper.Add(effect, effect.Clone(cardMapper, effectMapper, playerMapper));
 
             newGameController._allCards = cardMapper.Values.ToList();
-            
+
             newGameController.Random = new Random(42);
 
             // shuffle pile to avoid cheating
@@ -604,34 +604,11 @@ namespace UnstableUnicornCore
             if (player == null)
                 return newGameController;
 
-            // leave opponents cards in hand which are known and rest of them randomly replace
-            var playerKnowledge = newGameController.CardVisibilityTracker.GetKnownPlayerCardsOfAllPlayers(playerMapper[player]);
-            Dictionary<APlayer, List<Card>> cardsLost = newGameController.Players.ToDictionary(x => x, x => new List<Card>());
-
-            foreach (var p in newGameController.Players) {
-                var knowledgeAboutP = playerKnowledge[p];
-                for (int idx = 0; idx < p.Hand.Count; idx++) {
-                    var card = p.Hand[idx];
-                    if (!knowledgeAboutP.Contains(card)) {
-                        cardsLost[p].Add(card);
-                        card.MoveCard(newGameController, null, CardLocation.Pile);
-                        newGameController.Pile.Add(card);
-                        idx--;
-                    }
-                }
-            }
-
-            newGameController.Pile = newGameController.Pile.Shuffle(newGameController.Random);
-
-            // effects like discard effect can reference unknown cards
-            Dictionary<Card, Card> redirections = new();
-            foreach (var (p, playerLostCards) in cardsLost) {
-                newGameController.PlayerDrawCards(p, playerLostCards.Count);
-
-                for (int i = p.Hand.Count - playerLostCards.Count; i < p.Hand.Count; i++) {
-                    redirections.Add(playerLostCards[i - p.Hand.Count + playerLostCards.Count], p.Hand[i]);
-                }
-            }
+            Dictionary<Card, Card> redirections;
+            if (!newGameController.CardVisibilityTracker.IsPlayerSeePile(playerMapper[player]))
+                ChangeUnknownOppenentsCardWithPile(player, playerMapper, newGameController, out redirections);
+            else
+                ChangeUnknownOppenentsCardBetweenPlayers(player, playerMapper, newGameController, out redirections);
 
             foreach (var effect in newGameController._actualChainLink) {
                 for (int i = 0; i < effect.CardTargets.Count; i++) {
@@ -641,6 +618,83 @@ namespace UnstableUnicornCore
             }
 
             return newGameController;
+
+            static void ChangeUnknownOppenentsCardWithPile(
+                APlayer player,
+                Dictionary<APlayer, APlayer> playerMapper,
+                GameController newGameController,
+                out Dictionary<Card, Card> redirections)
+            {
+                // leave opponents cards in hand which are known and rest of them randomly replace
+                var playerKnowledge = newGameController.CardVisibilityTracker.GetKnownPlayerCardsOfAllPlayers(playerMapper[player]);
+                Dictionary<APlayer, List<Card>> cardsLost = newGameController.Players.ToDictionary(x => x, x => new List<Card>());
+
+                foreach (var p in newGameController.Players) {
+                    var knowledgeAboutP = playerKnowledge[p];
+                    for (int idx = 0; idx < p.Hand.Count; idx++) {
+                        var card = p.Hand[idx];
+                        if (!knowledgeAboutP.Contains(card)) {
+                            cardsLost[p].Add(card);
+                            card.MoveCard(newGameController, null, CardLocation.Pile);
+                            newGameController.Pile.Add(card);
+                            idx--;
+                        }
+                    }
+                }
+
+                newGameController.Pile = newGameController.Pile.Shuffle(newGameController.Random);
+
+                // effects like discard effect can reference unknown cards
+                redirections = new Dictionary<Card, Card>();
+                foreach (var (p, playerLostCards) in cardsLost) {
+                    newGameController.PlayerDrawCards(p, playerLostCards.Count);
+
+                    for (int i = p.Hand.Count - playerLostCards.Count; i < p.Hand.Count; i++) {
+                        redirections.Add(playerLostCards[i - p.Hand.Count + playerLostCards.Count], p.Hand[i]);
+                    }
+                }
+            }
+
+            static void ChangeUnknownOppenentsCardBetweenPlayers(
+                APlayer player,
+                Dictionary<APlayer, APlayer> playerMapper,
+                GameController newGameController,
+                out Dictionary<Card, Card> redirections)
+            {
+                // leave opponents cards in hand which are known and rest of them randomly replace
+                var playerKnowledge = newGameController.CardVisibilityTracker.GetKnownPlayerCardsOfAllPlayers(playerMapper[player]);
+                List<Card> unknownCards = new();
+
+                for (int playerIdx = 0; playerIdx < newGameController.Players.Count; playerIdx++) {
+                    var p = newGameController.Players[playerIdx];
+                    var knowledgeAboutP = playerKnowledge[p];
+                    for (int cardIdx = 0; cardIdx < p.Hand.Count; cardIdx++) {
+                        var card = p.Hand[cardIdx];
+                        if (!knowledgeAboutP.Contains(card)) {
+                            unknownCards.Add(card);
+                        }
+                    }
+                }
+
+                unknownCards = unknownCards.Shuffle(newGameController.Random);
+
+                // effects like discard effect can reference unknown cards
+                redirections = new Dictionary<Card, Card>();
+
+                for (int i = 0; i + 1 < unknownCards.Count; i+=2) {
+                    var card1 = unknownCards[i];
+                    var card2 = unknownCards[i+1];
+
+                    var player1 = card1.Player;
+                    var player2 = card2.Player;
+
+                    card1.MoveCard(newGameController, player2, CardLocation.InHand);
+                    card2.MoveCard(newGameController, player1, CardLocation.InHand);
+
+                    redirections.Add(card1, card2);
+                    redirections.Add(card2, card1);
+                }
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ namespace UnstableUnicornCore {
     public struct CardVisibilityTracker {
 
         Dictionary<APlayer, Dictionary<APlayer, HashSet<Card>>> knownCardsInHand = new();
+        HashSet<APlayer> playersSeePile = new();
 
         public CardVisibilityTracker(List<APlayer> players) {
             foreach (var p in players) {
@@ -114,6 +115,21 @@ namespace UnstableUnicornCore {
             }
         }
 
+        /// <summary>
+        /// Adds information that <paramref name="player"/> currently see pile content
+        /// </summary>
+        /// <param name="player"></param>
+        public void AddPlayerSeePile(APlayer player) => playersSeePile.Add(player);
+
+        /// <summary>
+        /// Removes information that <paramref name="player"/> currently see pile content
+        /// => player now doesn't see pile content
+        /// </summary>
+        /// <param name="player"></param>
+        public void RemovePlayerSeePile(APlayer player) => playersSeePile.Remove(player);
+
+        public bool IsPlayerSeePile(APlayer player) => playersSeePile.Contains(player);
+
         public CardVisibilityTracker Clone(Dictionary<Card, Card> cardMapper, Dictionary<APlayer, APlayer> playerMapper) {
             var newCardVisibility = new CardVisibilityTracker(playerMapper.Values.ToList());
             
@@ -122,6 +138,10 @@ namespace UnstableUnicornCore {
                     newCardVisibility.knownCardsInHand[knowledgeOfPlayerNew][newP] =
                         knownCardsInHand[knowledgeOfPlayerOld][oldP].ToList().ConvertAll(c => cardMapper[c]).ToHashSet();
                 }
+
+            foreach (var player in playersSeePile) {
+                newCardVisibility.playersSeePile.Add(playerMapper[player]);
+            }
 
             return newCardVisibility;
         }

@@ -32,7 +32,14 @@ namespace UnstableUnicornCore.BasicEffects {
             var cards = correctPile.FindAll(searchPredicate);
 
             _cardCount = Math.Min(_cardCount, cards.Count);
+
+            if (whereToSearchCards == CardLocation.Pile)
+                gameController.CardVisibilityTracker.AddPlayerSeePile(OwningPlayer);
+            
             CardTargets = OwningPlayer.WhichCardsToGet(_cardCount, this, cards);
+
+            if (whereToSearchCards == CardLocation.Pile)
+                gameController.CardVisibilityTracker.RemovePlayerSeePile(OwningPlayer);
 
             ValidatePlayerSelection(_cardCount, CardTargets, cards);
 
