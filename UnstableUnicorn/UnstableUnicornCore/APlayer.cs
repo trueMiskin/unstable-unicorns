@@ -140,6 +140,9 @@ namespace UnstableUnicornCore {
         protected abstract List<APlayer> ChoosePlayersCore(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected);
 
         public List<Card> WhichCardsToGet(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
+            if (cardsWhichCanBeSelected.Count == 0)
+                return new List<Card>();
+
             return WhichCardsToGetCore(number, effect, cardsWhichCanBeSelected);
         }
         protected abstract List<Card> WhichCardsToGetCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
