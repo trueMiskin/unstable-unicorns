@@ -325,6 +325,13 @@ namespace UnstableUnicornCore {
             }
         }
 
+        private List<(int turnNumber, CardLocation from, CardLocation to)> log = new();
+
+        [Conditional("DEBUG")]
+        private void AddToLog(GameController gameController, CardLocation newCardLocation) {
+            log.Add((gameController.TurnNumber, Location, newCardLocation));
+        }
+
         /// <summary>
         /// Warning: This function does not add or remove cards to <see cref="CardLocation.Pile"/>
         /// for performence 
@@ -336,7 +343,8 @@ namespace UnstableUnicornCore {
         /// <param name="newCardLocation"></param>
         /// <exception cref="InvalidOperationException"></exception>
         internal void MoveCard(GameController gameController, APlayer? newPlayer, CardLocation newCardLocation) {
-            if( (Location == CardLocation.InHand || Location == CardLocation.OnTable) && Player == null)
+            AddToLog(gameController, newCardLocation);
+            if ((Location == CardLocation.InHand || Location == CardLocation.OnTable) && Player == null)
                 throw new InvalidOperationException($"On location `{Location}` variable Player should be setted!");
 
             // event must be published before moving card for triggers
@@ -442,6 +450,7 @@ namespace UnstableUnicornCore {
             newCard.triggerEffects = (from effect in triggerEffects select triggerEffectMapper[effect]).ToList();
             newCard._oneTimeTriggerEffects = (from effect in _oneTimeTriggerEffects select triggerEffectMapper[effect]).ToList();
             newCard.continuousEffects = (from effect in continuousEffects select continuousEffectMapper[effect]).ToList();
+            newCard.log = new List<(int turnNumber, CardLocation from, CardLocation to)>(log);
 
             return newCard;
         }
