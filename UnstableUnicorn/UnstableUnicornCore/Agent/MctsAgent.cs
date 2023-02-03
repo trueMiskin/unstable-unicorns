@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using static UnstableUnicornCore.Agent.Mcts;
 
 namespace UnstableUnicornCore.Agent {
@@ -104,13 +105,17 @@ namespace UnstableUnicornCore.Agent {
             for (int _ = 0; _ < _limit; _++) {
                 var node = rootNode;
 
+                StringBuilder treePath = new StringBuilder();
                 while (!node.IsLeaf()) {
                     // every x will be non null
+                    Debug.Assert(node._children.Length != 0);
                     node = node._children.MaxBy(x => x!.Ucb())!;
-                    // Console.Write(node._parent._children.ToList().IndexOf(node));
+
+                    Debug.Assert(node._parent != null);
+                    treePath.Append(node._parent._children.ToList().IndexOf(node));
                 }
 
-                MctsNode unexploredChild = node.PickUnexploredChildren();
+                MctsNode unexploredChild = node.PickUnexploredChildren(treePath);
 
                 int[] outcomes = unexploredChild.Playout(_baseStrat);
                 unexploredChild.Backpropagate(outcomes);
@@ -157,14 +162,16 @@ namespace UnstableUnicornCore.Agent {
 
         public bool IsLeaf() => numberCreatedChildren != _children.Length || _isGameEnded;
 
-        public MctsNode PickUnexploredChildren() {
+        public MctsNode PickUnexploredChildren(StringBuilder treePath) {
             if (_isGameEnded)
                 return this;
             
             var idx = _random.Next(_children.Length);
             while (_children[idx] != null) idx = _random.Next(_children.Length);
 
-            // Console.WriteLine(idx);
+            treePath.Append(idx);
+            // Console.WriteLine(sb.ToString());
+
             // Console.WriteLine("One step");
             var (newState, actions, playerIdx) = makeOneAction(_actions[idx], _state);
             // Console.WriteLine("One step ended");
@@ -172,7 +179,7 @@ namespace UnstableUnicornCore.Agent {
             _children[idx] = new MctsNode(newState, this, actions, playerIdx, _random);
             numberCreatedChildren++;
 
-            return _children[idx];
+            return _children[idx]!;
         }
 
         public int[] Playout(BaseStrategyGenerator baseStrat) {
@@ -224,6 +231,11 @@ namespace UnstableUnicornCore.Agent {
         }
 
         /// <summary>
+        /// Useful debug variable
+        /// </summary>
+        public List<object?>? RealActions;
+
+        /// <summary>
         /// Make one defined action from given state
         /// 
         /// This method does not change given state controller
@@ -241,6 +253,7 @@ namespace UnstableUnicornCore.Agent {
             var helperController = controller.Clone(null, playerMapper);
             helperController.SimulateGame();
 
+            RealActions = data.RealActions;
             if (data.StateAfterAction == null) {
                 data.StateAfterAction = copyStateWithNewEmptyAgents(helperController);
                 data.ListOfActionsAfterAction = new();
@@ -263,6 +276,7 @@ namespace UnstableUnicornCore.Agent {
             public int PlayerIdx;
             public IReadOnlyList<int> Action;
             public GameController? StateAfterAction;
+            public List<object?>? RealActions;
             public List<List<int>>? ListOfActionsAfterAction;
             public bool ActionPerformed = false;
 
@@ -287,10 +301,13 @@ namespace UnstableUnicornCore.Agent {
                     return answer;
                 }
                 if (Data.StateAfterAction == null) {
+                    Debug.Assert(availableActions.Count != 0);
                     Data.PlayerIdx = GameController.Players.IndexOf(this);
                     Data.StateAfterAction = copyStateWithNewEmptyAgents(GameController);
+                    Data.RealActions = availableActions.ConvertAll(o => (object?)o).ToList();
                     Data.ListOfActionsAfterAction = Enumerable.Range(0, availableActions.Count).ToList().Subsets(count).ToList();
                     GameController.State = EGameState.Ended;
+                    // Console.WriteLine("Actions {0}:", String.Join(" ", availableActions));
                     // Console.WriteLine("State saved");
                 }
 
