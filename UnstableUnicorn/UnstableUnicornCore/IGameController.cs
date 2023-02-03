@@ -606,14 +606,14 @@ namespace UnstableUnicornCore
 
             // leave opponents cards in hand which are known and rest of them randomly replace
             var playerKnowledge = newGameController.CardVisibilityTracker.GetKnownPlayerCardsOfAllPlayers(playerMapper[player]);
-            Dictionary<APlayer, int> howManyCardsLost = newGameController.Players.ToDictionary(x => x, x => 0);
+            Dictionary<APlayer, List<Card>> cardsLost = newGameController.Players.ToDictionary(x => x, x => new List<Card>());
 
             foreach (var p in newGameController.Players) {
                 var knowledgeAboutP = playerKnowledge[p];
                 for (int idx = 0; idx < p.Hand.Count; idx++) {
                     var card = p.Hand[idx];
                     if (!knowledgeAboutP.Contains(card)) {
-                        howManyCardsLost[p] += 1;
+                        cardsLost[p].Add(card);
                         card.MoveCard(newGameController, null, CardLocation.Pile);
                         newGameController.Pile.Add(card);
                         idx--;
@@ -623,8 +623,21 @@ namespace UnstableUnicornCore
 
             newGameController.Pile = newGameController.Pile.Shuffle(newGameController.Random);
 
-            foreach (var (p, num) in howManyCardsLost) {
-                newGameController.PlayerDrawCards(p, num);
+            // effects like discard effect can reference unknown cards
+            Dictionary<Card, Card> redirections = new();
+            foreach (var (p, playerLostCards) in cardsLost) {
+                newGameController.PlayerDrawCards(p, playerLostCards.Count);
+
+                for (int i = p.Hand.Count - playerLostCards.Count; i < p.Hand.Count; i++) {
+                    redirections.Add(playerLostCards[i - p.Hand.Count + playerLostCards.Count], p.Hand[i]);
+                }
+            }
+
+            foreach (var effect in newGameController._actualChainLink) {
+                for (int i = 0; i < effect.CardTargets.Count; i++) {
+                    if (redirections.TryGetValue(effect.CardTargets[i], out var newTarget))
+                        effect.CardTargets[i] = newTarget;
+                }
             }
 
             return newGameController;
