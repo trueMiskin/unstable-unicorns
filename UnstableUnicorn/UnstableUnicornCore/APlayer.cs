@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace UnstableUnicornCore {
-    
+
     public abstract class APlayer {
-        public List<Card> Hand       = new();
-        public List<Card> Stable     = new();
-        public List<Card> Upgrades   = new();
+        public List<Card> Hand = new();
+        public List<Card> Stable = new();
+        public List<Card> Upgrades = new();
         public List<Card> Downgrades = new();
 
         private GameController? gameController;
@@ -28,6 +29,18 @@ namespace UnstableUnicornCore {
             }
         }
 
+        Stopwatch stopwatch = new Stopwatch();
+        private long thinkTimeInMilis = 0;
+        private int numberCalls = 0;
+        public long AvarageResponse => thinkTimeInMilis / numberCalls;
+
+        private void StopwatchStart() => stopwatch.Restart();
+        private void StopWatchStop() {
+            stopwatch.Stop();
+            thinkTimeInMilis += stopwatch.ElapsedMilliseconds;
+            numberCalls++;
+        }
+
         /// <summary>
         /// Which card from should be played
         /// 
@@ -35,7 +48,12 @@ namespace UnstableUnicornCore {
         /// </summary>
         /// <returns>Card to play or null</returns>
         public Card? WhichCardToPlay() {
-            return WhichCardToPlayCore();
+            StopwatchStart();
+            
+            var ans = WhichCardToPlayCore();
+            
+            StopWatchStop();
+            return ans;
         }
         protected abstract Card? WhichCardToPlayCore();
 
@@ -54,7 +72,12 @@ namespace UnstableUnicornCore {
         /// <param name="card">Card which you decided to play</param>
         /// <returns>Target owner</returns>
         public APlayer WhereShouldBeCardPlayed(Card card) {
-            return WhereShouldBeCardPlayedCore(card);
+            StopwatchStart();
+            
+            var ans = WhereShouldBeCardPlayedCore(card);
+            
+            StopWatchStop();
+            return ans;
         }
         protected abstract APlayer WhereShouldBeCardPlayedCore(Card card);
 
@@ -65,45 +88,75 @@ namespace UnstableUnicornCore {
         /// <param name="stack"></param>
         /// <returns></returns>
         public Card? PlayInstantOnStack(List<Card> stack) {
+            StopwatchStart();
+            
             var instants = Hand.FindAll(card => card.CardType == ECardType.Instant);
 
+            Card? ans;
             // any instant card in hand?
             if (instants.Count == 0)
-                return null;
+                 ans = null;
+            else
+                ans = PlayInstantOnStackCore(stack, instants);
 
-            return PlayInstantOnStackCore(stack, instants);
+            StopWatchStop();
+            return ans;
         }
         protected abstract Card? PlayInstantOnStackCore(List<Card> stack, List<Card> availableInstantCards);
 
         public List<Card> WhichCardsToSacrifice(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
-            if (cardsWhichCanBeSelected.Count == 0)
-                return new List<Card>();
+            StopwatchStart();
 
-            return WhichCardsToSacrificeCore(number, effect, cardsWhichCanBeSelected);
+            List<Card> ans;
+            if (cardsWhichCanBeSelected.Count == 0)
+                ans = new List<Card>();
+            else
+                ans = WhichCardsToSacrificeCore(number, effect, cardsWhichCanBeSelected);
+
+            StopWatchStop();
+            return ans;
         }
         protected abstract List<Card> WhichCardsToSacrificeCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
         public List<Card> WhichCardsToDestroy(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
-            if (cardsWhichCanBeSelected.Count == 0)
-                return new List<Card>();
+            StopwatchStart();
 
-            return WhichCardsToDestroyCore(number, effect, cardsWhichCanBeSelected);
+            List<Card> ans;
+            if (cardsWhichCanBeSelected.Count == 0)
+                ans = new List<Card>();
+            else
+                ans = WhichCardsToDestroyCore(number, effect, cardsWhichCanBeSelected);
+
+            StopWatchStop();
+            return ans;
         }
         protected abstract List<Card> WhichCardsToDestroyCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
         public List<Card> WhichCardsToReturn(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
-            if (cardsWhichCanBeSelected.Count == 0)
-                return new List<Card>();
+            StopwatchStart();
 
-            return WhichCardsToReturnCore(number, effect, cardsWhichCanBeSelected);
+            List<Card> ans;
+            if (cardsWhichCanBeSelected.Count == 0)
+                ans = new List<Card>();
+            else
+                ans = WhichCardsToReturnCore(number, effect, cardsWhichCanBeSelected);
+
+            StopWatchStop();
+            return ans;
         }
         protected abstract List<Card> WhichCardsToReturnCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
         public List<Card> WhichCardsToSteal(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
-            if (cardsWhichCanBeSelected.Count == 0)
-                return new List<Card>();
+            StopwatchStart();
 
-            return WhichCardsToStealCore(number, effect, cardsWhichCanBeSelected);
+            List<Card> ans;
+            if (cardsWhichCanBeSelected.Count == 0)
+                ans = new List<Card>();
+            else
+                ans = WhichCardsToStealCore(number, effect, cardsWhichCanBeSelected);
+
+            StopWatchStop();
+            return ans;
         }
         protected abstract List<Card> WhichCardsToStealCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
@@ -116,15 +169,26 @@ namespace UnstableUnicornCore {
         /// <param name="cardsWhichCanBeSelected"></param>
         /// <returns></returns>
         public List<Card> WhichCardsToDiscard(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected) {
-            if (cardsWhichCanBeSelected.Count == 0)
-                return new List<Card>();
+            StopwatchStart();
 
-            return WhichCardsToDiscardCore(number, effect, cardsWhichCanBeSelected);
+            List<Card> ans;
+            if (cardsWhichCanBeSelected.Count == 0)
+                ans = new List<Card>();
+            else
+                ans = WhichCardsToDiscardCore(number, effect, cardsWhichCanBeSelected);
+
+            StopWatchStop();
+            return ans;
         }
         protected abstract List<Card> WhichCardsToDiscardCore(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected);
 
         public List<Card> WhichCardsToSave(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
-            return WhichCardsToSaveCore(number, effect, cardsWhichCanBeSelected);
+            StopwatchStart();
+
+            var ans = WhichCardsToSaveCore(number, effect, cardsWhichCanBeSelected);
+
+            StopWatchStop();
+            return ans;
         }
         protected abstract List<Card> WhichCardsToSaveCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
@@ -135,30 +199,56 @@ namespace UnstableUnicornCore {
             return ChoosePlayers(number, effect, players);
         }
         public List<APlayer> ChoosePlayers(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected) {
-            return ChoosePlayersCore(number, effect, playersWhichCanBeSelected);
+            StopwatchStart();
+
+            var ans = ChoosePlayersCore(number, effect, playersWhichCanBeSelected);
+
+            StopWatchStop();
+            return ans;
         }
         protected abstract List<APlayer> ChoosePlayersCore(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected);
 
         public List<Card> WhichCardsToGet(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
-            if (cardsWhichCanBeSelected.Count == 0)
-                return new List<Card>();
+            StopwatchStart();
 
-            return WhichCardsToGetCore(number, effect, cardsWhichCanBeSelected);
+            List<Card> ans;
+            if (cardsWhichCanBeSelected.Count == 0)
+                ans = new List<Card>();
+            else
+                ans = WhichCardsToGetCore(number, effect, cardsWhichCanBeSelected);
+
+            StopWatchStop();
+            return ans;
         }
         protected abstract List<Card> WhichCardsToGetCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
         public List<Card> WhichCardsToMove(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
-            return WhichCardsToMoveCore(number, effect, cardsWhichCanBeSelected);
+            StopwatchStart();
+
+            List<Card> ans = WhichCardsToMoveCore(number, effect, cardsWhichCanBeSelected);
+
+            StopWatchStop();
+            return ans;
         }
         protected abstract List<Card> WhichCardsToMoveCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
         public AEffect WhichEffectToSelect(List<AEffect> effectsVariants) {
-            return WhichEffectToSelectCore(effectsVariants);
+            StopwatchStart();
+
+            var ans = WhichEffectToSelectCore(effectsVariants);
+
+            StopWatchStop();
+            return ans;
         }
         protected abstract AEffect WhichEffectToSelectCore(List<AEffect> effectsVariants);
 
         public bool ActivateEffect(AEffect effect) {
-            return ActivateEffectCore(effect);
+            StopwatchStart();
+
+            var ans = ActivateEffectCore(effect);
+
+            StopWatchStop();
+            return ans;
         }
         protected abstract bool ActivateEffectCore(AEffect effect);
     }
