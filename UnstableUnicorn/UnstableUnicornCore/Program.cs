@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using UnstableUnicornCore.Agent;
 using UnstableUnicornCore.BaseSet;
 
@@ -18,7 +19,7 @@ namespace UnstableUnicornCore {
             return output;
         }
 
-        public static GameController CreateGame(List<Deck> decks, List<APlayer> playes, int gameSeed) {
+        public static GameController CreateGame(List<Deck> decks, List<APlayer> playes, int gameSeed, VerbosityLevel verbosity) {
             List<Card> nursery = new();
             List<Card> pile = new();
 
@@ -28,7 +29,7 @@ namespace UnstableUnicornCore {
             }
 
             Console.WriteLine($"Card in set: {nursery.Count + pile.Count}");
-            return new GameController(pile, nursery, playes, gameSeed);
+            return new GameController(pile, nursery, playes, gameSeed, verbosity);
         }
 
         public static List<Deck> findAllDecks() {
@@ -115,7 +116,7 @@ namespace UnstableUnicornCore {
             foreach (Deck _ in decks)
                 selected.Add(false);
 
-            while(true) {
+            while (true) {
                 Console.WriteLine("Select decks which you want to include in the game:");
                 Console.WriteLine("Available decks:");
                 for (int idx = 0; idx < decks.Count; idx++) {
@@ -132,8 +133,7 @@ namespace UnstableUnicornCore {
                             if (selected.Any(value => value))
                                 break;
                             Console.WriteLine("You don't select any deck!!");
-                        }
-                        else
+                        } else
                             selected[selectedNumber - 1] = !selected[selectedNumber - 1];
                     else {
                         Console.WriteLine("Number not in available range!");
@@ -169,7 +169,7 @@ namespace UnstableUnicornCore {
                     players.Add(new RandomPlayer());
             }
 
-            var game = CreateGame(selectDecks(deck), players, seed);
+            var game = CreateGame(selectDecks(deck), players, seed, VerbosityLevel.None);
 
             game.SimulateGame();
         }
@@ -195,6 +195,7 @@ namespace UnstableUnicornCore {
             //    game.SimulateGame();
             //}
 
+            string test_name = "4random_agents+2rule_based";
             int maxTurns = 100;
             int ruleBasedAgentWins = 0, mctsAgentWins = 0;
             for (int id = 0; id < maxTurns; id++) {
@@ -204,22 +205,29 @@ namespace UnstableUnicornCore {
                     players.Add(new RandomPlayer());
                 }
                 for (int x = 0; x < 2; x++) {
-                    //players.Add(new RuleBasedAgent());
-                    players.Add(new MctsAgent());
+                    players.Add(new RuleBasedAgent());
+                    //players.Add(new MctsAgent());
                 }
 
-                var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id);
+                var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id, VerbosityLevel.All);
 
                 game.SimulateGame();
 
                 Console.WriteLine($"Game ended after {game.TurnNumber} turns");
                 foreach (var result in game.GameResults)
                     Console.WriteLine($"Player id: {result.PlayerId}, value: {result.NumUnicorns}, len: {result.SumUnicornNames}");
-                
+
                 if (game.GameResults.First().Player is RuleBasedAgent)
                     ruleBasedAgentWins++;
                 if (game.GameResults.First().Player is MctsAgent)
                     mctsAgentWins++;
+
+                var toLog = new GameRecord(gameSeed: id, game.GameResults, game.GameLog);
+
+                using var stream = File.Create(test_name + "-seed=" + id + ".json");
+                JsonSerializer.Serialize(stream, toLog, new JsonSerializerOptions {
+                    WriteIndented= true,
+                });
             }
 
             Console.WriteLine($"RuleBasedAgent won {ruleBasedAgentWins} times from {maxTurns} games.");

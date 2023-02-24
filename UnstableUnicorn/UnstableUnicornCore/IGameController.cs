@@ -11,6 +11,9 @@ namespace UnstableUnicornCore
     }
 
     public class GameController : IGameController, IPublisher {
+        public List<TurnLog> GameLog = new();
+        private TurnLog? _turnLog;
+        public VerbosityLevel Verbosity { get; private set; }
         public EGameState State { get; internal set; } = EGameState.NotStarted;
         private List<GameResult>? _gameResults;
         public List<GameResult> GameResults {
@@ -66,8 +69,9 @@ namespace UnstableUnicornCore
         private int _playerOnTurn = 0, _turnNumber = 1;
         public int TurnNumber => _turnNumber;
         private int _debugIndentation = 0;
-        public GameController(List<Card> pile, List<Card> nursery, List<APlayer> players, int seed = 42) {
+        public GameController(List<Card> pile, List<Card> nursery, List<APlayer> players, int seed = 42, VerbosityLevel verbosity = VerbosityLevel.None) {
             Random = new Random(seed);
+            Verbosity = verbosity;
 
             _allCards.AddRange(pile);
             _allCards.AddRange(nursery);
@@ -111,6 +115,7 @@ namespace UnstableUnicornCore
                 DebugPrint("------> Start turn <-------");
 
                 APlayer player = Players[_playerOnTurn];
+
                 SimulateOneTurn(player);
 
                 if (_willTakeExtraTurn)
@@ -142,6 +147,8 @@ namespace UnstableUnicornCore
         private bool _publishedOnEndTurn = false, _endTurnResolved = false;
         private Card? _card;
         private APlayer? _targetPlayer;
+
+        private PlayedCardLog? _playedCardLog;
         internal void SimulateOneTurn(APlayer playerOnTurn) {
             if (!_beforeTurnStarted) {
                 SkipToEndTurnPhase = false;
@@ -150,6 +157,9 @@ namespace UnstableUnicornCore
                 ActualPlayerOnTurn = playerOnTurn;
 
                 _beforeTurnStarted = true;
+
+                if (Verbosity == VerbosityLevel.All)
+                    _turnLog = new TurnLog(TurnNumber, playerOnTurn);
             }
 
             OnBeginTurn(playerOnTurn);
@@ -175,6 +185,9 @@ namespace UnstableUnicornCore
                     if(_cardIdx == 0)
                         PlayerDrawCard(playerOnTurn);
 
+                    if (Verbosity == VerbosityLevel.All)
+                        _playedCardLog = new PlayedCardLog(_card);
+
                     _cardIdx = int.MaxValue; _cardSelected = false;
                     break;
                 } else {
@@ -189,6 +202,9 @@ namespace UnstableUnicornCore
                         _targetPlayerSelected = true;
 
                         Stack = new List<Card> { _card };
+
+                        if (Verbosity == VerbosityLevel.All)
+                            _playedCardLog = new PlayedCardLog(_card);
                     }
                     
                     Debug.Assert(_targetPlayer != null);
@@ -216,6 +232,9 @@ namespace UnstableUnicornCore
                         }
 
                         if (instantCards.Count == 0) {
+                            if (Verbosity == VerbosityLevel.All)
+                                _playedCardLog!.StackResolve.Add(new StackLog(StackTypeLog.Resolved, Stack[^1]));
+
                             if (Stack.Count == 1)
                                 break;
 
@@ -225,6 +244,9 @@ namespace UnstableUnicornCore
                             // move card from hand
                             int firstPlayedCard = Random.Next(instantCards.Count);
                             instantCards[firstPlayedCard].PlayedInstant(Stack);
+
+                            if (Verbosity == VerbosityLevel.All)
+                                _playedCardLog!.StackResolve.Add(new StackLog(StackTypeLog.Reacted, Stack[^1]));
                         }
                     }
                     _stackResolved = true;
@@ -241,7 +263,7 @@ namespace UnstableUnicornCore
                         }
 
                         if (!_cardResolved) {
-                            ResolveChainLink();
+                            ResolveChainLink(_playedCardLog?.CardResolve);
                             
                             _cardResolved = true;
                         }
@@ -249,12 +271,18 @@ namespace UnstableUnicornCore
                     }
                 }
 
+                if (Verbosity == VerbosityLevel.All)
+                    _turnLog?.CardPlaying.Add(_playedCardLog!);
+
                 _card = null; _targetPlayer = null;
                 _cardSelected = _targetPlayerSelected = _stackResolved = false;
                 _cardPlayed = _cardResolved = false;
             }
 
             OnEndTurn(playerOnTurn);
+
+            if (Verbosity == VerbosityLevel.All)
+                GameLog.Add(_turnLog!);
 
             if (State == EGameState.Ended) return;
 
@@ -279,7 +307,7 @@ namespace UnstableUnicornCore
         private int _chooseTargetIdx = -1, _changeTargetingIdx = 0, _changeCardLocation = 0;
         private int _preCardLeft = 0, _preCardLeftPerEffectIdx = 0, _invokeEffectsIdx = 0;
         private bool _effectsUnregistered = false;
-        private void ResolveChainLink() {
+        private void ResolveChainLink(List<ChainLinkLog>? linksLog) {
             for (int chainNumber = 1; _actualChainLink.Count > 0 || _nextChainLink.Count > 0; chainNumber++) {
                 if (_chooseTargetIdx == -1) {
                     DebugPrint($"-- Resolving chain link {chainNumber}");
@@ -331,8 +359,16 @@ namespace UnstableUnicornCore
                 _preCardLeft = int.MaxValue;
 
                 if (!_effectsUnregistered) {
-                    foreach (var effect in _actualChainLink)
+                    ChainLinkLog chainLinkLog = new();
+                    foreach (var effect in _actualChainLink) {
                         DebugPrint($"{effect}, owner {effect.OwningCard.Name} and targets {string.Join(",", effect.CardTargets.Select(card => card.Name))}");
+
+                        if (Verbosity == VerbosityLevel.All)
+                            chainLinkLog.Effects.Add(new EffectLog(effect, effect.OwningCard, effect.CardTargets));
+                    }
+
+                    if (Verbosity == VerbosityLevel.All)
+                        linksLog!.Add(chainLinkLog);
 
                     // unregister affects of targets cards then moves
                     // the cards which published card leave and card enter events
@@ -430,7 +466,7 @@ namespace UnstableUnicornCore
 
             if (!_beginningTurnResolved) {
                 // resolve chain link
-                ResolveChainLink();
+                ResolveChainLink(_turnLog?.BeginningOfTurn);
 
                 if (!SkipToEndTurnPhase)
                     PlayerDrawCards(player, 1 + DrawExtraCards);
@@ -450,7 +486,7 @@ namespace UnstableUnicornCore
 
             if (!_endTurnResolved) {
                 // resolve chain link
-                ResolveChainLink();
+                ResolveChainLink(_turnLog?.EndOfTurn);
 
                 _endTurnResolved = true;
             }
@@ -542,6 +578,11 @@ namespace UnstableUnicornCore
         /// <returns></returns>
         public GameController Clone(APlayer? player, Dictionary<APlayer, APlayer> playerMapper) {
             GameController newGameController = (GameController)MemberwiseClone();
+            newGameController.GameLog = new();
+            newGameController._turnLog = null;
+            newGameController._playedCardLog = null;
+            newGameController.Verbosity = VerbosityLevel.None;
+
             newGameController._debugIndentation += 1;
 
             Dictionary<TriggerEffect, TriggerEffect> triggerEffectMapper = new();
