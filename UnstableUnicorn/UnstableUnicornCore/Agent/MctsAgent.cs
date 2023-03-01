@@ -3,14 +3,24 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using static UnstableUnicornCore.Agent.Mcts;
 
 namespace UnstableUnicornCore.Agent {
+    public delegate APlayer BaseStrategyGenerator();
+
     public class MctsAgent : APlayer {
+        int Playouts { get; init; }
+        BaseStrategyGenerator BaseStrategy { get; init; }
+        public MctsAgent(int playouts, BaseStrategyGenerator baseStrategy) {
+            Playouts = playouts;
+            BaseStrategy = baseStrategy;
+        }
         private List<T> chooseAction<T>(List<T> availableActions, int count) {
+            if (availableActions.Count == count)
+                return availableActions;
+
             var actions = availableActions.Subsets(count).ToList();
 
-            var mcts = new Mcts(this, GameController, () => new RuleBasedAgent(), 100);
+            var mcts = new Mcts(this, GameController, BaseStrategy, Playouts);
             var selection = mcts.Action(Enumerable.Range(0, availableActions.Count).ToList().Subsets(count).ToList());
             
             List<T> result = new List<T>();
@@ -81,7 +91,6 @@ namespace UnstableUnicornCore.Agent {
     }
 
     class Mcts {
-        public delegate APlayer BaseStrategyGenerator();
         APlayer _player;
         GameController _controller;
         BaseStrategyGenerator _baseStrat;
