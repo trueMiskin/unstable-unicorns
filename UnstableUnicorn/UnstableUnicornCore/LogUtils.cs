@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace UnstableUnicornCore {
@@ -8,8 +9,8 @@ namespace UnstableUnicornCore {
         public GameSummary Summary { get; init; }
         public List<TurnLog> Detail { get; init; }
 
-        public GameRecord(int gameSeed, List<GameResult> result, List<TurnLog> detail) {
-            Summary = new GameSummary { GameResult = result, GameSeed = gameSeed };
+        public GameRecord(int gameSeed, int gameLength, List<GameResult> result, List<TurnLog> detail) {
+            Summary = new GameSummary { GameResult = result, GameSeed = gameSeed, GameLength = gameLength };
             Detail = detail;
         }
     }
@@ -17,6 +18,7 @@ namespace UnstableUnicornCore {
     public record struct GameSummary {
         public List<GameResult> GameResult { get; init; }
         public int GameSeed { get; init; }
+        public int GameLength { get; init; }
     }
 
     public class TurnLog {
@@ -27,12 +29,29 @@ namespace UnstableUnicornCore {
         public int PlayerIndex => PlayerOnTurn.PlayerIndex;
 
         public List<ChainLinkLog> BeginningOfTurn { get; init; } = new();
+        public List<PlayerCards> PlayerCardsAfterBot { get; init; } = new();
         public List<PlayedCardLog> CardPlaying { get; init; } = new();
         public List<ChainLinkLog> EndOfTurn { get; init; } = new();
 
         public TurnLog(int turn, APlayer playerOnTurn) {
             Turn = turn;
             PlayerOnTurn = playerOnTurn;
+        }
+    }
+
+    public record PlayerCards {
+        public List<string> Hand { get; init; }
+        public List<string> Stable { get; init; }
+        public List<string> Upgrades { get; init; }
+        public List<string> Downgrades { get; init; }
+
+        string CardToName(Card card) => card.Name; 
+
+        public PlayerCards(APlayer player) {
+            Hand = player.Hand.ConvertAll(CardToName);
+            Stable = player.Stable.ConvertAll(CardToName);
+            Upgrades = player.Upgrades.ConvertAll(CardToName);
+            Downgrades = player.Downgrades.ConvertAll(CardToName);
         }
     }
 
@@ -47,7 +66,7 @@ namespace UnstableUnicornCore {
         public EffectLog(AEffect effect, Card owningCard, List<Card> targets) {
             EffectType = effect.GetType().ToString();
             OwningCard = owningCard.Name;
-            Targets = targets.ConvertAll(card => card.Name);
+            Targets = targets.ConvertAll(card => string.Format("{0}; {1}; {2}", card.Name, card.Player?.PlayerIndex, Enum.GetName(typeof(CardLocation), card.Location)));
         }
     }
 

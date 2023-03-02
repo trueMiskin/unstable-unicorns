@@ -195,8 +195,8 @@ namespace UnstableUnicornCore {
             //    game.SimulateGame();
             //}
 
-            string test_name = "4random_agents+2updated_mcts";
-            int maxTurns = 100;
+            string test_name = "test";
+            int maxTurns = 1;
             int ruleBasedAgentWins = 0, mctsAgentWins = 0;
             for (int id = 0; id < maxTurns; id++) {
                 Console.WriteLine($"---------> Starting game {id + 1} <---------");
@@ -222,9 +222,10 @@ namespace UnstableUnicornCore {
                 if (game.GameResults.First().Player is MctsAgent)
                     mctsAgentWins++;
 
-                var toLog = new GameRecord(gameSeed: id, game.GameResults, game.GameLog);
+                var toLog = new GameRecord(gameSeed: id, gameLength: game.TurnNumber, game.GameResults, game.GameLog);
 
                 using var stream = File.Create(test_name + "-seed=" + id + ".json");
+
                 JsonSerializer.Serialize(stream, toLog, new JsonSerializerOptions {
                     WriteIndented= true,
                 });

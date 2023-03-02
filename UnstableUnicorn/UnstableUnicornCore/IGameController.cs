@@ -471,6 +471,10 @@ namespace UnstableUnicornCore
                 if (!SkipToEndTurnPhase)
                     PlayerDrawCards(player, 1 + DrawExtraCards);
                 
+                if (Verbosity == VerbosityLevel.All)
+                    foreach (var p in Players)
+                        _turnLog!.PlayerCardsAfterBot.Add(new PlayerCards(p));
+
                 _beginningTurnResolved = true;
             }
         }
