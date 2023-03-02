@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+    <head>
+        <title>Log viewer</title>
+        <link rel="stylesheet" href="bootstrap.min.css">
+    </head>
+    <style>
+        .row-name { display: block; width: 0px; position: relative; left: -70px; }
+        ul { margin-bottom: 0px; }
+        .row {border-bottom: 1px solid black;}
+    </style>
+    <body>
+        <form id="load-log" class="text-center">
+            <label for="log-file">Choose log:</label>
+            <input type="file" name="log-file" id="log-file" />
+            <button type="submit">Submit</button>
+        </form>
+        <h2 class="text-center">Turn number <span id="turn">XX</span>/<span id="game-length">YY</span>, Player on turn <span id="player-id">ZZ</span></h2>
+        <div id="game-result" class="container">
+            <div id="game-summary" class="row">
+                <div class="row-name">Game Summary</div>
+                <div class="col">
+                    <div>Player <span class="id">ID</span> (<span class="place">X</span>. place)</div>
+                    <div>Player type: <span class="type">TYPE</span></div>
+                    <div>Number unicorns: <span class="num-unicorns">Y</span></div>
+                    <div>Sum unicorns name: <span class="sum-names">Z</span></div>
+                    <div>Average response: <span class="avg-response">QQQ</span> ms</div>
+                </div>
+            </div>
+        </div>
+        <div id="viewer" class="container">
+            <div class="bot row">
+                <div class="row-name">Beginning of turn</div>
+                <div class="col">
+                    <div class="effect">
+                        <span>
+                            <span class="owning-card">Card name</span>;
+                            <span class="effect-name">Effect Name</span>
+                        </span>
+                        <ul class="effect-targets">
+                            <li>Target 1</li>
+                            <li>Target 2</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="players-cards row">
+                <div class="row-name">Player cards</div>
+                <div class="col">
+                    <div class="player">Player number: <span class="player-number">XX</span></div>
+                    <b>Hand</b>
+                    <ul class="hand">
+                        <li>First card</li>
+                        <li>Second card</li>
+                    </ul>
+                    <b>Stable</b>
+                    <ul class="stable"></ul>
+                    <b>Upgrades</b>
+                    <ul class="upgrades"></ul>
+                    <b>Downgrades</b>
+                    <ul class="downgrades"></ul>
+                </div>
+                <div class="col">
+                    <h4>Hand</h4>
+                    <h4>Stable</h4>
+                    <h4>Upgrades</h4>
+                    <h4>Downgrades</h4>
+                </div>
+            </div>
+            <div class="cards-playing row">
+                <div class="row-name">Card playing</div>
+                <div class="col">
+                    <div>Neco</div>
+                    <div style="position: relative; left: 20px;">Neco</div>
+                </div>
+                <div class="col">
+                    <div>Neco</div>
+                    <div style="position: relative; left: 20px;">Neco</div>
+                </div>
+            </div>
+            <div class="end-turn row">
+                <div class="row-name">End turn</div>
+            </div>
+        </div>
+
+        <template id="empty-viewer">
+            <div class="bot row">
+                <div class="row-name">Beginning of turn</div>
+            </div>
+            <div class="players-cards row">
+                <div class="row-name">Player cards</div>
+            </div>
+            <div class="cards-playing row">
+                <div class="row-name">Card playing</div>
+            </div>
+            <div class="end-turn row">
+                <div class="row-name">End turn</div>
+            </div>
+        </template>
+        <template id="effect-template">
+            <div class="effect">
+                <span>
+                    <span class="owning-card">Card name</span>;
+                    <span class="effect-name">Effect Name</span>
+                </span>
+                <ul class="effect-targets">
+                </ul>
+            </div>
+        </template>
+        <template id="player-cards-template">
+            <div class="col">
+                <div class="player">Player number: <span class="player-number">XX</span></div>
+                <b>Hand</b>
+                <ul class="hand">
+                    <li>First card</li>
+                    <li>Second card</li>
+                </ul>
+                <b>Stable</b>
+                <ul class="stable"></ul>
+                <b>Upgrades</b>
+                <ul class="upgrades"></ul>
+                <b>Downgrades</b>
+                <ul class="downgrades"></ul>
+            </div>
+        </template>
+        <template id="player-overview">
+            <div class="col">
+                <div>Player <span class="id">ID</span> (<span class="place">X</span>. place)</div>
+                <div>Player type: <span class="type">TYPE</span></div>
+                <div>Number unicorns: <span class="num-unicorns">Y</span></div>
+                <div>Sum unicorns name: <span class="sum-names">Z</span></div>
+                <div>Average response: <span class="avg-response">QQQ</span> ms</div>
+            </div>
+        </template>
+    </body>
+    <script src="jquery-3.6.3.min.js"></script>
+    <script src="bootstrap.bundle.min.js"></script>
+    <script src="log_viewer.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#load-log').submit(checkForm);
+
+            $( "body" ).keydown(function( event ) {
+                if (event.which == 37 /* left arrow key */ ){
+                    previousTurn();
+                }
+                if (event.which == 39 /* right arrow key */ ){
+                    nextTurn();
+                }
+                if (event.which == 13 /* enter */){
+                    $('#game-result').toggle('slow');
+                }
+            });
+        });
+    </script>
+</html>
