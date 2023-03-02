@@ -18,7 +18,7 @@ namespace UnstableUnicornCore {
         }
 
         protected override Card? PlayInstantOnStackCore(List<Card> stack, List<Card> availableInstantCards) {
-            if (GameController.Random.Next() <= 0.5)
+            if (GameController.Random.NextSingle() <= 0.5)
                 return availableInstantCards.RandomSelection(GameController.Random, 1)[0];
             return null;
         }
