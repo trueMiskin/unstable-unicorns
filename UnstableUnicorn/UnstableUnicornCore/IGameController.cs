@@ -118,6 +118,8 @@ namespace UnstableUnicornCore
 
                 SimulateOneTurn(player);
 
+                if (State == EGameState.Ended) break;
+                
                 if (_willTakeExtraTurn)
                     _willTakeExtraTurn = false;
                 else
@@ -163,9 +165,8 @@ namespace UnstableUnicornCore
             }
 
             OnBeginTurn(playerOnTurn);
-            if (State == EGameState.Ended) return;
 
-            for (; _cardIdx < MaxCardsToPlayInOneTurn; _cardIdx++) {
+            for (; _cardIdx < MaxCardsToPlayInOneTurn && State != EGameState.Ended; _cardIdx++) {
                 if (SkipToEndTurnPhase)
                     break;
 
@@ -185,8 +186,9 @@ namespace UnstableUnicornCore
                     if(_cardIdx == 0)
                         PlayerDrawCard(playerOnTurn);
 
-                    if (Verbosity == VerbosityLevel.All)
+                    if (Verbosity == VerbosityLevel.All) {
                         _playedCardLog = new PlayedCardLog(_card);
+                    }
 
                     _cardIdx = int.MaxValue; _cardSelected = false;
                     break;
@@ -267,7 +269,6 @@ namespace UnstableUnicornCore
                             
                             _cardResolved = true;
                         }
-                        if (State == EGameState.Ended) return;
                     }
                 }
 
@@ -279,7 +280,8 @@ namespace UnstableUnicornCore
                 _cardPlayed = _cardResolved = false;
             }
 
-            OnEndTurn(playerOnTurn);
+            if (State != EGameState.Ended)
+                OnEndTurn(playerOnTurn);
 
             if (Verbosity == VerbosityLevel.All)
                 GameLog.Add(_turnLog!);
@@ -417,7 +419,7 @@ namespace UnstableUnicornCore
         public void CheckIfSomeoneWinGame() {
             foreach (var player in Players) {
                 int value = player.Stable.Sum(card => card.UnicornValue);
-                if (value == 6) {
+                if (value >= 6) {
                     State = EGameState.Ended;
                     return;
                 }
