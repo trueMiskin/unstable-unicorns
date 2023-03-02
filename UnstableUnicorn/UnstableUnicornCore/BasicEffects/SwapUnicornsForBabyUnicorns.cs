@@ -59,7 +59,7 @@ namespace UnstableUnicornCore.BasicEffects {
             }
 
             public void setUp(int cardCount, APlayer targetOwner) {
-                _cardCount = cardCount;
+                CardCount = cardCount;
                 TargetOwner = targetOwner;
             }
 
@@ -69,7 +69,7 @@ namespace UnstableUnicornCore.BasicEffects {
                 if (TargetOwner == null)
                     throw new InvalidOperationException($"{nameof(TargetOwner)} cannot be null");
 
-                gameController.PlayerGetBabyUnicornsOnTable(TargetOwner, _cardCount);
+                gameController.PlayerGetBabyUnicornsOnTable(TargetOwner, CardCount);
             }
 
             public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;

@@ -33,7 +33,7 @@ namespace UnstableUnicornCore.BasicEffects {
         private void ChooseTargetForPlayer(GameController gameController, APlayer player) {
             List<Card> availableSelection = validTargets(gameController, player);
 
-            int numberCardsToSelect = Math.Min(_cardCount, availableSelection.Count);
+            int numberCardsToSelect = Math.Min(CardCount, availableSelection.Count);
 
             var selectedCards = player.WhichCardsToDiscard(numberCardsToSelect, this, availableSelection);
 
@@ -84,7 +84,7 @@ namespace UnstableUnicornCore.BasicEffects {
                 // requirements are always met, if player targeting don't include owner of card
                 return true;
 
-            return validTargets(gameController, OwningPlayer, true).Count >= _cardCount;
+            return validTargets(gameController, OwningPlayer, true).Count >= CardCount;
         }
         
         public override AEffect Clone(Dictionary<Card, Card> cardMapper,

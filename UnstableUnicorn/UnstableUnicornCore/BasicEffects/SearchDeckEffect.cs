@@ -31,17 +31,17 @@ namespace UnstableUnicornCore.BasicEffects {
 
             var cards = correctPile.FindAll(searchPredicate);
 
-            _cardCount = Math.Min(_cardCount, cards.Count);
+            CardCount = Math.Min(CardCount, cards.Count);
 
             if (whereToSearchCards == CardLocation.Pile)
                 gameController.CardVisibilityTracker.AddPlayerSeePile(OwningPlayer);
             
-            CardTargets = OwningPlayer.WhichCardsToGet(_cardCount, this, cards);
+            CardTargets = OwningPlayer.WhichCardsToGet(CardCount, this, cards);
 
             if (whereToSearchCards == CardLocation.Pile)
                 gameController.CardVisibilityTracker.RemovePlayerSeePile(OwningPlayer);
 
-            ValidatePlayerSelection(_cardCount, CardTargets, cards);
+            ValidatePlayerSelection(CardCount, CardTargets, cards);
 
             foreach (var card in CardTargets) {
                 card.MoveCard(gameController, TargetOwner, TargetLocation);

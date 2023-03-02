@@ -47,7 +47,7 @@ namespace UnstableUnicornCore.BasicEffects {
         private void ChooseTargetForPlayer(GameController gameController, APlayer player) {
             List<Card> availableSelection = validTargets(gameController, player);
 
-            int numberCardsToSelect = Math.Min(_cardCount, availableSelection.Count);
+            int numberCardsToSelect = Math.Min(CardCount, availableSelection.Count);
 
             var selectedCards = player.WhichCardsToSacrifice(numberCardsToSelect, this, availableSelection);
 
@@ -64,8 +64,8 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            return validTargets(gameController, OwningPlayer).Count >= _cardCount
-                || _cardCount == Int32.MaxValue /* For sacrifice all */;
+            return validTargets(gameController, OwningPlayer).Count >= CardCount
+                || CardCount == Int32.MaxValue /* For sacrifice all */;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace UnstableUnicornCore.BasicEffects {
                 throw new InvalidOperationException("Players was not selected (was not called `ChooseTargets`).");
 
             foreach (APlayer player in playerList) {
-                int numberCardToSelect = Math.Min(_cardCount, player.Hand.Count);
+                int numberCardToSelect = Math.Min(CardCount, player.Hand.Count);
                 for (int i = 0; i < numberCardToSelect; i++) {
                     int selectedIndex = player.GameController.Random.Next(player.Hand.Count);
                     Card selectedCard = player.Hand[selectedIndex];

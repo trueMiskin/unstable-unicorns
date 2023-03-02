@@ -26,7 +26,7 @@ namespace UnstableUnicornCore.BasicEffects {
         public override void ChooseTargets(GameController gameController) {
             List<Card> availableSelection = validTargets(gameController);
 
-            int numberCardsToSelect = Math.Min(_cardCount, availableSelection.Count);
+            int numberCardsToSelect = Math.Min(CardCount, availableSelection.Count);
             
             // owner choose which card should be destroyed
             var selectedCards = OwningPlayer.WhichCardsToDestroy(numberCardsToSelect, this, availableSelection);
@@ -46,7 +46,7 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            return validTargets(gameController).Count >= _cardCount;
+            return validTargets(gameController).Count >= CardCount;
         }
     }
 }

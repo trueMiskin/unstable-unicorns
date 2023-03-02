@@ -54,7 +54,7 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController)
-            => GetValidTargets(gameController).Count >= _cardCount;
+            => GetValidTargets(gameController).Count >= CardCount;
 
         public override AEffect Clone(Dictionary<Card, Card> cardMapper,
                                       Dictionary<AEffect, AEffect> effectMapper,

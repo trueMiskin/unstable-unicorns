@@ -24,10 +24,10 @@ namespace UnstableUnicornCore.BasicEffects {
             }
 
             Debug.Assert(player != null);
-            _cardCount = Math.Min(_cardCount, player.Hand.Count);
-            CardTargets = OwningPlayer.WhichCardsToGet(_cardCount, this, player.Hand);
+            CardCount = Math.Min(CardCount, player.Hand.Count);
+            CardTargets = OwningPlayer.WhichCardsToGet(CardCount, this, player.Hand);
 
-            ValidatePlayerSelection(_cardCount, CardTargets, player.Hand);
+            ValidatePlayerSelection(CardCount, CardTargets, player.Hand);
         }
 
         public override void InvokeEffect(GameController gameController) {

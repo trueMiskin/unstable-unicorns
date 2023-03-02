@@ -29,14 +29,14 @@ namespace UnstableUnicornCore.BasicEffects {
 
         public override void ChooseTargets(GameController gameController) {
             var stealableCards = GetValidTargets(gameController);
-            if (_cardCount > stealableCards.Count)
-                _cardCount = stealableCards.Count;
+            if (CardCount > stealableCards.Count)
+                CardCount = stealableCards.Count;
 
             // owner choose target cards to steal
-            var selection = OwningPlayer.WhichCardsToSteal(_cardCount, this, stealableCards);
+            var selection = OwningPlayer.WhichCardsToSteal(CardCount, this, stealableCards);
 
 
-            ValidatePlayerSelection(_cardCount, selection, stealableCards);
+            ValidatePlayerSelection(CardCount, selection, stealableCards);
             CheckAndUpdateSelectionInActualLink(new List<Card>(), selection, gameController);
 
             CardTargets.AddRange(selection);
@@ -48,7 +48,7 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) {
-            return GetValidTargets(gameController).Count >= _cardCount;
+            return GetValidTargets(gameController).Count >= CardCount;
         }
     }
 }

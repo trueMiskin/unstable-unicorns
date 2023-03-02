@@ -23,7 +23,7 @@ namespace UnstableUnicornCore.BasicEffects {
             if (!_cardTargetsSelected) {
                 var cards = GetValidTargets(gameController);
 
-                int numberCardsToSelect = Math.Min(_cardCount, cards.Count);
+                int numberCardsToSelect = Math.Min(CardCount, cards.Count);
                 CardTargets = OwningPlayer.WhichCardsToMove(numberCardsToSelect, this, cards);
 
                 ValidatePlayerSelection(numberCardsToSelect, CardTargets, cards);
@@ -55,6 +55,6 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController)
-            => GetValidTargets(gameController).Count >= _cardCount;
+            => GetValidTargets(gameController).Count >= CardCount;
     }
 }

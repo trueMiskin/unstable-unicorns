@@ -12,7 +12,7 @@
         public override void ChooseTargets(GameController gameController) {}
 
         public override void InvokeEffect(GameController gameController) {
-            gameController.DrawExtraCards += _cardCount;
+            gameController.DrawExtraCards += CardCount;
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;

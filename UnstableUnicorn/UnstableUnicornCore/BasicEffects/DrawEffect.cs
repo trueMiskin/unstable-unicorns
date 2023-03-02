@@ -5,7 +5,7 @@
         public override void ChooseTargets(GameController gameController) {}
 
         public override void InvokeEffect(GameController gameController) {
-            for (int i = 0; i < _cardCount; i++)
+            for (int i = 0; i < CardCount; i++)
                 gameController.PlayerDrawCard(OwningPlayer);
         }
 

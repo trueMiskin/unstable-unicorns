@@ -22,7 +22,7 @@ namespace UnstableUnicornCore {
         /// <summary>
         /// Number card to discard
         /// </summary>
-        protected int _cardCount;
+        public int CardCount { get; protected set; }
 
         /// <summary>
         /// Which cards are targets of affect
@@ -54,7 +54,7 @@ namespace UnstableUnicornCore {
                 throw new InvalidOperationException("When constructing effect player who owns card must be setted!");
 
             OwningPlayer = owningCard.Player;
-            _cardCount = cardCount;
+            CardCount = cardCount;
         }
 
         /// <summary>

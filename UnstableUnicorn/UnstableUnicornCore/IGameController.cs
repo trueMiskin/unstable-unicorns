@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using UnstableUnicornCore.BasicEffects;
 
 namespace UnstableUnicornCore
 {
@@ -362,11 +363,24 @@ namespace UnstableUnicornCore
 
                 if (!_effectsUnregistered) {
                     ChainLinkLog chainLinkLog = new();
+
+                    int cardsDrawn = 0;
                     foreach (var effect in _actualChainLink) {
                         DebugPrint($"{effect}, owner {effect.OwningCard.Name} and targets {string.Join(",", effect.CardTargets.Select(card => card.Name))}");
 
-                        if (Verbosity == VerbosityLevel.All)
+                        if (Verbosity == VerbosityLevel.All) {
+                            // can be probably in method `ChooseTargets` in DrawEffects
+                            // but for now it is a hotfix for logging DrawEffect targets
+                            if (effect is DrawEffect)
+                                for (int i = 0; i < effect.CardCount; i++) {
+                                    if (cardsDrawn + 1 >= Pile.Count)
+                                        break;
+
+                                    effect.CardTargets.Add(Pile[Pile.Count - ++cardsDrawn]);
+                                }
+
                             chainLinkLog.Effects.Add(new EffectLog(effect, effect.OwningCard, effect.CardTargets));
+                        }
                     }
 
                     if (Verbosity == VerbosityLevel.All)

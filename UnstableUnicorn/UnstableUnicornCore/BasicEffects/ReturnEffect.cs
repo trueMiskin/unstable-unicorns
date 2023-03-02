@@ -59,7 +59,7 @@ namespace UnstableUnicornCore.BasicEffects {
         private void ChooseTargetForPlayer(GameController gameController, APlayer player, Predicate predicate) {
             var targets = validTargets(gameController, player, predicate);
 
-            int validTargetsToReturn = Math.Min(_cardCount, targets.Count);
+            int validTargetsToReturn = Math.Min(CardCount, targets.Count);
 
             // owner choose which card should be returned
             var cardsToReturn = player.WhichCardsToReturn(validTargetsToReturn, this, targets);
@@ -89,7 +89,7 @@ namespace UnstableUnicornCore.BasicEffects {
                 PlayerTargeting.EachPlayer => validTargets(gameController, OwningPlayer, EachPlayerPredicate),
                 _ => throw new NotImplementedException(),
             };
-            return targets.Count >= _cardCount;
+            return targets.Count >= CardCount;
         }
     }
 }

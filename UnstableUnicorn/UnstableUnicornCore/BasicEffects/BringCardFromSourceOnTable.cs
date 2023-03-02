@@ -24,11 +24,11 @@ namespace UnstableUnicornCore.BasicEffects {
 
             var cards = cardsSource.FindAll(allowedCardsPredicate);
 
-            _cardCount = Math.Min(_cardCount, cards.Count);
+            CardCount = Math.Min(CardCount, cards.Count);
             // maybe a little bit wrong used this method for selection
-            CardTargets = OwningPlayer.WhichCardsToGet(_cardCount, this, cards);
+            CardTargets = OwningPlayer.WhichCardsToGet(CardCount, this, cards);
 
-            ValidatePlayerSelection(_cardCount, CardTargets, cards);
+            ValidatePlayerSelection(CardCount, CardTargets, cards);
         }
 
         public override void InvokeEffect(GameController gameController) {
