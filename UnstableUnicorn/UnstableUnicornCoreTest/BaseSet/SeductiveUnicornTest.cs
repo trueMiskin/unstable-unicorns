@@ -16,6 +16,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             controller.Pile.Add(basicUnicorn);
             Card seductiveUnicorn = new SeductiveUnicorn().GetCardTemplate().CreateCard();
             controller.Pile.Add(seductiveUnicorn);
+            controller._allCards.AddRange(controller.Pile);
 
             controller.PlayerDrawCard(playerOne);
             controller.PlayerDrawCard(playerOne);
@@ -70,6 +71,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             controller.Pile.Add(secondBasicUnicorn);
             Card twoForOne = new TwoForOne().GetCardTemplate().CreateCard();
             controller.Pile.Add(twoForOne);
+            controller._allCards.AddRange(controller.Pile);
 
             controller.PlayerDrawCard(playerOne);
             controller.PlayerDrawCard(playerOne);
@@ -119,6 +121,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             controller.Pile.Add(rhinocorn);
             Card magicalFlyingUnicorn = new MagicalFlyingUnicorn().GetCardTemplate().CreateCard();
             controller.Pile.Add(magicalFlyingUnicorn);
+            controller._allCards.AddRange(controller.Pile);
 
             controller.PlayerDrawCard(playerThree);
             controller.PlayerDrawCard(playerTwo);

@@ -51,6 +51,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             controller.Pile.Add(basicUnicorn);
             Card unicornLasso = new UnicornLasso().GetCardTemplate().CreateCard();
             controller.Pile.Add(unicornLasso);
+            controller._allCards.AddRange(controller.Pile);
 
             controller.PlayerDrawCard(playerOne);
             controller.PlayerDrawCard(playerTwo);

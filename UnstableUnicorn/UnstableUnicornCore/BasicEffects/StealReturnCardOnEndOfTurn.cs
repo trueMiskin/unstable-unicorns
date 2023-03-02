@@ -7,11 +7,12 @@ namespace UnstableUnicornCore.BasicEffects {
 
         public override void InvokeEffect(GameController gameController) {
             foreach (var card in CardTargets) {
-                card.MoveCard(gameController, TargetOwner, TargetLocation);
-
                 Debug.Assert(card.Player != null);
                 var previousOwnerIndex = card.Player.PlayerIndex;
                 int cardIndex = card.CardIndex(gameController);
+
+                card.MoveCard(gameController, TargetOwner, TargetLocation);
+
                 new TriggerEffect(
                     card,
                     (_, _, _, _) => true,

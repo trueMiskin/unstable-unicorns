@@ -10,7 +10,7 @@ namespace UnstableUnicornCoreTest {
                 _resolveChainLink = typeof(GameController).GetMethod("ResolveChainLink", BindingFlags.Instance | BindingFlags.NonPublic);
 
             try {
-                _resolveChainLink.Invoke(gameController, new object[] { });
+                _resolveChainLink.Invoke(gameController, new object[] { null });
             }catch(TargetInvocationException ex) {
                 if (ex.InnerException != null)
                     // re-throw correct exception
