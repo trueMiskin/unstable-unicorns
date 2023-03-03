@@ -195,7 +195,7 @@ namespace UnstableUnicornCore {
             //    game.SimulateGame();
             //}
 
-            string test_name = "test";
+            string test_name = "test4";
             int maxTurns = 1;
             int ruleBasedAgentWins = 0, mctsAgentWins = 0;
             for (int id = 0; id < maxTurns; id++) {
@@ -206,7 +206,8 @@ namespace UnstableUnicornCore {
                 }
                 for (int x = 0; x < 2; x++) {
                     //players.Add(new RuleBasedAgent());
-                    players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
+                    //players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
+                    players.Add(new EvolutionAgent("vahy.txt"));
                 }
 
                 var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id, VerbosityLevel.All);

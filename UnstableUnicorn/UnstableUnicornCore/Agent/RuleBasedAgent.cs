@@ -13,6 +13,11 @@ namespace UnstableUnicornCore.Agent {
     /// https://www.reddit.com/r/UnstableUnicorns/comments/himbmz/my_personal_tier_list_for_the_base_deck_first/
     /// </summary>
     public class RuleBasedAgent : APlayer {
+        protected Dictionary<string, Tiers> _cardStrength;
+        public RuleBasedAgent() {
+            _cardStrength = CardStrength;
+        }
+
         protected override bool ActivateEffectCore(AEffect effect) {
             return true;
         }
@@ -170,7 +175,7 @@ namespace UnstableUnicornCore.Agent {
             return sortedPlayers;
         }
 
-        private static Tiers GetCardTier(Card card, bool allowUnknown = false) {
+        private Tiers GetCardTier(Card card, bool allowUnknown = false) {
             if (_cardStrength.TryGetValue(card.Name, out Tiers tier))
                 return tier;
             
@@ -180,7 +185,7 @@ namespace UnstableUnicornCore.Agent {
             throw new InvalidOperationException("Card is not in the list of known cards.");
         }
 
-        private static readonly Dictionary<string, Tiers> _cardStrength = new Dictionary<string, Tiers>(){
+        protected static readonly Dictionary<string, Tiers> CardStrength = new Dictionary<string, Tiers>(){
             {new BabyNarwhal().GetCardTemplate().CreateCard().Name, Tiers.F},
             {new BabyUnicorn().GetCardTemplate().CreateCard().Name, Tiers.F},
 
