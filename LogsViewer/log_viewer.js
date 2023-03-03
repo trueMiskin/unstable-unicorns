@@ -77,7 +77,7 @@ function showLog(){
 
         var $stackContainer = $("<div>", {"class": "col"});
 
-        $stackContainer.append( $('<div style="color: purple">').text(cardsPlaying[i]['CardToResolve']));
+        $stackContainer.append( $('<div style="color: purple">').text(`${cardsPlaying[i]['CardToResolve']}; ${playerOnTurn} -> ${cardsPlaying[i]['TargetPlayer']}`));
         var depth = 0;
         for (let j = 0; j < stackResolve.length; ++j) {
             var actualCardOnStack = stackResolve[j];

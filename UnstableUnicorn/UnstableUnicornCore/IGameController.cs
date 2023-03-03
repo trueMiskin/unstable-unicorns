@@ -207,7 +207,7 @@ namespace UnstableUnicornCore
                         Stack = new List<Card> { _card };
 
                         if (Verbosity == VerbosityLevel.All)
-                            _playedCardLog = new PlayedCardLog(_card);
+                            _playedCardLog = new PlayedCardLog(_card, _targetPlayer);
                     }
                     
                     Debug.Assert(_targetPlayer != null);

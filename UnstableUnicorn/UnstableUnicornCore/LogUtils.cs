@@ -72,11 +72,17 @@ namespace UnstableUnicornCore {
 
     public record PlayedCardLog {
         public string? CardToResolve { get; init; }
+        public int? TargetPlayer { get; init; }
         public List<StackLog> StackResolve { get; init; } = new();
         public List<ChainLinkLog> CardResolve { get; init; } = new();
 
         public PlayedCardLog(Card? cardToResolve) {
             CardToResolve = cardToResolve?.Name;
+        }
+
+        public PlayedCardLog(Card? cardToResolve, APlayer player) {
+            CardToResolve = cardToResolve?.Name;
+            TargetPlayer = player.PlayerIndex;
         }
     }
 
