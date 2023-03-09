@@ -24,7 +24,7 @@ namespace UnstableUnicornCore.BasicEffects {
             List<Card> validtargets = new();
 
             foreach (Card card in cards)
-                if (_allowedCardTypes.Contains(card.CardType) && card.CanBeSacriced() && card.Player == player)
+                if (_allowedCardTypes.Contains(card.CardType) && card.CanBeSacrificed() && card.Player == player)
                     validtargets.Add(card);
 
             return RemoveCardsWhichAreTargeted(validtargets, gameController);

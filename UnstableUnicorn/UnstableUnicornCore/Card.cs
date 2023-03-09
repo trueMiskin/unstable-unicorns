@@ -129,7 +129,7 @@ namespace UnstableUnicornCore {
                 ret &= effect.IsCardNeighable(this);
             return ret;
         }
-        public bool CanBeSacriced() { return _canBeSacrificed; }
+        public bool CanBeSacrificed() { return _canBeSacrificed; }
         public bool CanBeDestroyed() {
             if (Location != CardLocation.OnTable)
                 throw new InvalidOperationException("Invalid calling method, this card is not on table!");

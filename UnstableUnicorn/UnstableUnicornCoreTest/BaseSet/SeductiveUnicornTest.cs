@@ -43,10 +43,10 @@ namespace UnstableUnicornCoreTest.BaseSet {
 
             Card unicornPoison = new UnicornPoison().GetCardTemplate().CreateCard();
             controller.Pile.Add(unicornPoison);
-            controller.PlayerDrawCard(playerOne);
+            controller.PlayerDrawCard(playerTwo);
 
             // simple player will destroy first unicorn -> Seductive Unicorn
-            controller.PlayCardAndResolveChainLink(unicornPoison, playerOne);
+            controller.PlayCardAndResolveChainLink(unicornPoison, playerTwo);
 
             TestUtils.CheckPlayerPileSizes(playerOne, handSize: 0, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
             TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 0, stableSize: 1, numUpgrades: 0, numDowngrades: 0);

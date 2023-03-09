@@ -14,28 +14,34 @@ namespace UnstableUnicornCoreTest.BaseSet {
             // protection before shuffling
             Card rhinocorn = new Rhinocorn().GetCardTemplate().CreateCard();
             controller.Pile.Add(rhinocorn);
+            Card basicUnicorn = new BasicUnicorn().GetCardTemplate().CreateCard();
+            controller.Pile.Add(basicUnicorn);
 
             controller.PlayerDrawCard(playerOne);
+            controller.PlayerDrawCard(playerTwo);
 
             TestUtils.CheckPlayerPileSizes(playerOne, handSize: 1, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
-            TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 0, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
-            Assert.Equal(playerOne.Hand[0], rhinocorn);
+            TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 1, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
+            Assert.Equal(playerOne.Hand[0], basicUnicorn);
+            Assert.Equal(playerTwo.Hand[0], rhinocorn);
             Assert.Empty(controller.Pile);
             Assert.Empty(controller.DiscardPile);
 
-            controller.PlayCardAndResolveChainLink(rhinocorn, playerOne);
+            controller.PlayCardAndResolveChainLink(basicUnicorn, playerOne);
+            controller.PlayCardAndResolveChainLink(rhinocorn, playerTwo);
 
             TestUtils.CheckPlayerPileSizes(playerOne, handSize: 0, stableSize: 1, numUpgrades: 0, numDowngrades: 0);
-            TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 0, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
+            TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 0, stableSize: 1, numUpgrades: 0, numDowngrades: 0);
 
+            controller.ActualPlayerOnTurn = playerTwo;
             controller.PublishEvent(ETriggerSource.BeginningTurn);
             Assert.Single(controller.NextChainLink);
             controller.ResolveChainLink();
             Assert.True(controller.SkipToEndTurnPhase);
 
-            // rhinocorn executed himself -> only one valid target
+            // rhinocorn executed basic unicorn
             TestUtils.CheckPlayerPileSizes(playerOne, handSize: 0, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
-            TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 0, stableSize: 0, numUpgrades: 0, numDowngrades: 0);
+            TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 0, stableSize: 1, numUpgrades: 0, numDowngrades: 0);
         }
     }
 }
