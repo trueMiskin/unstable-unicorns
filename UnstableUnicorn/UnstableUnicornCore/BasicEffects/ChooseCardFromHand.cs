@@ -20,12 +20,22 @@ namespace UnstableUnicornCore.BasicEffects {
                     throw new InvalidOperationException("Selected wrong number of players or player select itself which is disallowed");
 
                 player = players[0];
+
+                Debug.Assert(TargetOwner != null);
+                foreach (var card in player.Hand)
+                    gameController.CardVisibilityTracker.AddSeenCardToPlayerKnowledge(
+                        TargetOwner,
+                        player,
+                        card
+                    );
+
                 _playerSelected = true;
             }
 
             Debug.Assert(player != null);
             CardCount = Math.Min(CardCount, player.Hand.Count);
-            CardTargets = OwningPlayer.WhichCardsToGet(CardCount, this, player.Hand);
+            // must copy list because it is modified by invoking the effect
+            CardTargets = OwningPlayer.WhichCardsToGet(CardCount, this, new List<Card>(player.Hand));
 
             ValidatePlayerSelection(CardCount, CardTargets, player.Hand);
         }
