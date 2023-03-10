@@ -14,6 +14,7 @@ namespace UnstableUnicornCore.Agent {
             var cardStrength = EvolutionAgent.GetCardStrength(weights);
 
             double fitness = 0;
+            int gameSeedShift = 0;
             Console.WriteLine("Fitness evaluate started");
             for (int id = 0; id < 10; id++) {
                 List<APlayer> players = new();
@@ -26,8 +27,15 @@ namespace UnstableUnicornCore.Agent {
                 players.Add(new MctsAgent(200, () => new EvolutionAgent(cardStrength)));
 
                 Stopwatch stopWatch = Stopwatch.StartNew();
-                var game = Program.CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id, VerbosityLevel.None);
-                game.SimulateGame();
+                var game = Program.CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id + gameSeedShift, VerbosityLevel.None);
+                try {
+                    game.SimulateGame();
+                } catch (Exception e) {
+                    // when game crashes, we print the error and try again with a different seed
+                    Console.Error.WriteLine(e);
+                    id--; gameSeedShift++;
+                    continue;
+                }
                 stopWatch.Stop();
 
                 Console.WriteLine("Evaluate {0} ms", stopWatch.ElapsedMilliseconds);
