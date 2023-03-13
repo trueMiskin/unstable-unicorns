@@ -80,8 +80,9 @@ namespace UnstableUnicornCore.Agent {
                 var gene1 = (int)parent1.GetGene(i).Value;
                 var gene2 = (int)parent2.GetGene(i).Value;
 
-                child1.ReplaceGene(i, new Gene((int)(alpha * gene1 + (1 - alpha) * gene2)));
-                child2.ReplaceGene(i, new Gene((int)((1 - alpha) * gene1 + alpha * gene2)));
+                int newGene = (int)(alpha * gene1 + (1 - alpha) * gene2);
+                child1.ReplaceGene(i, new Gene(newGene));
+                child2.ReplaceGene(i, new Gene(gene1 + gene2 - newGene));
             }
 
             return new List<IChromosome> { child1, child2 };
@@ -107,7 +108,8 @@ namespace UnstableUnicornCore.Agent {
                 {
                     semaphore.WaitOne();
 
-                    threads[i] = new Thread(() => { Tasks[i](); semaphore.Release();});
+                    int index = i;
+                    threads[i] = new Thread(() => { Tasks[index](); semaphore.Release();});
                     threads[i].Start();
                 }
 
@@ -169,16 +171,18 @@ namespace UnstableUnicornCore.Agent {
             var executor = new ThreadExecutor(maxThreads: 8);
             ga.TaskExecutor = executor;
 
-            var stats = new StreamWriter($"stats-{file}");
+            var stats = new StreamWriter($"eva_logs/stats-{file}");
             ga.GenerationRan += delegate {
-                string statText = string.Format("Generation {0}, best fitness {1}, avg. fitness {2}, max fitness {3}",
+                string statText = string.Format("Generation {0}, best fitness {1}, min {2}, avg. {3}, max {4} fitness",
                     ga.GenerationsNumber,
                     ga.BestChromosome.Fitness,
+                    ga.Population.CurrentGeneration.Chromosomes.Min(c => c.Fitness),
                     ga.Population.CurrentGeneration.Chromosomes.Average(c => c.Fitness),
                     ga.Population.CurrentGeneration.Chromosomes.Max(c => c.Fitness)
                 );
                 Console.WriteLine(statText);
                 stats.WriteLine(statText);
+                stats.Flush();
             };
 
             ga.Termination = new GenerationNumberTermination(10);
@@ -189,13 +193,13 @@ namespace UnstableUnicornCore.Agent {
             Console.WriteLine("Best solution found has {0} fitness.", ga.BestChromosome.Fitness);
             var weights = ga.BestChromosome.GetGenes().ToList().ConvertAll(g => (int)g.Value);
             var values = string.Join(';', weights);
-            Console.WriteLine("Values: {}", values);
+            Console.WriteLine("Values: {0}", values);
 
             stats.Close();
-            using (var writer = new StreamWriter(file))
+            using (var writer = new StreamWriter($"eva_logs/{file}"))
                 writer.WriteLine(values);
 
-            using (var writer = new StreamWriter($"last-pop-{file}"))
+            using (var writer = new StreamWriter($"eva_logs/last-pop-{file}"))
                 foreach (var individual in ga.Population.CurrentGeneration.Chromosomes)
                     writer.WriteLine(string.Join(';', individual.GetGenes().ToList().ConvertAll(g => (int)g.Value)));
         }
