@@ -9,6 +9,20 @@ using UnstableUnicornCore.BaseSet;
 
 namespace UnstableUnicornCore.Agent {
     public class MyProblemFitness : IFitness {
+        /// <summary>
+        /// Delegate should create 5 players and evolution agent based on cardStrength
+        /// </summary>
+        /// <param name="cardStrength"></param>
+        /// <returns>The all players and the evolution agent instance based on cardStrength</returns>
+        public delegate (List<APlayer>, EvolutionAgent) CreatePlayers(Dictionary<string, Tiers> cardStrength);
+
+        CreatePlayers createPlayers;
+
+        public MyProblemFitness(CreatePlayers createPlayers)
+        {
+            this.createPlayers = createPlayers;
+        }
+
         public double Evaluate(IChromosome chromosome) {
             List<Tiers> weights = chromosome.GetGenes().ToList().ConvertAll(g => (Tiers)(int)g.Value);
             var cardStrength = EvolutionAgent.GetCardStrength(weights);
@@ -17,14 +31,7 @@ namespace UnstableUnicornCore.Agent {
             int gameSeedShift = 0;
             Console.WriteLine("Fitness evaluate started");
             for (int id = 0; id < 10; id++) {
-                List<APlayer> players = new();
-                players.Add(new RandomPlayer());
-                players.Add(new RuleBasedAgent());
-                players.Add(new MctsAgent(200, () => new RandomPlayer()));
-                players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
-                var evaPlayer = new EvolutionAgent(cardStrength);
-                players.Add(evaPlayer);
-                players.Add(new MctsAgent(200, () => new EvolutionAgent(cardStrength)));
+                (List<APlayer> players, var evaPlayer) = createPlayers(cardStrength);
 
                 Stopwatch stopWatch = Stopwatch.StartNew();
                 var game = Program.CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id + gameSeedShift, VerbosityLevel.None);
@@ -131,7 +138,7 @@ namespace UnstableUnicornCore.Agent {
 
         public EvolutionAgent(string file) {
             if (!File.Exists(file)) {
-                runEvolution(file);
+                RunEvolution(file);
             }
             loadBestIndividual(file);
         }
@@ -158,12 +165,26 @@ namespace UnstableUnicornCore.Agent {
             return cardStrength;
         }
 
-        private void runEvolution(string file) {
+        public static void RunEvolution(string file) {
+            RunEvolution(file, (cardStrength) => {
+                List<APlayer> players = new();
+                players.Add(new RandomPlayer());
+                players.Add(new RuleBasedAgent());
+                players.Add(new MctsAgent(200, () => new RandomPlayer()));
+                players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
+                var evaPlayer = new EvolutionAgent(cardStrength);
+                players.Add(evaPlayer);
+                players.Add(new MctsAgent(200, () => new EvolutionAgent(cardStrength)));
+                return (players, evaPlayer);
+            });
+        }
+
+        public static void RunEvolution(string file, MyProblemFitness.CreatePlayers createPlayers) {
             var selection = new TournamentSelection();
 
             var crossover = new ArithmeticCrossover();
             var mutation = new UniformMutation(allGenesMutable: true);
-            var fitness = new MyProblemFitness();
+            var fitness = new MyProblemFitness(createPlayers);
             var chromosome = new MyProblemChromosome(CardStrength.Keys.Count);
             var population = new Population(24, 24, chromosome);
 

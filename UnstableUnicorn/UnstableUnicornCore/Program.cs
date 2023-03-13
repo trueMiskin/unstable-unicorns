@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -195,8 +196,38 @@ namespace UnstableUnicornCore {
             //    game.SimulateGame();
             //}
 
-            string test_name = "test4";
-            int maxTurns = 1;
+            if (args.Length == 2) {
+                MyProblemFitness.CreatePlayers createPlayers;
+                if(args[0] == "mcts_random") {
+                    createPlayers = (cardStrength) => {
+                        List<APlayer> players = new();
+                        for (int x = 0; x < 5; x++) {
+                            players.Add(new MctsAgent(200, () => new RandomPlayer()));
+                        }
+                        var evolutionAgent = new EvolutionAgent(cardStrength);
+                        players.Add(evolutionAgent);
+                        return (players, evolutionAgent);
+                    };
+                }else if (args[0] == "mcts_rule_based"){
+                    createPlayers = (cardStrength) => {
+                        List<APlayer> players = new();
+                        for (int x = 0; x < 5; x++) {
+                            players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
+                        }
+                        var evolutionAgent = new EvolutionAgent(cardStrength);
+                        players.Add(evolutionAgent);
+                        return (players, evolutionAgent);
+                    };
+                }else {
+                    System.Console.WriteLine("Unknown parameter: " + args[0]);
+                    return;
+                }
+                EvolutionAgent.RunEvolution($"{args[0]}-{args[1]}", createPlayers);
+                return;
+            }
+
+            string test_name = "eva_1";
+            int maxTurns = 100000;
             int ruleBasedAgentWins = 0, mctsAgentWins = 0;
             for (int id = 0; id < maxTurns; id++) {
                 Console.WriteLine($"---------> Starting game {id + 1} <---------");
@@ -205,14 +236,17 @@ namespace UnstableUnicornCore {
                     players.Add(new RandomPlayer());
                 }
                 for (int x = 0; x < 2; x++) {
-                    //players.Add(new RuleBasedAgent());
+                    // players.Add(new RuleBasedAgent());
                     //players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
-                    players.Add(new EvolutionAgent("vahy.txt"));
+                    players.Add(new EvolutionAgent("arithmetic-xover.txt"));
                 }
 
+                Stopwatch stopWatch = Stopwatch.StartNew();
                 var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id, VerbosityLevel.All);
 
                 game.SimulateGame();
+                stopWatch.Stop();
+                Console.WriteLine($"Game ended after {stopWatch.ElapsedMilliseconds} ms");
 
                 Console.WriteLine($"Game ended after {game.TurnNumber} turns");
                 foreach (var result in game.GameResults)
