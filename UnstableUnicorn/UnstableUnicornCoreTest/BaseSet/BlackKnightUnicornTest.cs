@@ -8,7 +8,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestBlackKnightUnicornShouldNotBeActivated() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card unicornPoison = new UnicornPoison().GetCardTemplate().CreateCard();
@@ -44,7 +44,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestActivateableTestWithValidTarget() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card unicornPoison = new UnicornPoison().GetCardTemplate().CreateCard();
@@ -80,7 +80,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestInteractionWithTwoForOne() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card secondBasicUnicorn = new BasicUnicorn().GetCardTemplate().CreateCard();

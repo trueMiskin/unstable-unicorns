@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnstableUnicornCore;
 using UnstableUnicornCore.BaseSet;
 using Xunit;
@@ -9,7 +8,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestCardEnterStableTrigger() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card basicUnicorn = new BasicUnicorn().GetCardTemplate().CreateCard();
@@ -39,7 +38,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestCardLeaveStableTrigger() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card unicornPoison = new UnicornPoison().GetCardTemplate().CreateCard();
@@ -79,7 +78,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestInteractionWithStealAndReturn() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card barbedWire = new BarbedWire().GetCardTemplate().CreateCard();
@@ -135,7 +134,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestCardEnterToDifferentStable() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card basicUnicorn = new BasicUnicorn().GetCardTemplate().CreateCard();

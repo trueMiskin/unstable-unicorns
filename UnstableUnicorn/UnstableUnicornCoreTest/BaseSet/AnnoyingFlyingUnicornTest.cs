@@ -8,7 +8,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestActivateableTestNoValidTarget() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card annoyingUnicorn = new AnnoyingFlyingUnicorn().GetCardTemplate().CreateCard();
@@ -33,7 +33,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestActivateableTestWithValidTarget() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card basicUnicorn = new BasicUnicorn().GetCardTemplate().CreateCard();
@@ -64,7 +64,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestReturningCardAfterDestroying() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card unicornPoison = new UnicornPoison().GetCardTemplate().CreateCard();
@@ -99,7 +99,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestReturningCardAfterDestroyingWithCardVisibility() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new(), playerThree = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree }, shufflePlayers: false);
 
             // protection before shuffling
             Card unicornPoison = new UnicornPoison().GetCardTemplate().CreateCard();

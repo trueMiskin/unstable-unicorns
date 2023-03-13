@@ -9,7 +9,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestMovingCardToActivePlayerStable() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card puppicorn = new Puppicorn().GetCardTemplate().CreateCard();
@@ -52,7 +52,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestCantBeSacrificed() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card twoForOne = new TwoForOne().GetCardTemplate().CreateCard();

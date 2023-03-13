@@ -12,7 +12,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             SimplePlayerMockUp playerOne = new(), playerTwo = new(), playerThree = new();
             playerOne.ChooseMyself = selectMyself;
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree }, shufflePlayers: false);
 
             // protection before shuffling
             Card secondBasicUnicorn = new BasicUnicorn().GetCardTemplate().CreateCard();

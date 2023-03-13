@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnstableUnicornCore;
 using UnstableUnicornCore.BaseSet;
 using Xunit;
@@ -11,7 +10,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestDontEffectingSpells() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card basicUnicorn = new BasicUnicorn().GetCardTemplate().CreateCard();
@@ -48,7 +47,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestUnicornsAreEffectedByCard() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card annoyingFlyingUnicorn = new AnnoyingFlyingUnicorn().GetCardTemplate().CreateCard();

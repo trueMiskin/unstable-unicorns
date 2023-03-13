@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnstableUnicornCore;
 using UnstableUnicornCore.BaseSet;
 using Xunit;
@@ -14,7 +10,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestPullOpponentCardEffect() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
             BasicUnicorn basicUnicornTemplate = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card basicUnicorn = basicUnicornTemplate.GetCardTemplate().CreateCard();
@@ -38,7 +34,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestCardVisibilityAfterPullEffect() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new(), playerThree = new();
             BasicUnicorn basicUnicornTemplate = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree }, shufflePlayers: false);
 
             // protection before shuffling
             Card basicUnicorn = basicUnicornTemplate.GetCardTemplate().CreateCard();

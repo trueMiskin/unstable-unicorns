@@ -10,7 +10,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestUnicornPoison_TestDestroyEffect() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
             BasicUnicorn basicUnicornTemplate = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card basicUnicorn = basicUnicornTemplate.GetCardTemplate().CreateCard();
@@ -38,7 +38,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestFunctionalityBothCardsNoValidTarget() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
             BasicUnicorn basicUnicornTemplate = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card basicUnicorn = basicUnicornTemplate.GetCardTemplate().CreateCard();
@@ -87,7 +87,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             SimplePlayerMockUp playerOne = new(), playerTwo = new(), playerThree = new();
             GameController controller;
             Card basicUnicorn, rainbowAura, basicUnicornSecond, unicornPoison;
-            controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree });
+            controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree }, shufflePlayers: false);
 
             BasicUnicorn basicUnicornTemplate = new();
             // protection before shuffling

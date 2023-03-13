@@ -10,7 +10,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
             playerTwo.WhichEffectShouldBeSelected = 0; // destroy a upgrade
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card chainsawUnicorn = new ChainsawUnicorn().GetCardTemplate().CreateCard();
@@ -46,7 +46,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             // normally sacrifice downgrade is second effects but requirements for first effect is not met
             playerTwo.WhichEffectShouldBeSelected = 0;
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card chainsawUnicorn = new ChainsawUnicorn().GetCardTemplate().CreateCard();

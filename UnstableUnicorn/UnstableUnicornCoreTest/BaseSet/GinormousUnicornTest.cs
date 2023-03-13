@@ -10,7 +10,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestUnicornValue(CardTemplateSource cardTemplateSource, int expectedUnicornValue) {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card card = cardTemplateSource.GetCardTemplate().CreateCard();

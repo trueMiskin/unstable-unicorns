@@ -9,7 +9,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestWithoutValidEffectToDestroy() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card sharkWithAHorn = new SharkWithAHorn().GetCardTemplate().CreateCard();
@@ -35,7 +35,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestWithValidEffectToDestroy() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card basicUnicorn = new BasicUnicorn().GetCardTemplate().CreateCard();

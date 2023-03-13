@@ -8,7 +8,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestRequirementsToPlay() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card unicornSwap = new UnicornSwap().GetCardTemplate().CreateCard();
@@ -25,7 +25,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestPlayedOnEmptyBoad() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card basicUnicorn = new BasicUnicorn().GetCardTemplate().CreateCard();

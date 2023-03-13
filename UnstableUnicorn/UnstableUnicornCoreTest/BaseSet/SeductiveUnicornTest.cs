@@ -9,7 +9,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestReturnEffectAfterLeave() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card basicUnicorn = new BasicUnicorn().GetCardTemplate().CreateCard();
@@ -59,7 +59,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestSeductiveUnicornAndStealedUnicornDestroyedInSameChainLink() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card seductiveUnicorn = new SeductiveUnicorn().GetCardTemplate().CreateCard();
@@ -109,7 +109,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestUnicornLassoAndRhinocorn() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new(), playerThree = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree }, shufflePlayers: false);
 
             // protection before shuffling
             Card seductiveUnicorn = new SeductiveUnicorn().GetCardTemplate().CreateCard();

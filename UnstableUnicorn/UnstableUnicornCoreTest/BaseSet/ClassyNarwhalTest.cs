@@ -10,7 +10,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestChoosingUpgradeCard() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card rainbowAura = new RainbowAura().GetCardTemplate().CreateCard();
@@ -51,7 +51,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestChoosingUpgradeCardNarwhalPlayedToDifferentStable() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card rainbowAura = new RainbowAura().GetCardTemplate().CreateCard();
@@ -89,7 +89,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestShufflingDeck() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             CardTemplate basicUnicornTemplate = new BasicUnicorn().GetCardTemplate();

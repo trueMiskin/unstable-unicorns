@@ -10,7 +10,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             Card babyUnicorn = new BabyUnicorn().GetCardTemplate().CreateCard();
 
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card> { babyUnicorn }, new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card> { babyUnicorn }, new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             controller.PlayerGetBabyUnicornOnTable(playerTwo);
@@ -27,7 +27,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             Card babyUnicorn = new BabyUnicorn().GetCardTemplate().CreateCard();
 
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card> { babyUnicorn }, new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card> { babyUnicorn }, new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card unicornPoison = new UnicornPoison().GetCardTemplate().CreateCard();
@@ -57,7 +57,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             Card babyUnicorn = new BabyUnicorn().GetCardTemplate().CreateCard();
 
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card> { babyUnicorn }, new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card> { babyUnicorn }, new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card unicornPoison = new UnicornPoison().GetCardTemplate().CreateCard();
@@ -91,7 +91,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             Card babyUnicorn = new BabyUnicorn().GetCardTemplate().CreateCard();
 
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card> { babyUnicorn }, new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card> { babyUnicorn }, new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card backKick = new BackKick().GetCardTemplate().CreateCard();
@@ -120,7 +120,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             Card babyUnicorn = new BabyUnicorn().GetCardTemplate().CreateCard();
 
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card> { babyUnicorn }, new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card> { babyUnicorn }, new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card twoForOne = new TwoForOne().GetCardTemplate().CreateCard();

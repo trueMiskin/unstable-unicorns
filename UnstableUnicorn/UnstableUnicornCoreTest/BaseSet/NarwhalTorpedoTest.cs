@@ -14,7 +14,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestSacrificeEffect(int numberDowngrades) {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
             Pandamonium pandamoniumTemplate = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card pandamoniumModel = pandamoniumTemplate.GetCardTemplate().CreateCard();

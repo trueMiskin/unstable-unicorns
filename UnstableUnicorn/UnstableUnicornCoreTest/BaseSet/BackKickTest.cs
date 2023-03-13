@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnstableUnicornCore;
 using UnstableUnicornCore.BaseSet;
 using Xunit;
@@ -12,7 +8,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestReturnThenDiscardCardWithoutValidTarget() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card backKick = new BackKick().GetCardTemplate().CreateCard();
@@ -30,7 +26,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestReturnThenDiscardCardWithValidTarget() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card backKick = new BackKick().GetCardTemplate().CreateCard();
@@ -71,7 +67,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestReturnThenDiscardCardWithCardsVisibility() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new(), playerThree = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree }, shufflePlayers: false);
 
             // protection before shuffling
             Card backKick = new BackKick().GetCardTemplate().CreateCard();

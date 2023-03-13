@@ -41,7 +41,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestInteractionWithUnicornPoison() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
             BasicUnicorn basicUnicornTemplate = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card basicUnicorn = basicUnicornTemplate.GetCardTemplate().CreateCard();

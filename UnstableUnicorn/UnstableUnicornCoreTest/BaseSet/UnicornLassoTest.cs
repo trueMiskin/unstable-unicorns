@@ -9,7 +9,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestStealAndReturnEffectWithoutTarget() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card unicornLasso = new UnicornLasso().GetCardTemplate().CreateCard();
@@ -44,7 +44,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         [Fact]
         public void TestStealAndReturnEffectWithTarget() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card basicUnicorn = new BasicUnicorn().GetCardTemplate().CreateCard();

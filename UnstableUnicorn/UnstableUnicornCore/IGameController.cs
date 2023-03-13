@@ -70,7 +70,12 @@ namespace UnstableUnicornCore
         private int _playerOnTurn = 0, _turnNumber = 1;
         public int TurnNumber => _turnNumber;
         private int _debugIndentation = 0;
-        public GameController(List<Card> pile, List<Card> nursery, List<APlayer> players, int seed = 42, VerbosityLevel verbosity = VerbosityLevel.None) {
+        public GameController(List<Card> pile,
+                              List<Card> nursery,
+                              List<APlayer> players,
+                              int seed = 42,
+                              VerbosityLevel verbosity = VerbosityLevel.None,
+                              bool shufflePlayers = true) {
             Random = new Random(seed);
             Verbosity = verbosity;
 
@@ -88,7 +93,11 @@ namespace UnstableUnicornCore
 
             foreach(APlayer p in players)
                 p.GameController = this;
-            Players = new List<APlayer>( players );
+
+            if (shufflePlayers)
+                Players = new List<APlayer>( players ).Shuffle(Random);
+            else
+                Players = new List<APlayer>( players );
 
             // setting for unit tests
             ActualPlayerOnTurn = Players[0];

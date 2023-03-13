@@ -9,7 +9,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestRequirementsToPlay() {
             SimplePlayerMockUp playerOne = new(), playerTwo = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo }, shufflePlayers: false);
 
             // protection before shuffling
             Card glitterTornado = new GlitterTornado().GetCardTemplate().CreateCard();
@@ -29,7 +29,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
         public void TestWithValidTargetInOwnersStable(bool opponentHaveCardInStable) {
             SimplePlayerMockUp playerOne = new(), playerTwo = new(), playerThree = new();
 
-            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree });
+            GameController controller = new GameController(new List<Card>(), new List<Card>(), new List<APlayer>() { playerOne, playerTwo, playerThree }, shufflePlayers: false);
 
             // protection before shuffling
             Card unicornLasso = new UnicornLasso().GetCardTemplate().CreateCard();
