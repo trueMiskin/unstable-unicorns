@@ -18,6 +18,14 @@ namespace UnstableUnicornCore.Agent {
 
         CreatePlayers createPlayers;
 
+        /// <summary>
+        /// Init game seed for fitness evaluation
+        /// 
+        /// This seed should be changed over generations, because if we use the same seed
+        /// then overfitting can occur.
+        /// </summary>
+        public int InitGameSeed = 0;
+
         public MyProblemFitness(CreatePlayers createPlayers)
         {
             this.createPlayers = createPlayers;
@@ -30,17 +38,20 @@ namespace UnstableUnicornCore.Agent {
             double fitness = 0;
             int gameSeedShift = 0;
             Console.WriteLine("Fitness evaluate started");
-            for (int id = 0; id < 10; id++) {
+            for (int gameNum = 0; gameNum < 10; gameNum++) {
                 (List<APlayer> players, var evaPlayer) = createPlayers(cardStrength);
 
                 Stopwatch stopWatch = Stopwatch.StartNew();
-                var game = Program.CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id + gameSeedShift, VerbosityLevel.None);
+                var game = Program.CreateGame(new List<Deck> { new SecondPrintDeck() },
+                                              players,
+                                              InitGameSeed + gameNum + gameSeedShift,
+                                              VerbosityLevel.None);
                 try {
                     game.SimulateGame();
                 } catch (Exception e) {
                     // when game crashes, we print the error and try again with a different seed
                     Console.Error.WriteLine(e);
-                    id--; gameSeedShift++;
+                    gameNum--; gameSeedShift++;
                     continue;
                 }
                 stopWatch.Stop();
@@ -93,6 +104,25 @@ namespace UnstableUnicornCore.Agent {
             }
 
             return new List<IChromosome> { child1, child2 };
+        }
+    }
+
+    public class CopyElitistReinsertion : ElitistReinsertion {
+        protected override IList<IChromosome> PerformSelectChromosomes(IPopulation population, IList<IChromosome> offspring, IList<IChromosome> parents) {
+            var diff = population.MinSize - offspring.Count;
+
+            if (diff > 0)
+            {
+                var bestParents = parents.OrderByDescending(p => p.Fitness).Take(diff).ToList();
+
+                for (int i = 0; i < bestParents.Count; i++)
+                {
+                    var copy = bestParents[i].CreateNew();
+                    copy.ReplaceGenes(0, bestParents[i].GetGenes());
+                    offspring.Add(copy);
+                }
+            }
+            return offspring;
         }
     }
 
@@ -187,13 +217,20 @@ namespace UnstableUnicornCore.Agent {
             var fitness = new MyProblemFitness(createPlayers);
             var chromosome = new MyProblemChromosome(CardStrength.Keys.Count);
             var population = new Population(24, 24, chromosome);
+            var reinsertion = new CopyElitistReinsertion();
 
-            var ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
+            var ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation){
+                Reinsertion = reinsertion
+            };
+
             var executor = new ThreadExecutor(maxThreads: 8);
             ga.TaskExecutor = executor;
 
             var stats = new StreamWriter($"eva_logs/stats-{file}");
             ga.GenerationRan += delegate {
+                // generate new game seed for fitness function
+                fitness.InitGameSeed = RandomizationProvider.Current.GetInt(0, 100_000);
+
                 string statText = string.Format("Generation {0}, best fitness {1}, min {2}, avg. {3}, max {4} fitness",
                     ga.GenerationsNumber,
                     ga.BestChromosome.Fitness,
