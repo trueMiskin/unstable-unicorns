@@ -38,23 +38,27 @@ namespace UnstableUnicornCore.Agent {
         }
 
         protected override Card? PlayInstantOnStackCore(List<Card> stack, List<Card> availableInstantCards) {
+            return PlayInstantOnStackInner(stack, availableInstantCards, (double) Tiers.AA);
+        }
+
+        protected Card? PlayInstantOnStackInner(List<Card> stack, List<Card> availableInstantCards, double threshold) {
             Debug.Assert(stack.Count > 0);
             Debug.Assert(stack[0].Player != null);
             APlayer player = stack[0].Player;
             Card card = stack[0];
-            Tiers tier = GetCardTier(card);
+            double tier = GetCardTier(card);
 
             if (player == this){
                 // i don't want react on my card
                 if (stack.Count % 2 == 1)
                     return null;
-                if (tier >= Tiers.AA)
+                if (tier <= threshold)
                     return availableInstantCards.First();
             }else{
                 // i want react only opponent card
                 if (stack.Count % 2 == 0)
                     return null;
-                if (tier >= Tiers.AA)
+                if (tier <= threshold)
                     return availableInstantCards.First();
             }
 
@@ -175,12 +179,12 @@ namespace UnstableUnicornCore.Agent {
             return sortedPlayers;
         }
 
-        private Tiers GetCardTier(Card card, bool allowUnknown = false) {
+        protected virtual double GetCardTier(Card card, bool allowUnknown = false) {
             if (_cardStrength.TryGetValue(card.Name, out Tiers tier))
-                return tier;
+                return (double) tier;
             
             if (allowUnknown)
-                return Tiers.F;
+                return (double) Tiers.F;
 
             throw new InvalidOperationException("Card is not in the list of known cards.");
         }
