@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using UnstableUnicornCore.Agent;
 using UnstableUnicornCore.BaseSet;
 
@@ -29,7 +30,7 @@ namespace UnstableUnicornCore {
                 pile.AddRange(CreateCardFromGenerator(deck.OtherCards()));
             }
 
-            Console.WriteLine($"Card in set: {nursery.Count + pile.Count}");
+            // Console.WriteLine($"Card in set: {nursery.Count + pile.Count}");
             return new GameController(pile, nursery, playes, gameSeed, verbosity);
         }
 
@@ -175,6 +176,38 @@ namespace UnstableUnicornCore {
             game.SimulateGame();
         }
 
+        public static void varianceBenchmark(){
+            var initSeeds = new int[]{0, 2_000, 4_000, 8_000, 16_000, 32_000, 64_000, 128_000, 256_000, 512_000};
+            var numGames = new int[]{1, 2, 3, 5, 10, 20, 50, 100, 200, 500, 1000};
+
+            foreach (var num in numGames) {
+                Console.WriteLine($"Number of games: {num}");
+                foreach (var seed in initSeeds) {
+                    var results = new List<int>();
+                    for (int i = 0; i < num; i++){
+                        var players = new List<APlayer>();
+                        for (int x = 0; x < 3; x++) {
+                            // players.Add(new RandomPlayer());
+                            players.Add(new RuleBasedAgent());
+                        }
+                        for (int x = 0; x < 3; x++) {
+                            players.Add(new EvolutionAgent("eva_logs/mcts_random-19"));
+                            // players.Add(new RuleBasedAgent());
+                        }
+
+                        var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, seed + i, VerbosityLevel.None);
+
+                        game.SimulateGame();
+                        results.Add(game.GameResults.First().Player.GetType() == typeof(EvolutionAgent) ? 1 : 0);
+                    }
+
+                    var avg = results.Average();
+                    var variance = results.Select(x => Math.Pow(x - avg, 2)).Sum() / results.Count;
+                    Console.WriteLine($"Seed: {seed}, avg: {avg}, variance: {variance}");
+                }
+            }
+        }
+
         public static void Main(string[] args) {
             /*
             handleGameInteractively();
@@ -225,49 +258,86 @@ namespace UnstableUnicornCore {
                 EvolutionAgent.RunEvolution($"{args[0]}-{args[1]}", createPlayers);
                 return;
             }
-
-            string test_name = "eva_1";
-            int maxTurns = 100000;
-            int ruleBasedAgentWins = 0, mctsAgentWins = 0;
-            for (int id = 0; id < maxTurns; id++) {
-                Console.WriteLine($"---------> Starting game {id + 1} <---------");
-                List<APlayer> players = new();
-                for (int x = 0; x < 4; x++) {
-                    players.Add(new RandomPlayer());
+            if (args.Length == 5) {
+                if (args[0] != "parametric_evolution") {
+                    System.Console.WriteLine("Unknown parameter: " + args[0]);
+                    return;
                 }
-                for (int x = 0; x < 2; x++) {
-                    // players.Add(new RuleBasedAgent());
-                    //players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
-                    players.Add(new EvolutionAgent("arithmetic-xover.txt"));
-                }
-
-                Stopwatch stopWatch = Stopwatch.StartNew();
-                var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id, VerbosityLevel.All);
-
-                game.SimulateGame();
-                stopWatch.Stop();
-                Console.WriteLine($"Game ended after {stopWatch.ElapsedMilliseconds} ms");
-
-                Console.WriteLine($"Game ended after {game.TurnNumber} turns");
-                foreach (var result in game.GameResults)
-                    Console.WriteLine($"Player id: {result.PlayerId}, value: {result.NumUnicorns}, len: {result.SumUnicornNames}");
-
-                if (game.GameResults.First().Player is RuleBasedAgent)
-                    ruleBasedAgentWins++;
-                if (game.GameResults.First().Player is MctsAgent)
-                    mctsAgentWins++;
-
-                var toLog = new GameRecord(gameSeed: id, gameLength: game.TurnNumber, game.GameResults, game.GameLog);
-
-                using var stream = File.Create(test_name + "-seed=" + id + ".json");
-
-                JsonSerializer.Serialize(stream, toLog, new JsonSerializerOptions {
-                    WriteIndented= true,
-                });
+                MyProblemFitness.CreatePlayers createPlayers = (cardStrength) => {
+                    List<APlayer> players = new();
+                    for (int x = 0; x < 5; x++) {
+                        players.Add(new RandomPlayer());
+                    }
+                    var evolutionAgent = new EvolutionAgent(cardStrength);
+                    players.Add(evolutionAgent);
+                    return (players, evolutionAgent);
+                };
+                string computerNum = args[1];
+                int populationSize = int.Parse(args[2]);
+                int maxGenerations = int.Parse(args[3]);
+                int numGames = int.Parse(args[4]);
+                EvolutionAgent.RunEvolution($"{args[0]}-ps={populationSize}-mg={maxGenerations}-ng={numGames}-{computerNum}", createPlayers, populationSize, maxGenerations, numGames);
+                return;
             }
 
-            Console.WriteLine($"RuleBasedAgent won {ruleBasedAgentWins} times from {maxTurns} games.");
-            Console.WriteLine($"MctsAgent won {mctsAgentWins} times from {maxTurns} games.");
+            // varianceBenchmark();
+            // return;
+
+            string test_name = "test_rule_based_agent";
+            int maxTurns = 100_000;
+
+            Regex regex = new Regex("/random.*");
+            var matches = Directory.EnumerateFiles("eva_logs").Where(f => regex.IsMatch(f));
+            foreach (var match in matches) {
+                var fileName = Path.GetFileName(match);
+                System.Console.WriteLine("Testing: " + fileName);
+
+                int ruleBasedAgentWins = 0, mctsAgentWins = 0, evolutionAgentWins = 0;
+                for (int id = 0; id < maxTurns; id++) {
+                    // Console.WriteLine($"---------> Starting game {id + 1} <---------");
+                    List<APlayer> players = new();
+                    for (int x = 0; x < 4; x++) {
+                        players.Add(new RandomPlayer());
+                        // players.Add(new RuleBasedAgent());
+                        // players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
+                    }
+                    for (int x = 0; x < 2; x++) {
+                        players.Add(new RuleBasedAgent());
+                        //players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
+                        // players.Add(new EvolutionAgent(match));
+                    }
+
+                    Stopwatch stopWatch = Stopwatch.StartNew();
+                    var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id, VerbosityLevel.All);
+
+                    game.SimulateGame();
+                    stopWatch.Stop();
+                    // Console.WriteLine($"Game ended after {stopWatch.ElapsedMilliseconds} ms");
+
+                    // Console.WriteLine($"Game ended after {game.TurnNumber} turns");
+                    // foreach (var result in game.GameResults)
+                    //     Console.WriteLine($"Player id: {result.PlayerId}, value: {result.NumUnicorns}, len: {result.SumUnicornNames}");
+
+                    if (game.GameResults.First().Player.GetType() == typeof(RuleBasedAgent))
+                        ruleBasedAgentWins++;
+                    if (game.GameResults.First().Player is MctsAgent)
+                        mctsAgentWins++;
+                    if (game.GameResults.First().Player is EvolutionAgent)
+                        evolutionAgentWins++;
+
+                    var toLog = new GameRecord(gameSeed: id, gameLength: game.TurnNumber, game.GameResults, game.GameLog);
+
+                    using var stream = File.Create(test_name + "-seed=" + id + ".json");
+
+                    JsonSerializer.Serialize(stream, toLog, new JsonSerializerOptions {
+                        WriteIndented= true,
+                    });
+                }
+                Console.WriteLine($"RuleBasedAgent won {ruleBasedAgentWins} times from {maxTurns} games.");
+                Console.WriteLine($"MctsAgent won {mctsAgentWins} times from {maxTurns} games.");
+                Console.WriteLine($"EvolutionAgent won {evolutionAgentWins} times from {maxTurns} games.");
+            }
+
             /**/
         }
     }

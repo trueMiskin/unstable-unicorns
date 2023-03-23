@@ -14,7 +14,7 @@ namespace UnstableUnicornCore.Agent {
         /// </summary>
         /// <param name="cardStrength"></param>
         /// <returns>The all players and the evolution agent instance based on cardStrength</returns>
-        public delegate (List<APlayer>, EvolutionAgent) CreatePlayers(Dictionary<string, Tiers> cardStrength);
+        public delegate (List<APlayer>, EvolutionAgent) CreatePlayers(Dictionary<string, double> cardStrength);
 
         CreatePlayers createPlayers;
 
@@ -25,20 +25,22 @@ namespace UnstableUnicornCore.Agent {
         /// then overfitting can occur.
         /// </summary>
         public int InitGameSeed = 0;
+        int numberGames;
 
-        public MyProblemFitness(CreatePlayers createPlayers)
+        public MyProblemFitness(CreatePlayers createPlayers, int numberGames)
         {
             this.createPlayers = createPlayers;
+            this.numberGames = numberGames;
         }
 
         public double Evaluate(IChromosome chromosome) {
-            List<Tiers> weights = chromosome.GetGenes().ToList().ConvertAll(g => (Tiers)(int)g.Value);
+            List<double> weights = chromosome.GetGenes().ToList().ConvertAll(g => (double) g.Value);
             var cardStrength = EvolutionAgent.GetCardStrength(weights);
 
             double fitness = 0;
             int gameSeedShift = 0;
             Console.WriteLine("Fitness evaluate started");
-            for (int gameNum = 0; gameNum < 10; gameNum++) {
+            for (int gameNum = 0; gameNum < numberGames; gameNum++) {
                 (List<APlayer> players, var evaPlayer) = createPlayers(cardStrength);
 
                 Stopwatch stopWatch = Stopwatch.StartNew();
@@ -66,19 +68,35 @@ namespace UnstableUnicornCore.Agent {
         }
     }
 
-    public class MyProblemChromosome : ChromosomeBase {
+    // public class MyProblemChromosome : ChromosomeBase {
+    //     int _length;
+    //     public MyProblemChromosome(int length) : base(length) {
+    //         _length = length;
+    //         CreateGenes();
+    //     }
+
+    //     public override Gene GenerateGene(int geneIndex) {
+    //         return new Gene(RandomizationProvider.Current.GetInt((int)Tiers.S, (int)Tiers.F));
+    //     }
+
+    //     public override IChromosome CreateNew() {
+    //         return new MyProblemChromosome(_length);
+    //     }
+    // }
+
+    public class FloatingPointChromosome : ChromosomeBase {
         int _length;
-        public MyProblemChromosome(int length) : base(length) {
+        public FloatingPointChromosome(int length) : base(length) {
             _length = length;
             CreateGenes();
         }
 
         public override Gene GenerateGene(int geneIndex) {
-            return new Gene(RandomizationProvider.Current.GetInt((int)Tiers.S, (int)Tiers.F));
+            return new Gene(RandomizationProvider.Current.GetDouble(0, 1));
         }
 
         public override IChromosome CreateNew() {
-            return new MyProblemChromosome(_length);
+            return new FloatingPointChromosome(_length);
         }
     }
 
@@ -95,10 +113,10 @@ namespace UnstableUnicornCore.Agent {
             var alpha = RandomizationProvider.Current.GetDouble();
 
             for (int i = 0; i < parent1.Length; i++) {
-                var gene1 = (int)parent1.GetGene(i).Value;
-                var gene2 = (int)parent2.GetGene(i).Value;
+                var gene1 = (double)parent1.GetGene(i).Value;
+                var gene2 = (double)parent2.GetGene(i).Value;
 
-                int newGene = (int)(alpha * gene1 + (1 - alpha) * gene2);
+                double newGene = alpha * gene1 + (1 - alpha) * gene2;
                 child1.ReplaceGene(i, new Gene(newGene));
                 child2.ReplaceGene(i, new Gene(gene1 + gene2 - newGene));
             }
@@ -166,6 +184,8 @@ namespace UnstableUnicornCore.Agent {
 
     public class EvolutionAgent : RuleBasedAgent {
 
+        Dictionary<string, double> _evaCardStrength;
+
         public EvolutionAgent(string file) {
             if (!File.Exists(file)) {
                 RunEvolution(file);
@@ -173,21 +193,21 @@ namespace UnstableUnicornCore.Agent {
             loadBestIndividual(file);
         }
 
-        public EvolutionAgent(Dictionary<string, Tiers> cardStrength) => _cardStrength = cardStrength;
+        public EvolutionAgent(Dictionary<string, double> cardStrength) => _evaCardStrength = cardStrength;
 
         private void loadBestIndividual(string file) {
-            List<Tiers> weights;
+            List<double> weights;
             using (var reader = new StreamReader(file))
-                weights = reader.ReadLine().Split(';').ToList().ConvertAll(str => (Tiers) int.Parse(str));
+                weights = reader.ReadLine().Split(';').ToList().ConvertAll(str => double.Parse(str));
 
-            _cardStrength = GetCardStrength(weights);
+            _evaCardStrength = GetCardStrength(weights);
         }
 
-        public static Dictionary<string, Tiers> GetCardStrength(List<Tiers> weights) {
+        public static Dictionary<string, double> GetCardStrength(List<double> weights) {
             var keys = CardStrength.Keys.ToList();
             keys.Sort();
 
-            Dictionary<string, Tiers> cardStrength = new();
+            Dictionary<string, double> cardStrength = new();
             for (int i = 0; i < keys.Count; i++) {
                 cardStrength.Add(keys[i], weights[i]);
             }
@@ -209,14 +229,18 @@ namespace UnstableUnicornCore.Agent {
             });
         }
 
-        public static void RunEvolution(string file, MyProblemFitness.CreatePlayers createPlayers) {
+        public static void RunEvolution(string file,
+                                        MyProblemFitness.CreatePlayers createPlayers,
+                                        int populationSize = 24,
+                                        int maxGenerations = 10,
+                                        int numberGames = 10) {
             var selection = new TournamentSelection();
 
             var crossover = new ArithmeticCrossover();
             var mutation = new UniformMutation(allGenesMutable: true);
-            var fitness = new MyProblemFitness(createPlayers);
-            var chromosome = new MyProblemChromosome(CardStrength.Keys.Count);
-            var population = new Population(24, 24, chromosome);
+            var fitness = new MyProblemFitness(createPlayers, numberGames);
+            var chromosome = new FloatingPointChromosome(CardStrength.Keys.Count);
+            var population = new Population(populationSize, populationSize, chromosome);
             var reinsertion = new CopyElitistReinsertion();
 
             var ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation){
@@ -243,13 +267,13 @@ namespace UnstableUnicornCore.Agent {
                 stats.Flush();
             };
 
-            ga.Termination = new GenerationNumberTermination(10);
+            ga.Termination = new GenerationNumberTermination(maxGenerations);
 
             Console.WriteLine("GA running...");
             ga.Start();
 
             Console.WriteLine("Best solution found has {0} fitness.", ga.BestChromosome.Fitness);
-            var weights = ga.BestChromosome.GetGenes().ToList().ConvertAll(g => (int)g.Value);
+            var weights = ga.BestChromosome.GetGenes().ToList().ConvertAll(g => (double)g.Value);
             var values = string.Join(';', weights);
             Console.WriteLine("Values: {0}", values);
 
@@ -259,7 +283,21 @@ namespace UnstableUnicornCore.Agent {
 
             using (var writer = new StreamWriter($"eva_logs/last-pop-{file}"))
                 foreach (var individual in ga.Population.CurrentGeneration.Chromosomes)
-                    writer.WriteLine(string.Join(';', individual.GetGenes().ToList().ConvertAll(g => (int)g.Value)));
+                    writer.WriteLine(string.Join(';', individual.GetGenes().ToList().ConvertAll(g => (double)g.Value)));
+        }
+
+        protected override Card? PlayInstantOnStackCore(List<Card> stack, List<Card> availableInstantCards) {
+            return PlayInstantOnStackInner(stack, availableInstantCards, 0.2);
+        }
+
+        protected override double GetCardTier(Card card, bool allowUnknown = false) {
+            if (_evaCardStrength.TryGetValue(card.Name, out double tier))
+                return tier;
+
+            if (allowUnknown)
+                return 1;
+
+            throw new InvalidOperationException("Card is not in the list of known cards.");
         }
     }
 }
