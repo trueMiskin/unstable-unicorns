@@ -1,0 +1,130 @@
+\documentclass[12pt,a4paper,twoside,openright]{report}
+\let\openright=\cleardoublepage
+
+\input{metadata}
+
+\usepackage[a-2u]{pdfx}
+
+\ifEN\else\usepackage[czech,shorthands=off]{babel}\fi
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% See https://en.wikipedia.org/wiki/Canons_of_page_construction before
+% modifying the size of printable area. LaTeX defaults are great.
+% If you feel it would help anything, you can enlarge the printable area a bit:
+%\usepackage[textwidth=390pt,textheight=630pt]{geometry}
+% The official recommendation expands the area quite a bit (looks pretty harsh):
+%\usepackage[textwidth=145mm,textheight=247mm]{geometry}
+
+%%% FONTS %%%
+\usepackage{lmodern} % TeX "original" (this sets up the latin mono)
+
+% Optionally choose an override for the main font for typesetting:
+\usepackage[mono=false]{libertinus} % popular for comp-sci (ACM uses this)
+%\usepackage{tgschola} % Schoolbook-like (gives a bit of historic feel)
+%\usepackage[scale=0.96]{tgpagella} % Palladio-like (popular in formal logic).
+% IBM Plex font suite is nice but requires us to fine-tune the sizes, also note
+% that it does not directly support small caps (\textsc) and requires lualatex:
+%\usepackage[usefilenames,RM={Scale=0.88},SS={Scale=0.88},SScon={Scale=0.88},TT={Scale=0.88},DefaultFeatures={Ligatures=Common}]{plex-otf}
+
+% Optionally choose a custom sans-serif fonts (e.g. for figures and tables).
+% Default sans-serif font is usually Latin Modern Sans. Some font packages
+% (e.g. libertinus) replace that with a better matching sans-serif font.
+%\usepackage{tgheros} % recommended and very readable (Helvetica-like)
+%\usepackage{FiraSans} % looks great
+% DO NOT typeset the main text in sans-serif font!
+% The serifs make the text easily readable on the paper.
+
+% IMPORTANT FONT NOTE: Some fonts require additional PDF/A conversion using
+% the pdfa.sh script. These currently include only 'tgpagella'; but various
+% other fonts from the texlive distribution need that too (mainly the Droid
+% font family).
+
+
+% some useful packages
+\usepackage{microtype}
+\usepackage{amsmath,amsfonts,amsthm,bm}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{floatrow}
+
+% load bibliography tools
+\usepackage[backend=bibtex,natbib,style=numeric,sorting=none]{biblatex}
+% alternative with alphanumeric citations (more informative than numbers):
+%\usepackage[backend=bibtex,natbib,style=alphabetic]{biblatex}
+%
+% alternatives that conform to iso690
+% (iso690 is not formally required on MFF, but may help elsewhere):
+%\usepackage[backend=bibtex,natbib,style=iso-numeric,sorting=none]{biblatex}
+%\usepackage[backend=bibtex,natbib,style=iso-alphabetic]{biblatex}
+%
+% additional option choices:
+%  - add `giveninits=true` to typeset "E. A. Poe" instead of full Edgar Allan
+%  - `terseinits=true` additionaly shortens it to nature-like "Poe EA"
+%  - add `maxnames=10` to limit (or loosen) the maximum number of authors in
+%    bibliography entry before shortening to `et al.` (useful when referring to
+%    book collections that may have hundreds of authors)
+%  - for additional flexibility (e.g. multiple reference sections, etc.),
+%    remove `backend=bibtex` and compile with `biber` instead of `bibtex` (see
+%    Makefile)
+%  - `sorting=none` causes the bibliography list to be ordered by the order of
+%    citation as they appear in the text, which is usually the desired behavior
+%    with numeric citations. Additionally you can use a style like
+%    `numeric-comp` that compresses the long lists of citations such as
+%    [1,2,3,4,5,6,7,8] to simpler [1--8]. This is especially useful if you plan
+%    to add tremendous amounts of citations, as usual in life sciences and
+%    bioinformatics.
+%  - if you don't like the "In:" appearing in the bibliography, use the
+%    extended style (`ext-numeric` or `ext-alphabetic`), and add option
+%    `articlein=false`.
+%
+% possibly reverse the names of the authors with the default styles:
+%\DeclareNameAlias{default}{family-given}
+
+% load the file with bibliography entries
+\addbibresource{refs}
+
+% remove this if you won't use fancy verbatim environments
+\usepackage{fancyvrb}
+
+% remove this if you won't typeset TikZ graphics
+\usepackage{tikz}
+\usetikzlibrary{positioning} %add libraries as needed (shapes, decorations, ...)
+
+% remove this if you won't typeset any pseudocode
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+% remove this if you won't list any source code
+\usepackage{listings}
+
+
+\hypersetup{unicode}
+\hypersetup{breaklinks=true}
+
+\usepackage[noabbrev]{cleveref}
+
+\input{todos} % remove this before compiling the final version
+
+\input{macros} % use this file for various custom definitions
+
+
+\begin{document}
+
+\include{title}
+
+\tableofcontents
+
+\include{content}
+\include{bibliography}
+
+% \appendix
+% \include{howto}
+
+% if your attachments are complicated, describe them in a separate appendix
+%\include{attachments}
+
+\openright
+\end{document}

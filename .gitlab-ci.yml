@@ -1,0 +1,27 @@
+#
+# This GitLab CI configuration builds the thesis on each push
+# The thesis is stored as an repository artifact
+#
+# It works with the gitlab.mff.cuni.cz instance.
+#
+
+stages:
+  - build
+  - verify
+
+latexmk:
+  stage: build
+  image: aergus/latex
+  script: |
+    apt-get update && apt install -y --no-install-recommends make rsync pandoc && cd thesis; make;
+  artifacts:
+    paths:
+      - thesis/build/thesis.pdf
+      - thesis/build/abstract-cz.pdf
+      - thesis/build/abstract-en.pdf
+
+verapdf:
+  stage: verify
+  image: ghcr.io/mff-cuni-cz/cuni-thesis-validator
+  script: |
+    verify thesis/build/*.pdf |tee /dev/stderr |grep -qE 'nonCompliant="0"'
