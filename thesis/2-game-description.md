@@ -1,4 +1,4 @@
-# 2. Game description
+# Game description
 
 The following chapter describes the mechanics of the game in detail.
 
@@ -8,7 +8,7 @@ Then we will look at the effects in more detail.
 After that, I will describe how are resolved effects of cards.
 And finally, we will talk about impossible actions.
 
-## 2.1 Terminology
+## Terminology
 
 Terminology of places (card **sources**) where cards can be stored:
 
@@ -53,7 +53,7 @@ Some effects target one or more players but sometimes can be unclear if the stat
 - **Each other player** - Refers to each player in the game, __excluding__ you.
 - **Any number of players** - Refers to any number of players you choose, __excluding__ you.
 
-## 2.2 Types of effects
+## Types of effects
 
 There are three different types of effects in the game: one-time effect, continuous effect and trigger effect. The one-time effect has a disposable immediate impact on the game. For example, Steal a unicorn card.
 The continuous effect is active as long as the card is in your stable. For instance, All your unicorns are pandas. This effect can be beneficial because all effects which target unicorns can not target your pandas but you can not win, because you have no unicorns in your stable!
@@ -68,7 +68,7 @@ The last combination is conditional "if you do". The effect after "if you do" is
 TODO: after for example, should be an uppercase letter?
 TODO: should be edited texts from cards?
 
-## 2.3 Resolving of cards effects
+## Resolving of cards effects
 
 In this section, I will describe the core of the game mechanics - how are resolved effects of the cards.
 
@@ -78,7 +78,7 @@ TODO: picture of the chain link
 
 This approach to how are resolved effects can be a little bit confusing because even people typically think in sequential order. Additionally, these have some consequences for instance, when two effects can be activated at beginning of the turn, then you must decide which effects will be activated and resolve them simultaneously. You can not activate the first effect, see the result and then decide if you activate the second effect.
 
-## 2.4 Impossible actions
+## Impossible actions
 
 Effects can be mandatory or optional. Mandatory effects must be resolved. All **magic** cards have mandatory effects. **Unicorn** cards can have mandatory or optional effects. Optional effects use the "may" in the effect description.
 

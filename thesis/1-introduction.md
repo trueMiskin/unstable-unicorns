@@ -1,4 +1,4 @@
-# 1. Introduction
+# Introduction
 
 Unstable Unicorns is a game from 2017 that started on Kickstarter.
 When the campaign on Kickstarter ended 33,720 backers pledged $1,865,140[^wiki].
