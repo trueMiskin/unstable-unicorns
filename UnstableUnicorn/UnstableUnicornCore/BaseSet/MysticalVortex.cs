@@ -8,7 +8,7 @@ using UnstableUnicornCore.BasicEffects;
 namespace UnstableUnicornCore.BaseSet {
     public class MysticalVortex : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Mystical Vortex")
                 .CardType(ECardType.Spell)
                 .Text("Each player must DISCARD a card. Shuffle the discard pile into the deck.")

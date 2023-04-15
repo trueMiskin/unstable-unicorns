@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class RainbowAura : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Rainbow Aura")
                 .CardType(ECardType.Upgrade)
                 .Text("Your Unicorn cards cannot be destroyed.")

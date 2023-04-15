@@ -4,7 +4,7 @@ using UnstableUnicornCore.BasicEffects;
 namespace UnstableUnicornCore.BaseSet {
     public class UnicornOnTheCob : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Unicorn On The Cob")
                 .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, DRAW 2 cards and DISCARD a card.")

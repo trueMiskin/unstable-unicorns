@@ -5,7 +5,7 @@ using UnstableUnicornCore.BasicEffects;
 namespace UnstableUnicornCore.BaseSet {
     public class ResetButton : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Reset Button")
                 .CardType(ECardType.Spell)
                 .Text("Each player must SACRIFICE all Upgrade and Downgrade cards. Shuffle the discard pile into the deck.")

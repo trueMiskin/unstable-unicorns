@@ -4,7 +4,7 @@ using UnstableUnicornCore.BasicEffects;
 namespace UnstableUnicornCore.BaseSet {
     public class BabyUnicorn : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Baby Unicorn")
                 .CardType(ECardType.BabyUnicorn)
                 .Text("If this card would be sacrificed, destroyed, or returned to your hand, return it to the Nursery instead.")

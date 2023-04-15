@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class Pandamonium : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Pandamonium")
                 .CardType(ECardType.Downgrade)
                 .Text("All of your Unicorns are considered Pandas. Cards that affect Unicorn cards do not affect your Pandas.")

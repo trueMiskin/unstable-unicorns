@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class BlatantThievery : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Blatant Thievery")
                 .CardType(ECardType.Spell)
                 .Text("Choose any player and look at that player's hand. Choose a card from that player's hand and add it to your hand.")

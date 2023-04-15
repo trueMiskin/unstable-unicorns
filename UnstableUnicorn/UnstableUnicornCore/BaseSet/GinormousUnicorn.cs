@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class GinormousUnicorn : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Ginormous Unicorn")
                 .CardType(ECardType.MagicUnicorn)
                 .Text("This card counts for 2 Unicorns. You cannot play any Instant cards.")

@@ -9,7 +9,7 @@ namespace UnstableUnicornCore.BaseSet {
         /// </summary>
         /// <returns></returns>
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Re-target")
                 .CardType(ECardType.Spell)
                 .Text("Move an Upgrade or Downgrade card from any player's Stable to any other player's Stable.")
