@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class RainbowUnicorn : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Rainbow Unicorn")
                 .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, you may bring a Basic Unicorn card from your hand directly into your Stable.")

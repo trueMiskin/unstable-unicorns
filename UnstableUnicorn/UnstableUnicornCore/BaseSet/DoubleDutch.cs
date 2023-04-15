@@ -4,7 +4,7 @@ using UnstableUnicornCore.BasicEffects;
 namespace UnstableUnicornCore.BaseSet {
     public class DoubleDutch : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Double Dutch")
                 .CardType(ECardType.Upgrade)
                 .Text("If this card is in your Stable at the beginning of your turn, you may play 2 cards during your Action phase.")

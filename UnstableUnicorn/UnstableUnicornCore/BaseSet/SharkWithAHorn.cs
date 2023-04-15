@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class SharkWithAHorn : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Shark With A Horn")
                 .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, you may SACRIFICE this card. If you do, DESTROY a Unicorn card.")

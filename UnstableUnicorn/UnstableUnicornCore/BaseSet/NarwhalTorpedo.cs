@@ -5,7 +5,7 @@ using UnstableUnicornCore.BasicEffects;
 namespace UnstableUnicornCore.BaseSet {
     public class NarwhalTorpedo : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Narwhal Torpedo")
                 .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, SACRIFICE all Downgrade cards.")

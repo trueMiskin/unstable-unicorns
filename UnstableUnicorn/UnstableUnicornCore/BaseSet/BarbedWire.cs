@@ -8,7 +8,7 @@ using UnstableUnicornCore.BasicEffects;
 namespace UnstableUnicornCore.BaseSet {
     public class BarbedWire : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Barbed Wire")
                 .CardType(ECardType.Downgrade)
                 .Text("Each time a Unicorn card enters or leaves your stable, DISCARD a card.")

@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class GlitterTornado : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Glitter Tornado")
                 .CardType(ECardType.Spell)
                 .Text("Return a card in each player's Stable (including yours) to their hand.")

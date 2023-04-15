@@ -8,7 +8,7 @@ namespace UnstableUnicornCore.BaseSet {
     /// </summary>
     public class ChainsawUnicorn : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Chainsaw Unicorn")
                 .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, you may DESTROY an Upgrade card or SACRIFICE a Downgrade card.")

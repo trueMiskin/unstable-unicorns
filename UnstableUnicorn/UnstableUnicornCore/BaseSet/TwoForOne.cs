@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class TwoForOne : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Two-for-one")
                 .CardType(ECardType.Spell)
                 .Text("SACRIFICE a card, then DESTROY 2 cards.")

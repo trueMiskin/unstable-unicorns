@@ -4,7 +4,7 @@ using UnstableUnicornCore.BasicEffects;
 namespace UnstableUnicornCore.BaseSet {
     public class GlitterBomb : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Glitter Bomb")
                 .CardType(ECardType.Upgrade)
                 .Text("If this card is in your Stable at the beginning of your turn, you may SACRIFICE a card. If you do, DESTROY a card.")

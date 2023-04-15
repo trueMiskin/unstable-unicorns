@@ -7,7 +7,7 @@ namespace UnstableUnicornCore.BaseSet {
     /// </summary>
     public class ExtraTail : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Extra Tail")
                 .CardType(ECardType.Upgrade)
                 .Text("You must have a Basic Unicorn in your Stable in order to play this card. If this card is in your Stable at the beginning of your turn, you may DRAW an extra card.")

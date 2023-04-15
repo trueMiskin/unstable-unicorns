@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class UnfairBargain : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Unfair Bargain")
                 .CardType(ECardType.Spell)
                 .Text("Trade hands with any other player.")

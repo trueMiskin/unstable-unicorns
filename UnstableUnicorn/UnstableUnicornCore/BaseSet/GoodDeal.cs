@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class GoodDeal : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Good Deal")
                 .CardType(ECardType.Spell)
                 .Text("DRAW 3 cards and DISCARD a card.")

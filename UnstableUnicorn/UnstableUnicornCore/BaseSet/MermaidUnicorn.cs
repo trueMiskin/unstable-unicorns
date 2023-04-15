@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class MermaidUnicorn : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Mermaid Unicorn")
                 .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, you may choose any player. Return a card in that player's Stable to their hand.")

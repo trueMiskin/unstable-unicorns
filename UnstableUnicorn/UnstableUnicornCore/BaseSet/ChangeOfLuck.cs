@@ -8,7 +8,7 @@ using UnstableUnicornCore.BasicEffects;
 namespace UnstableUnicornCore.BaseSet {
     public class ChangeOfLuck : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Change of Luck")
                 .CardType(ECardType.Spell)
                 .Text("DRAW 2 cards and DISCARD 3 cards, then take another turn.")

@@ -4,7 +4,7 @@ using UnstableUnicornCore.BasicEffects;
 namespace UnstableUnicornCore.BaseSet {
     public class AlluringNarwhal : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Alluring Narwhal")
                 .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, you may STEAL an Upgrade card.")

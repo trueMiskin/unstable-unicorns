@@ -7,7 +7,7 @@ namespace UnstableUnicornCore.BaseSet {
     public class TheGreatNarwhal : CardTemplateSource {
         internal static Regex narwhalRegex = new Regex(@"\bnarwhal\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("The Great Narwhal")
                 .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, you may search the deck for a card with \"Narwhal\" in its name and add it to your hand. Shuffle the deck.")

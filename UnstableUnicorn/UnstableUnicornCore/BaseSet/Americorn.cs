@@ -6,7 +6,7 @@ using UnstableUnicornCore.BasicEffects;
 namespace UnstableUnicornCore.BaseSet {
     public class Americorn : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Americorn")
                 .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, choose any player. Pull a card from that player's hand.")

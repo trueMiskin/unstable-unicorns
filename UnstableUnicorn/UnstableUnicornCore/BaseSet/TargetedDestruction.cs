@@ -9,7 +9,7 @@ namespace UnstableUnicornCore.BaseSet {
         /// </summary>
         /// <returns></returns>
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Targeted Destruction")
                 .CardType(ECardType.Spell)
                 .Text("DESTROY an Upgrade card or SACRIFICE a Downgrade card.")

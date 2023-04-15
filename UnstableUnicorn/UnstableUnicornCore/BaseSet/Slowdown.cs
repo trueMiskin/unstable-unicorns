@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class Slowdown : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Slowdown")
                 .CardType(ECardType.Downgrade)
                 .Text("You cannot play Instant cards.")

@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class UnicornPoison : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Unicorn Poison")
                 .CardType(ECardType.Spell)
                 .Text("DESTROY a Unicorn card.")

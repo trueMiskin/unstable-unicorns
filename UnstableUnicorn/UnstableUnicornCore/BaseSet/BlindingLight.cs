@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class BlindingLight : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Blinding Light")
                 .CardType(ECardType.Downgrade)
                 .Text("Triggered effects of your Unicorn cards do not activate.")

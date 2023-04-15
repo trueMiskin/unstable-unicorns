@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class ShabbyTheNarwhal : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Shabby The Narwhal")
                 .CardType(ECardType.MagicUnicorn)
                 .Text("When this card enters your Stable, you may search the deck for a Downgrade card and add it to your hand. Shuffle the deck.")

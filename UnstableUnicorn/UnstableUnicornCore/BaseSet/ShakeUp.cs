@@ -4,7 +4,7 @@ using UnstableUnicornCore.BasicEffects;
 namespace UnstableUnicornCore.BaseSet {
     public class ShakeUp : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Shake Up")
                 .CardType(ECardType.Spell)
                 .Text("Shuffle this card, your hand, and the discard pile into the deck. DRAW 5 cards.")

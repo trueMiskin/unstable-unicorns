@@ -3,7 +3,7 @@
 namespace UnstableUnicornCore.BaseSet {
     public class QueenBeeUnicorn : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Queen Bee Unicorn")
                 .CardType(ECardType.MagicUnicorn)
                 .Text("Basic Unicorn cards cannot enter any other player's Stable.")

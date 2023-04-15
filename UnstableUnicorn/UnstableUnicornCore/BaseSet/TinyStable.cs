@@ -4,7 +4,7 @@ using UnstableUnicornCore.BasicEffects;
 namespace UnstableUnicornCore.BaseSet {
     public class TinyStable : CardTemplateSource {
         public override CardTemplate GetCardTemplate() {
-            return Card
+            return EmptyCard
                 .Name("Tiny Stable")
                 .CardType(ECardType.Downgrade)
                 .Text("If at any time you have more than 5 Unicorns in your Stable, SACRIFICE a Unicorn card.")
