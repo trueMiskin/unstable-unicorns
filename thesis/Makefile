@@ -5,7 +5,7 @@ LATEXMK=latexmk $(LATEXMKOPTS)
 PANDOCOPTS=--top-level-division=chapter --lua-filter citation.lua #--bibliography=refs.bib  --citeproc
 
 BUILD_DIR := ./build
-CHAPTERS=1-introduction 2-game-description 3-related-work 4-game-modification
+CHAPTERS=1-introduction 2-game-description 3-related-work 4-game-modification 5-game-implementation
 
 %.tex: %.md build_directory
 	pandoc $(PANDOCOPTS) -f markdown -t latex -o "$(BUILD_DIR)/$@" $<
