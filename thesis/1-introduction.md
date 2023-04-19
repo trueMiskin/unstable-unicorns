@@ -12,15 +12,11 @@ they get a copy of the product or a reward for their donation (for example
 t-shirt, tin figurine etc.). The campaign typically has more tiers of rewards
 based on the amount of donation.
 
-The game become popular and the creators of the game released several expansions.
+The game became popular and the creators of the game released several expansions.
 Unfortunately, the expansions are not translated into the Czech language.
 
 The game is a card game for 2-8 players. Each player has a stable of unicorns
-and the goal is to be the first player to have 6 or 7 unicorns (based on the number
-of playing players) in their stable after all effects are resolved.
-
-- 2-5 players: 7 unicorns
-- 6-8 players: 6 unicorns
+and the goal is to be the first player to have 6 (for 6-8 players) or 7 unicorns (for 2-5 players) in their stable after all effects are resolved.
 
 If more players have most of the unicorns in their stable then the player with the
 biggest sum of letters in the names of their unicorns wins. If more players have
@@ -39,11 +35,10 @@ in their stable. The game is turn-based and each turn has 4 phases:
 - Action phase
 - End of Turn phase
 
-At the beginning of the turn, there are resolved all effects which are triggered at
-the beginning of the turn. Then the player draws a card from the deck and can play
+At the beginning of the turn, all effects that are triggered at the beginning of the turn are resolved. Then the player draws a card from the deck and can play
 normally one card from their hand.
 
-After the player announces that he wants to play a given card, other players can play
+After the player announces that they want to play a given card, other players can play
 cards as a reaction.
 In the base game, there are only 2 cards that can be played as reaction cards:
 "Neigh" and "Super Neigh". In the expansions, there are a lot more cards that

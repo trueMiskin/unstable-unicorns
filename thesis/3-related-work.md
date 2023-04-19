@@ -11,11 +11,9 @@ discard pile and the board state (unicorns/upgrades/downgrades in each stable).
 They normally cannot see other players' cards in hand and the order of cards in the draw pile.
 
 The game is a multi-agent environment. The game can be played with 2-8 players.
-About game can be thought of as a single-player environment and other players are part of the environment. This is true but we know the other players have the goal
-and the agent can build on this strategy.
 
-The game is stochastic. The cards themselves are deterministic -- all effects do not
-have a random component. However, the order of cards in the draw pile is random.
+The game is stochastic. The cards themselves are deterministic -- all effects 
+have no random components. However, the order of cards in the draw pile is random.
 
 The game is sequential. The next game state is determined by the previous game
 state and the action of the players.
@@ -24,11 +22,11 @@ The game is dynamic. When a player announces he wants to play a given card other
 players can react to this card. Each player independently decides whether to react
 or not.
 
-The game is discrete. In the game, there are a finite number of cards and
-each time can be played integer number of cards. It is not possible to play
+The game is discrete. In the game, there is a finite number of cards and
+each time an integer number of cards can be played. It is not possible to play
 a fraction of a card. This is also true for the effects of cards.
 
-The game theoretically can be infinite but in practice, the game ends after
+The game theoretically can be infinite, but in practice, the game ends after
 at most hundreds of turns.
 
 ## Artificial intelligence in similar games
@@ -40,14 +38,14 @@ grows with the different effects of cards and the combinations of cards.
 After years of existence, there are a lot of decks that break the game balance
 (for instance infinite combo decks[^infinite]). Every year, the game developers
 release new sets of cards and it will be impossible to balance the game.
-Therefore, there exist a lot of formats that are allowed to use only
+Therefore, there exists a lot of formats that allow using only
 selected sets of cards.
-Sometimes, some cards are too strong and there are banned for the format.
+Sometimes, some cards are too strong and are banned for the format.
 The game has a lot of competitive tournaments for big prizes.
 
 [^infinite]: https://tappedout.net/mtg-decks/selesnya-infinite-elf-tokens/
 
-In [-@2009mctsmtg] was applied to use Monte Carlo Tree Search to play the game [@2009mctsmtg].
+In [-@2009mctsmtg] Monte Carlo Tree Search was applied to use to play the game [@2009mctsmtg].
 Results showed that the algorithm can beat the strong rule-based agent that
 was designed by the expert player of MtG.
 
@@ -57,48 +55,55 @@ goal is to have the best combination of cards. This game is based on evaluating 
 the probability of your card strength combination. Another aspect
 of the game is psychological. The players can bluff and bet to confuse
 the opponent. Some people can think that the game is just gambling and
-the game is based on luck. However, it was developed a strategy that wins the
+the game is based on luck. However, a strategy was developed that wins the
 game on average [@moravvcik2017deepstack] (not all games can be won).
-This is proof that the game is not just gambling if some strategy can win the game on average.
+This is a proof that the game is not just gambling.
 
-The last game which has little different properties of the environment is
+The last game which has slightly different properties of the environment is
 Go game. Go is a game for 2 players, turn-based, deterministic with perfect
-information. Why is the game Go so challenging is a huge search space.
+information. The game is challenging because of the huge search space.
 In [-@silver2016mastering], the DeepMind team developed an algorithm[@silver2016mastering]
-based on Monte Carlo Tree Search with deep neural networks which come
-be very successful in the game Go. The algorithm was able to beat the
-best human players in the game Go.
+based on Monte Carlo Tree Search with deep neural networks which become
+very successful in Go. The algorithm was able to beat the
+best human players.
 
-## Evolution algorithm
+## Evolutionary algorithms
 
 Evolutionary algorithms are nature-inspired algorithms. The idea is
 to mimic Darwin's theory of evolution. The individuals compete to reproduce
 their genes for the next generation. The basic structure of the algorithm
 is the following:
 
-```
-Initialize the population
-Evaluate the fitness of each individual
-Repeat until the stopping criterion is met:
-    Select the parents
-    Crossover
-    Mutation
-    Evaluate the fitness of each individual
-    Offspring is the new population
-```
+\begin{algorithm}
+\begin{algorithmic}
+\Function{EvolutionaryAlgorithm}{}
+    \State Initialize the population
+    \State Evaluate the fitness of each individual
+    \While{Repeat until the stopping criterion is met}
+        \State Select the parents
+        \State Crossover
+        \State Mutation
+        \State Evaluate the fitness of each individual
+        \State Offspring is the new population
+    \EndWhile
+\EndFunction
+\end{algorithmic}
+\caption{Pseudocode of the evolutionary algorithm}
+\label{alg:w}
+\end{algorithm}
 
 Before we start with describing the algorithm, we must define what is
-the individual. The individual will be the solution to the problem.
-In this section, the individual will be a bit string. Other representations
+the individual. The individual is the solution to the problem.
+In this section, the individual is a bit string. Other representations
 of the individual will be used later.
 
 Most of the time, the initial population is randomly generated.
 It is possible to use some smart initialization but we must do it
 very carefully, otherwise, we can get stuck in a local optimum.
 
-The next step is to evaluate the fitness of each individual. The fitness function evaluates how good is the individual as a solution to the problem. The fitness function depends on the problem and the computing of the fitness function should be quick as possible. Most of the time, the bottleneck of the algorithm is the fitness function.
+The next step is to evaluate the fitness of each individual. The fitness function evaluates how good is the individual as a solution to the problem. The fitness function depends on the problem and the computing of the fitness function should be as quick as possible. Most of the time, the bottleneck of the algorithm is the fitness function.
 
-The next step is selecting the parents. The selection can be done in many ways. The most common approaches are roulette wheel selection and tournament selection. In the roulette wheel, each individual has assigned an arc on the wheel. The arc is proportional to the fitness of the individual in the population. Then we are just spinning the wheel and selecting the individual. In the tournament selection, we select randomly $k$ individuals and the best individual is selected as a parent. Both approaches have their advantages and disadvantages. The roulette wheel can converge more quickly when the fitnesses are more different but when the fitnesses are similar, the roulette wheel performs as random selection. The tournament converges slower but it is more robust to the fitness differences. Another benefit is that the tournament selection can be easily switched on minimization instead maximization of the problem.
+The next step is selecting the parents. The selection can be done in many ways. The most common approaches are roulette wheel selection and tournament selection. In the roulette wheel, selection each individual is assigned an arc on the wheel. The arc is proportional to the fitness of the individual in the population. Then we are just spinning the wheel and selecting the individual. In the tournament selection, we select randomly $k$ individuals and the best individual is selected as a parent. Both approaches have their advantages and disadvantages. The roulette wheel can have stronger selection pressure when the fitnesses are more different but when the fitnesses are similar, the roulette wheel performs as random selection. The tournament has the same selection pressure during the whole evolution. Another benefit is that the tournament selection can be easily switched on minimization instead maximization of the problem.
 
 Another step is crossover. The crossover combines the genes of the parents to create a new individual. The crossover can be done in many ways too. The most common crossovers are one-point crossover and uniform crossover. The one-point crossover combines 2 parents and produces 2 offspring. The crossover randomly selects a point and the first offspring gets the genes from the first parent up to the point and the genes from the second parent after the point. The second offspring gets the other part of the genes. The uniform crossover randomly chooses for every gene from which parent it will be taken.
 
@@ -109,7 +114,7 @@ This process is repeated until we reach the stopping criterion (or patience runs
 
 ## Monte Carlo Tree Search
 
-Monte Carlo Tree Search is a search technique where is combined a tree search algorithm and machine learning principles. It solves the problem of exploration and exploitation. The algorithm expands a node that is most promising (best-first search)[@chaslot2010monte].
+Monte Carlo Tree Search is a search technique that combines a tree search algorithm and machine learning principles (the algorithm tries to exploit information that has so far). It solves the problem of exploration and exploitation. The algorithm expands a node that is most promising (best-first search)[@chaslot2010monte].
 
 The algorithm itself is quite simple and has 4 main steps: Selection, Expansion, Simulation and Backpropagation.
 
