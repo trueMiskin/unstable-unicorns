@@ -86,7 +86,7 @@ Then there are big questions. The first one is how many games should be played b
 |                 | 5000         | 0.98     | 0.0196   |
 |                 | 9000         | 0.99     | 0.0098   |
 
-It shows that with the increasing number of games, the win rate is more accurate but around 200 games, the win rate accuracy is good enough. The winrate after 100,000 games is around 98.2%. Unfortunately, this number of games will take ages with more complex agents as Mcts agent with a lot playouts. For this reason, I choose only 10 games for the fitness evaluation with Mcts agents.
+It shows that with the increasing number of games, the win rate is more accurate but around 200 games, the win rate accuracy is good enough. The win rate after 100,000 games is around 98.2%. Unfortunately, this number of games will take ages with more complex agents as Mcts agents with a lot of playouts. For this reason, I choose only 10 games for the fitness evaluation with Mcts agents.
 
 The second question is better to have a smaller population and more generations or a bigger population and fewer generations. The answer depends on the problem. I made tests with different population sizes and generations. The results are shown in the figure below.
 
