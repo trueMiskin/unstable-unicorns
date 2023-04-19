@@ -79,7 +79,7 @@ is the following:
 \Function{EvolutionaryAlgorithm}{}
     \State Initialize the population
     \State Evaluate the fitness of each individual
-    \While{Repeat until the stopping criterion is met}
+    \While{Until the stopping criterion is not met}
         \State Select the parents
         \State Crossover
         \State Mutation
