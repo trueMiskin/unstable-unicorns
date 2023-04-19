@@ -90,6 +90,6 @@ It shows that with the increasing number of games, the win rate is more accurate
 
 The second question is better to have a smaller population and more generations or a bigger population and fewer generations. The answer depends on the problem. I made tests with different population sizes and generations. The results are shown in the figure below.
 
-![The figure shows the performance of the different population sizes and the number of generations. "ps" means the population size and "mg" means max generations. The single line in the figure is the mean of the 10 experiments.](img/population-size-and-max-generations.png){ height=50% }
+![The figure shows the performance of the different population sizes and the number of generations. "ps" means the population size and "mg" means max generations. The single line in the figure is the mean of the 10 experiments.](img/population-size-and-max-generations.png){width=510px height=280px}
 
 The figure shows that the bigger the population size and the fewer generations are better. The figure is clearly shown that the population relatively quickly goes to the local optimum and then it does not change much.
