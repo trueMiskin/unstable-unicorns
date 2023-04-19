@@ -57,10 +57,36 @@ Then there are big questions. The first one is how many games should be played b
 
 | Number of games | Initial seed | Win rate | Variance |
 | --------------- | ------------ | -------- | -------- |
+| 3               | 0            | 1        | 0        |
+|                 | 2000         | 1        | 0        |
+|                 | 5000         | 0.6667   | 0.2222   |
+|                 | 9000         | 0.6667   | 0.2222   |
+| 5               | 0            | 1        | 0        |
+|                 | 2000         | 1        | 0        |
+|                 | 5000         | 0.8      | 0.16     |
+|                 | 9000         | 0.8      | 0.16     |
+| 10              | 0            | 1        | 0        |
+|                 | 2000         | 0.9      | 0.09     |
+|                 | 5000         | 0.8      | 0.16     |
+|                 | 9000         | 0.9      | 0.09     |
+| 20              | 0            | 1        | 0        |
+|                 | 2000         | 0.95     | 0.0475   |
+|                 | 5000         | 0.9      | 0.09     |
+|                 | 9000         | 0.9      | 0.09     |
+| 100             | 0            | 1        | 0        |
+|                 | 2000         | 0.98     | 0.0196   |
+|                 | 5000         | 0.96     | 0,0384   |
+|                 | 9000         | 0.98     | 0.0196   |
+| 200             | 0            | 0.985    | 0.0148   |
+|                 | 2000         | 0.985    | 0.0148   |
+|                 | 5000         | 0.975    | 0.0244   |
+|                 | 9000         | 0.99     | 0.0099   |
+| 500             | 0            | 0.988    | 0.0116   |
+|                 | 2000         | 0.98     | 0.0196   |
+|                 | 5000         | 0.98     | 0.0196   |
+|                 | 9000         | 0.99     | 0.0098   |
 
-TODO: table
-
-It shows that with the increasing number of games, the win rate is more accurate but around 100 games, the win rate accuracy is good enough. Unfortunately, this number of games will take ages with more complicated agents as Mcts agent. For this reason, I choose only 10 games for the fitness evaluation.
+It shows that with the increasing number of games, the win rate is more accurate but around 200 games, the win rate accuracy is good enough. The winrate after 100,000 games is around 98.2%. Unfortunately, this number of games will take ages with more complex agents as Mcts agent with a lot playouts. For this reason, I choose only 10 games for the fitness evaluation with Mcts agents.
 
 The second question is better to have a smaller population and more generations or a bigger population and fewer generations. The answer depends on the problem. I made tests with different population sizes and generations. The results are shown in the figure below.
 
