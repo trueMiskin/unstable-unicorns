@@ -1,6 +1,6 @@
 NAME=thesis
 ABSTRACT=abstract
-LATEXMKOPTS=-pdf#enable for forcing pdflatex
+LATEXMKOPTS=#-pdf #enable for forcing pdflatex
 LATEXMK=latexmk $(LATEXMKOPTS)
 PANDOCOPTS=--top-level-division=chapter --lua-filter citation.lua #--bibliography=refs.bib  --citeproc
 
