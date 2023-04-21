@@ -279,6 +279,7 @@ namespace UnstableUnicornCore {
             }
 
             // varianceBenchmark();
+            // mctsAgentTests();
             // return;
 
             string test_name = "test_rule_based_agent";
@@ -337,6 +338,48 @@ namespace UnstableUnicornCore {
             }
 
             /**/
+        }
+
+        private static void mctsAgentTests(){
+            int maxTurns = 100;
+            for (int playouts = 100; playouts <= 800; playouts *= 2) {
+                string folderName = "mcts_agent_tests";
+                if (!Directory.Exists(folderName)) {
+                    Directory.CreateDirectory(folderName);
+                }
+                int mctsAgentWins = 0, evolutionAgentWins = 0;
+                for (int id = 0; id < maxTurns; id++) {
+                    List<APlayer> players = new();
+                    for (int x = 0; x < 4; x++) {
+                        players.Add(new RandomPlayer());
+                    }
+                    for (int x = 0; x < 2; x++) {
+                        players.Add(new MctsAgent(playouts, () => new RuleBasedAgent()));
+                    }
+
+                    Stopwatch stopWatch = Stopwatch.StartNew();
+                    var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id, VerbosityLevel.All);
+
+                    game.SimulateGame();
+                    stopWatch.Stop();
+                    Console.WriteLine($"Game ended after {stopWatch.ElapsedMilliseconds} ms");
+
+                    if (game.GameResults.First().Player is MctsAgent)
+                        mctsAgentWins++;
+                    if (game.GameResults.First().Player is EvolutionAgent)
+                        evolutionAgentWins++;
+
+                    var toLog = new GameRecord(gameSeed: id, gameLength: game.TurnNumber, game.GameResults, game.GameLog);
+
+                    using var stream = File.Create($"{folderName}/mcts-{playouts}" + "-seed=" + id + ".json");
+
+                    JsonSerializer.Serialize(stream, toLog, new JsonSerializerOptions {
+                        WriteIndented= true,
+                    });
+                }
+                Console.WriteLine($"MctsAgent won {mctsAgentWins} times from {maxTurns} games.");
+                Console.WriteLine($"EvolutionAgent won {evolutionAgentWins} times from {maxTurns} games.");
+            }
         }
     }
 }
