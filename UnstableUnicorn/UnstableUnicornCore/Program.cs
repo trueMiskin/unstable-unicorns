@@ -177,7 +177,7 @@ namespace UnstableUnicornCore {
         }
 
         public static void varianceBenchmark(){
-            var initSeeds = new int[]{0, 2_000, 4_000, 8_000, 16_000, 32_000, 64_000, 128_000, 256_000, 512_000};
+            var initSeeds = new int[]{0, 2_000, 5_000, 9_000, 14_000, 20_000, 40_000, 80_000, 160_000, 320_000};
             var numGames = new int[]{1, 2, 3, 5, 10, 20, 50, 100, 200, 500, 1000};
 
             foreach (var num in numGames) {
@@ -187,18 +187,16 @@ namespace UnstableUnicornCore {
                     for (int i = 0; i < num; i++){
                         var players = new List<APlayer>();
                         for (int x = 0; x < 3; x++) {
-                            // players.Add(new RandomPlayer());
-                            players.Add(new RuleBasedAgent());
+                            players.Add(new RandomPlayer());
                         }
                         for (int x = 0; x < 3; x++) {
-                            players.Add(new EvolutionAgent("eva_logs/mcts_random-19"));
-                            // players.Add(new RuleBasedAgent());
+                            players.Add(new RuleBasedAgent());
                         }
 
                         var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, seed + i, VerbosityLevel.None);
 
                         game.SimulateGame();
-                        results.Add(game.GameResults.First().Player.GetType() == typeof(EvolutionAgent) ? 1 : 0);
+                        results.Add(game.GameResults.First().Player.GetType() == typeof(RuleBasedAgent) ? 1 : 0);
                     }
 
                     var avg = results.Average();
