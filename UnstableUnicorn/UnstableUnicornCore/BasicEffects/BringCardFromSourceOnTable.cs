@@ -19,6 +19,7 @@ namespace UnstableUnicornCore.BasicEffects {
             var cardsSource = cardsourceLocation switch {
                 CardLocation.InHand => OwningPlayer.Hand,
                 CardLocation.DiscardPile => gameController.DiscardPile,
+                CardLocation.Nursery => gameController.Nursery,
                 _ => throw new NotImplementedException()
             };
 
