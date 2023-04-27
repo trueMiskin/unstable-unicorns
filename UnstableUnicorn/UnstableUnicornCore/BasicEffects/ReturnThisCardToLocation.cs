@@ -51,7 +51,7 @@ namespace UnstableUnicornCore.BasicEffects {
                 gameController.CardVisibilityTracker.AllPlayersSawPlayerCard(OwningCard.Player, OwningCard);
             }
 
-            gameController.AddEffectToActualChainLink(this);
+            gameController.AddEffectToCurrentChainLink(this);
         }
 
         public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;

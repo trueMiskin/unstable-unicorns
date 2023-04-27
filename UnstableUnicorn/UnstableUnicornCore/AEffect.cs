@@ -93,7 +93,7 @@ namespace UnstableUnicornCore {
         /// This method call <see cref="TriggerEffect"/> in situation when is published
         /// <see cref="ETriggerSource.ChangeTargeting"/> or <see cref="ETriggerSource.ChangeLocationOfCard"/>
         /// <br/>
-        /// DON'T forget to ADD new effect to <see cref="GameController.AddEffectToActualChainLink(AEffect)"/>
+        /// DON'T forget to ADD new effect to <see cref="GameController.AddEffectToCurrentChainLink(AEffect)"/>
         /// This method should not do actual effect, only preparing. Real execution of effect should
         /// be in <see cref="InvokeEffect(GameController)"/>
         /// </summary>

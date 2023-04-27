@@ -17,7 +17,7 @@ namespace UnstableUnicornCore.BasicEffects {
             // removed saved card from target of effect
             effect.CardTargets.Remove(OwningCard);
 
-            gameController.AddEffectToActualChainLink(this);
+            gameController.AddEffectToCurrentChainLink(this);
         }
     }
 }

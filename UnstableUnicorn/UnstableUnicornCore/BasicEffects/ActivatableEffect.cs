@@ -15,7 +15,7 @@ namespace UnstableUnicornCore.BasicEffects {
 
             if (OwningPlayer.ActivateEffect(_effect)) {
                 // choosing targets of added effect will be called too
-                gameController.AddEffectToActualChainLink(_effect);
+                gameController.AddEffectAfterSelectedEffectToCurrentChainLink(_effect, this);
             }
         }
 

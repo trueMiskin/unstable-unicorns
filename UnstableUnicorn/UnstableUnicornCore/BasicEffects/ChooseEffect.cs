@@ -23,7 +23,7 @@ namespace UnstableUnicornCore.BasicEffects {
             if (!availableEffectVariants.Contains(effect))
                 throw new InvalidOperationException("Selected unknown effect");
 
-            gameController.AddEffectToActualChainLink(effect);
+            gameController.AddEffectAfterSelectedEffectToCurrentChainLink(effect, this);
         }
 
         public override void InvokeEffect(GameController gameController) { }
