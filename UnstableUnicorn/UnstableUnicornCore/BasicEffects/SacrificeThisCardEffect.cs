@@ -8,5 +8,9 @@ namespace UnstableUnicornCore.BasicEffects {
             CardTargets.Add(OwningCard);
             CheckAndUpdateSelectionInActualLink(new List<Card>(), CardTargets, gameController);
         }
+
+        public override bool MeetsRequirementsToPlayInner(GameController gameController) {
+            return !gameController.CardsWhichAreTargeted.ContainsKey(OwningCard);
+        }
     }
 }
