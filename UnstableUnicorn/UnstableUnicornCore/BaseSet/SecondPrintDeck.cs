@@ -14,18 +14,18 @@ namespace UnstableUnicornCore.BaseSet {
             yield return (new Narwhal(), 1);
             yield return (new AlluringNarwhal(), 1);
             yield return (new Americorn(), 1);
-            // angel unicorn
+            yield return (new AngelUnicorn(), 1);
             yield return (new AnnoyingFlyingUnicorn(), 1);
             yield return (new BlackKnightUnicorn(), 1);
             yield return (new ChainsawUnicorn(), 1);
             yield return (new ClassyNarwhal(), 1);
-            // extremely destructive
-            // extremely fertile
+            yield return (new ExtremelyDestructiveUnicorn(), 1);
+            yield return (new ExtremelyFertileUnicorn(), 1);
             yield return (new GinormousUnicorn(), 1);
             yield return (new GreedyFlyingUnicorn(), 1);
-            // Llamacorn
+            yield return (new Llamacorn(), 1);
             yield return (new MagicalFlyingUnicorn(), 1);
-            // magical kittencorn
+            yield return (new MagicalKittencorn(), 1);
             yield return (new MajesticFlyingUnicorn(), 1);
             yield return (new MermaidUnicorn(), 1);
             yield return (new NarwhalTorpedo(), 1);
@@ -40,8 +40,8 @@ namespace UnstableUnicornCore.BaseSet {
             yield return (new SwiftFlyingUnicorn(), 1);
             yield return (new TheGreatNarwhal(), 1);
             yield return (new UnicornOnTheCob(), 1);
-            // unicorn phoenix
-            // zombie unicorn
+            yield return (new UnicornPhoenix(), 1);
+            yield return (new ZombieUnicorn(), 1);
 
             //
             // Spells
