@@ -80,6 +80,10 @@ namespace UnstableUnicornCore {
                 // execute `ChangeTargeting` and `ChangeLocationOfCard` immediately because this event should be used
                 // only on effects which saving unicorns from leaving stable (for example: to discard pile)
                 if (triggerSource == ETriggerSource.ChangeTargeting || triggerSource == ETriggerSource.ChangeLocationOfCard) {
+                    // if reaction effect can not be played - skip it
+                    if (!triggeredEffect.MeetsRequirementsToPlayInner(gameController))
+                        return;
+
                     if (effectWhichTriggerEffect == null)
                         throw new InvalidOperationException($"{triggerSource} must have not null effect");
 

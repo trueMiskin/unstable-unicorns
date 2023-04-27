@@ -21,7 +21,7 @@ namespace UnstableUnicornCore.BasicEffects {
 
         public override void InvokeEffect(GameController gameController) {}
 
-        public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;
+        public override bool MeetsRequirementsToPlayInner(GameController gameController) => _effect.MeetsRequirementsToPlayInner(gameController);
 
         public override void InvokeReactionEffect(GameController gameController, AEffect effect) {
             if (OwningPlayer.ActivateEffect(_effect))
