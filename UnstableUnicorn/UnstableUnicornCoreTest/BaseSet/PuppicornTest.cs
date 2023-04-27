@@ -103,7 +103,7 @@ namespace UnstableUnicornCoreTest.BaseSet {
             TestUtils.CheckPlayerPileSizes(playerTwo, handSize: 0, stableSize: 1, numUpgrades: 0, numDowngrades: 0);
 
             Assert.False(puppicorn.CanBeSacrificed());
-            Assert.False(puppicorn.CanBeDestroyed());
+            Assert.False(puppicorn.CanBeDestroyed(null));
             Assert.Equal(puppicorn, playerTwo.Stable[0]);
         }
     }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace UnstableUnicornCore.BasicContinuousEffects {
     public class PlayerCardsCantBeDestroyed : AContinuousEffect {
@@ -12,7 +8,7 @@ namespace UnstableUnicornCore.BasicContinuousEffects {
             _protectedCardTypes = protectedCardTypes;
         }
 
-        public override bool IsCardDestroyable(Card card) {
+        public override bool IsCardDestroyable(Card card, AEffect? byEffect) {
             return !(card.Player == OwningPlayer && _protectedCardTypes.Contains(card.CardType));
         }
     }

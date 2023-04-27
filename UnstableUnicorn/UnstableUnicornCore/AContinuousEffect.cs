@@ -40,7 +40,13 @@ namespace UnstableUnicornCore {
         /// <returns></returns>
         public virtual bool IsCardPlayable(Card card, APlayer targetOwner) => true;
 
-        public virtual bool IsCardDestroyable(Card card) => true;
+        /// <summary>
+        /// If continuous effect allow destroy the owning card.
+        /// </summary>
+        /// <param name="card"></param>
+        /// <param name="byEffect"></param>
+        /// <returns></returns>
+        public virtual bool IsCardDestroyable(Card card, AEffect? byEffect) => true;
 
         /// <summary>
         /// Triggered effect are one time effects of unicorns and trigger effects
