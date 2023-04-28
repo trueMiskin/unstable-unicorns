@@ -1,12 +1,11 @@
-﻿using CommandLine;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using UnstableUnicornCore.Agent;
 using UnstableUnicornCore.BaseSet;
 using static UnstableUnicornCore.Agent.MyProblemFitness;
@@ -208,66 +207,90 @@ namespace UnstableUnicornCore {
             }
         }
 
-        public static int Main(string[] args) {
-            ParserResult<object> parsed = CommandLineHelper.ParseInput(args);
-            return parsed.MapResult(
-                (GameOptions _) => {
-                    handleGameInteractively();
-                    return 0;
-                },
-                (VarianceBenchmark _) => {
-                    varianceBenchmark();
-                    return 0;
-                },
-                (MctsAgentTestOptions _) => {
-                    mctsAgentTests();
-                    return 0;
-                },
-                (EvoMctsRandomOptions opts) => {
-                    CreatePlayers createPlayers = (cardStrength) => {
-                        List<APlayer> players = new();
-                        for (int x = 0; x < 5; x++) {
-                            players.Add(new MctsAgent(200, () => new RandomPlayer()));
+        public static void Main(string[] args) {
+            var gameCommand = new Command("game", "Run game");
+            gameCommand.SetHandler(() => handleGameInteractively());
+
+            var varianceBenchmarkCommand = new Command("variance-benchmark", "Run multiple games with different seeds.");
+            varianceBenchmarkCommand.SetHandler(() => varianceBenchmark());
+
+            var mctsAgentTestsCommand = new Command("mcts-agent-tests", "Compare Mcts agents with different numbers of playouts.");
+            mctsAgentTestsCommand.SetHandler(() => mctsAgentTests());
+
+            var evolutionCommand = new Command("evolution", "The command for running different evolutions.");
+            evolutionCommand.AddAlias("evo");
+            var pcNameArgument = new Argument<string>("pc-name", "The name of the pc where the evolution is running.");
+            var populationSize = new Option<int>(new[]{ "--population-size", "--ps" }, "The size of the population.");
+            populationSize.SetDefaultValue(16);
+            var numGames_random = new Option<int>(new[]{ "--num-games", "--ng" }, "The number of games in each fitness evaluation.");
+            numGames_random.SetDefaultValue(100);
+            var numGames_mcts = new Option<int>(new[]{ "--num-games", "--ng" }, "The number of games in each fitness evaluation.");
+            numGames_mcts.SetDefaultValue(10);
+            var maxGenerations = new Option<int>(new[]{ "--max-generations", "--mg" }, "The maximum number of generations.");
+            maxGenerations.SetDefaultValue(200);
+
+            var evoMctsCommand = new Command("mcts", "Evolution where 5 agents are mcts agents.");
+            var defaultPolicy = new Argument<string>("default-policy", "Default policy for MCTS agents.")
+                .FromAmong("random", "rule_based");
+            evoMctsCommand.AddArgument(pcNameArgument);
+            evoMctsCommand.AddArgument(defaultPolicy);
+            evoMctsCommand.AddOption(populationSize);
+            evoMctsCommand.AddOption(maxGenerations);
+            evoMctsCommand.AddOption(numGames_mcts);
+
+            evoMctsCommand.SetHandler((pcName, defaultPolicy, populationSize, maxGenerations, numGames) => {
+                System.Console.WriteLine($"Running mcts-{defaultPolicy} evolution on pc {pcName}");
+                CreatePlayers createPlayers = (cardStrength) => {
+                    List<APlayer> players = new();
+                    for (int x = 0; x < 5; x++) {
+                        switch(defaultPolicy){
+                            case "random":
+                                players.Add(new MctsAgent(200, () => new RandomPlayer()));
+                                break;
+                            case "rule_based":
+                                players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
+                                break;
+                            default:
+                                throw new InvalidProgramException();
                         }
-                        var evolutionAgent = new EvolutionAgent(cardStrength);
-                        players.Add(evolutionAgent);
-                        return (players, evolutionAgent);
-                    };
-                    EvolutionAgent.RunEvolution($"mcts_random-{opts.PcName}", createPlayers);
-                    return 0;
-                },
-                (EvoMctsRuleBasedOptions opts) => {
-                    CreatePlayers createPlayers = (cardStrength) => {
-                        List<APlayer> players = new();
-                        for (int x = 0; x < 5; x++) {
-                            players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
-                        }
-                        var evolutionAgent = new EvolutionAgent(cardStrength);
-                        players.Add(evolutionAgent);
-                        return (players, evolutionAgent);
-                    };
-                    EvolutionAgent.RunEvolution($"mcts_random-{opts.PcName}", createPlayers);
-                    return 0;
-                },
-                (EvoParametricOptions opts) => {
-                    CreatePlayers createPlayers = (cardStrength) => {
-                        List<APlayer> players = new();
-                        for (int x = 0; x < 5; x++) {
-                            players.Add(new RandomPlayer());
-                        }
-                        var evolutionAgent = new EvolutionAgent(cardStrength);
-                        players.Add(evolutionAgent);
-                        return (players, evolutionAgent);
-                    };
-                    string computerNum = opts.PcName;
-                    int populationSize = opts.PopulationSize;
-                    int maxGenerations = opts.MaxGenerations;
-                    int numGames = opts.NumGames;
-                    EvolutionAgent.RunEvolution($"parametric_evolution-ps={populationSize}-mg={maxGenerations}-ng={numGames}-{computerNum}", createPlayers, populationSize, maxGenerations, numGames);
-                    return 0;
-                },
-                (_) => -1
-            );
+                    }
+                    var evolutionAgent = new EvolutionAgent(cardStrength);
+                    players.Add(evolutionAgent);
+                    return (players, evolutionAgent);
+                };
+                EvolutionAgent.RunEvolution($"mcts_{defaultPolicy}-mg={maxGenerations}-ng={numGames}-{pcName}", createPlayers);
+            }, pcNameArgument, defaultPolicy, populationSize, maxGenerations, numGames_mcts);
+
+            var evoRandomCommand = new Command("random", "Evolution where 5 agents are random agents.");
+            evoRandomCommand.AddArgument(pcNameArgument);
+            evoRandomCommand.AddOption(populationSize);
+            evoRandomCommand.AddOption(maxGenerations);
+            evoRandomCommand.AddOption(numGames_random);
+
+            evoRandomCommand.SetHandler((pcName, populationSize, maxGenerations, numGames) => {
+                CreatePlayers createPlayers = (cardStrength) => {
+                    List<APlayer> players = new();
+                    for (int x = 0; x < 5; x++) {
+                        players.Add(new RandomPlayer());
+                    }
+                    var evolutionAgent = new EvolutionAgent(cardStrength);
+                    players.Add(evolutionAgent);
+                    return (players, evolutionAgent);
+                };
+                string computerNum = pcName;
+                EvolutionAgent.RunEvolution($"random-ps={populationSize}-mg={maxGenerations}-ng={numGames}-{computerNum}", createPlayers, populationSize, maxGenerations, numGames);
+            }, pcNameArgument, populationSize, maxGenerations, numGames_random);
+
+            evolutionCommand.AddCommand(evoMctsCommand);
+            evolutionCommand.AddCommand(evoRandomCommand);
+
+            var rootCommand = new RootCommand("Unstable Unicorns CLI");
+            rootCommand.AddCommand(gameCommand);
+            rootCommand.AddCommand(varianceBenchmarkCommand);
+            rootCommand.AddCommand(mctsAgentTestsCommand);
+            rootCommand.AddCommand(evolutionCommand);
+
+            rootCommand.Invoke(args);
             /*
             handleGameInteractively();
 
