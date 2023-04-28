@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommandLine;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -8,6 +9,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using UnstableUnicornCore.Agent;
 using UnstableUnicornCore.BaseSet;
+using static UnstableUnicornCore.Agent.MyProblemFitness;
 
 namespace UnstableUnicornCore {
 
@@ -206,31 +208,23 @@ namespace UnstableUnicornCore {
             }
         }
 
-        public static void Main(string[] args) {
-            /*
-            handleGameInteractively();
-
-            // For bot testing
-            // 347516
-            // 2938278
-            // 8704718
-            /*/
-            //for (int id = 8704718; ; id++) {
-            //    Console.WriteLine($"---------> Starting game {id+1} <---------");
-            //    List<APlayer> players = new();
-            //    for (int x = 0; x < 6; x++) {
-            //        players.Add(new RandomPlayer());
-            //    }
-
-            //    var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id);
-
-            //    game.SimulateGame();
-            //}
-
-            if (args.Length == 2) {
-                MyProblemFitness.CreatePlayers createPlayers;
-                if(args[0] == "mcts_random") {
-                    createPlayers = (cardStrength) => {
+        public static int Main(string[] args) {
+            ParserResult<object> parsed = CommandLineHelper.ParseInput(args);
+            return parsed.MapResult(
+                (GameOptions _) => {
+                    handleGameInteractively();
+                    return 0;
+                },
+                (VarianceBenchmark _) => {
+                    varianceBenchmark();
+                    return 0;
+                },
+                (MctsAgentTestOptions _) => {
+                    mctsAgentTests();
+                    return 0;
+                },
+                (EvoMctsRandomOptions opts) => {
+                    CreatePlayers createPlayers = (cardStrength) => {
                         List<APlayer> players = new();
                         for (int x = 0; x < 5; x++) {
                             players.Add(new MctsAgent(200, () => new RandomPlayer()));
@@ -239,8 +233,11 @@ namespace UnstableUnicornCore {
                         players.Add(evolutionAgent);
                         return (players, evolutionAgent);
                     };
-                }else if (args[0] == "mcts_rule_based"){
-                    createPlayers = (cardStrength) => {
+                    EvolutionAgent.RunEvolution($"mcts_random-{opts.PcName}", createPlayers);
+                    return 0;
+                },
+                (EvoMctsRuleBasedOptions opts) => {
+                    CreatePlayers createPlayers = (cardStrength) => {
                         List<APlayer> players = new();
                         for (int x = 0; x < 5; x++) {
                             players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
@@ -249,38 +246,48 @@ namespace UnstableUnicornCore {
                         players.Add(evolutionAgent);
                         return (players, evolutionAgent);
                     };
-                }else {
-                    System.Console.WriteLine("Unknown parameter: " + args[0]);
-                    return;
-                }
-                EvolutionAgent.RunEvolution($"{args[0]}-{args[1]}", createPlayers);
-                return;
-            }
-            if (args.Length == 5) {
-                if (args[0] != "parametric_evolution") {
-                    System.Console.WriteLine("Unknown parameter: " + args[0]);
-                    return;
-                }
-                MyProblemFitness.CreatePlayers createPlayers = (cardStrength) => {
-                    List<APlayer> players = new();
-                    for (int x = 0; x < 5; x++) {
-                        players.Add(new RandomPlayer());
-                    }
-                    var evolutionAgent = new EvolutionAgent(cardStrength);
-                    players.Add(evolutionAgent);
-                    return (players, evolutionAgent);
-                };
-                string computerNum = args[1];
-                int populationSize = int.Parse(args[2]);
-                int maxGenerations = int.Parse(args[3]);
-                int numGames = int.Parse(args[4]);
-                EvolutionAgent.RunEvolution($"{args[0]}-ps={populationSize}-mg={maxGenerations}-ng={numGames}-{computerNum}", createPlayers, populationSize, maxGenerations, numGames);
-                return;
-            }
+                    EvolutionAgent.RunEvolution($"mcts_random-{opts.PcName}", createPlayers);
+                    return 0;
+                },
+                (EvoParametricOptions opts) => {
+                    CreatePlayers createPlayers = (cardStrength) => {
+                        List<APlayer> players = new();
+                        for (int x = 0; x < 5; x++) {
+                            players.Add(new RandomPlayer());
+                        }
+                        var evolutionAgent = new EvolutionAgent(cardStrength);
+                        players.Add(evolutionAgent);
+                        return (players, evolutionAgent);
+                    };
+                    string computerNum = opts.PcName;
+                    int populationSize = opts.PopulationSize;
+                    int maxGenerations = opts.MaxGenerations;
+                    int numGames = opts.NumGames;
+                    EvolutionAgent.RunEvolution($"parametric_evolution-ps={populationSize}-mg={maxGenerations}-ng={numGames}-{computerNum}", createPlayers, populationSize, maxGenerations, numGames);
+                    return 0;
+                },
+                (_) => -1
+            );
+            /*
+            handleGameInteractively();
 
-            // varianceBenchmark();
-            // mctsAgentTests();
-            // return;
+            // For bot testing
+            // 347516
+            // 2938278
+            // 8704718
+            // 23818264
+            /*//*
+            for (int id = 12428753; ; id++) {
+                Console.WriteLine($"---------> Starting game {id + 1} <---------");
+                List<APlayer> players = new();
+                for (int x = 0; x < 6; x++) {
+                    players.Add(new RandomPlayer());
+                }
+
+                var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id, VerbosityLevel.None);
+
+                game.SimulateGame();
+            }
 
             string test_name = "test_rule_based_agent";
             int maxTurns = 100_000;
