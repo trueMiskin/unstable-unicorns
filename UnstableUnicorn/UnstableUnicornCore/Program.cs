@@ -245,10 +245,10 @@ namespace UnstableUnicornCore {
                     for (int x = 0; x < 5; x++) {
                         switch(defaultPolicy){
                             case "random":
-                                players.Add(new MctsAgent(200, () => new RandomPlayer()));
+                                players.Add(new MctsAgent(100, () => new RandomPlayer()));
                                 break;
                             case "rule_based":
-                                players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
+                                players.Add(new MctsAgent(100, () => new RuleBasedAgent()));
                                 break;
                             default:
                                 throw new InvalidProgramException();
