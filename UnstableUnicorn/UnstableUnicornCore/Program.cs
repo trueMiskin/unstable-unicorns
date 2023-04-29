@@ -232,23 +232,28 @@ namespace UnstableUnicornCore {
             var evoMctsCommand = new Command("mcts", "Evolution where 5 agents are mcts agents.");
             var defaultPolicy = new Argument<string>("default-policy", "Default policy for MCTS agents.")
                 .FromAmong("random", "rule_based");
+            var playoutsNum = new Option<int>("--playouts-num", "The number of playouts for MCTS agents.");
+            playoutsNum.AddAlias("--pn");
+            playoutsNum.SetDefaultValue(100);
+
             evoMctsCommand.AddArgument(pcNameArgument);
             evoMctsCommand.AddArgument(defaultPolicy);
             evoMctsCommand.AddOption(populationSize);
             evoMctsCommand.AddOption(maxGenerations);
             evoMctsCommand.AddOption(numGames_mcts);
+            evoMctsCommand.AddOption(playoutsNum);
 
-            evoMctsCommand.SetHandler((pcName, defaultPolicy, populationSize, maxGenerations, numGames) => {
+            evoMctsCommand.SetHandler((pcName, defaultPolicy, populationSize, maxGenerations, numGames, playoutsNum) => {
                 System.Console.WriteLine($"Running mcts-{defaultPolicy} evolution on pc {pcName}");
                 CreatePlayers createPlayers = (cardStrength) => {
                     List<APlayer> players = new();
                     for (int x = 0; x < 5; x++) {
                         switch(defaultPolicy){
                             case "random":
-                                players.Add(new MctsAgent(100, () => new RandomPlayer()));
+                                players.Add(new MctsAgent(playoutsNum, () => new RandomPlayer()));
                                 break;
                             case "rule_based":
-                                players.Add(new MctsAgent(100, () => new RuleBasedAgent()));
+                                players.Add(new MctsAgent(playoutsNum, () => new RuleBasedAgent()));
                                 break;
                             default:
                                 throw new InvalidProgramException();
@@ -258,8 +263,8 @@ namespace UnstableUnicornCore {
                     players.Add(evolutionAgent);
                     return (players, evolutionAgent);
                 };
-                EvolutionAgent.RunEvolution($"mcts_{defaultPolicy}-mg={maxGenerations}-ng={numGames}-{pcName}", createPlayers, populationSize, maxGenerations, numGames);
-            }, pcNameArgument, defaultPolicy, populationSize, maxGenerations, numGames_mcts);
+                EvolutionAgent.RunEvolution($"mcts_{defaultPolicy}-mg={maxGenerations}-pn={playoutsNum}-ng={numGames}-{pcName}", createPlayers, populationSize, maxGenerations, numGames);
+            }, pcNameArgument, defaultPolicy, populationSize, maxGenerations, numGames_mcts, playoutsNum);
 
             var evoRandomCommand = new Command("random", "Evolution where 5 agents are random agents.");
             evoRandomCommand.AddArgument(pcNameArgument);
