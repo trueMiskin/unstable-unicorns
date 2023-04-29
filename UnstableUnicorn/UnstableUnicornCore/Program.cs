@@ -258,7 +258,7 @@ namespace UnstableUnicornCore {
                     players.Add(evolutionAgent);
                     return (players, evolutionAgent);
                 };
-                EvolutionAgent.RunEvolution($"mcts_{defaultPolicy}-mg={maxGenerations}-ng={numGames}-{pcName}", createPlayers);
+                EvolutionAgent.RunEvolution($"mcts_{defaultPolicy}-mg={maxGenerations}-ng={numGames}-{pcName}", createPlayers, populationSize, maxGenerations, numGames);
             }, pcNameArgument, defaultPolicy, populationSize, maxGenerations, numGames_mcts);
 
             var evoRandomCommand = new Command("random", "Evolution where 5 agents are random agents.");
