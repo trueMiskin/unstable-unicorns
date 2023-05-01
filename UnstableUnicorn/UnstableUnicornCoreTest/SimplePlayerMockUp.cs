@@ -41,7 +41,7 @@ namespace UnstableUnicornCoreTest {
 
             if (ChooseCardsWhichCantBeDestroy) {
                 foreach (var card in GameController.GetCardsOnTable()) {
-                    if (!card.CanBeDestroyed()) {
+                    if (!card.CanBeDestroyed(effect)) {
                         ret.Add(card);
                     }
                 }

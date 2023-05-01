@@ -18,7 +18,7 @@ namespace UnstableUnicornCore.BasicEffects {
 
             foreach (Card card in cards)
                 if (_allowedCardTypes.Contains(card.CardType) &&
-                        card.CanBeDestroyed() && card.Player != OwningPlayer
+                        card.CanBeDestroyed(this) && card.Player != OwningPlayer
                     )
                     validtargets.Add(card);
 

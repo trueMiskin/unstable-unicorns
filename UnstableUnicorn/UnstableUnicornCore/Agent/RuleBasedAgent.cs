@@ -197,18 +197,18 @@ namespace UnstableUnicornCore.Agent {
             {new Narwhal().GetCardTemplate().CreateCard().Name, Tiers.A},
             {new AlluringNarwhal().GetCardTemplate().CreateCard().Name, Tiers.AA},
             {new Americorn().GetCardTemplate().CreateCard().Name, Tiers.A},
-            // angel unicorn
+            {new AngelUnicorn().GetCardTemplate().CreateCard().Name, Tiers.A},
             {new AnnoyingFlyingUnicorn().GetCardTemplate().CreateCard().Name, Tiers.B},
             {new BlackKnightUnicorn().GetCardTemplate().CreateCard().Name, Tiers.D},
             {new ChainsawUnicorn().GetCardTemplate().CreateCard().Name, Tiers.C},
             {new ClassyNarwhal().GetCardTemplate().CreateCard().Name, Tiers.A},
-            // extremely destructive
-            // extremely fertile
+            {new ExtremelyDestructiveUnicorn().GetCardTemplate().CreateCard().Name, Tiers.C},
+            {new ExtremelyFertileUnicorn().GetCardTemplate().CreateCard().Name, Tiers.S},
             {new GinormousUnicorn().GetCardTemplate().CreateCard().Name, Tiers.E},
             {new GreedyFlyingUnicorn().GetCardTemplate().CreateCard().Name, Tiers.B},
-            // Llamacorn
+            {new Llamacorn().GetCardTemplate().CreateCard().Name, Tiers.E},
             {new MagicalFlyingUnicorn().GetCardTemplate().CreateCard().Name, Tiers.A},
-            // magical kittencorn
+            {new MagicalKittencorn().GetCardTemplate().CreateCard().Name, Tiers.D},
             {new MajesticFlyingUnicorn().GetCardTemplate().CreateCard().Name, Tiers.AA},
             {new MermaidUnicorn().GetCardTemplate().CreateCard().Name, Tiers.A},
             // narwhal torpedo - A tier
@@ -224,8 +224,8 @@ namespace UnstableUnicornCore.Agent {
             {new SwiftFlyingUnicorn().GetCardTemplate().CreateCard().Name, Tiers.AA},
             {new TheGreatNarwhal().GetCardTemplate().CreateCard().Name, Tiers.B},
             {new UnicornOnTheCob().GetCardTemplate().CreateCard().Name, Tiers.B},
-            // unicorn phoenix
-            // zombie unicorn
+            {new UnicornPhoenix().GetCardTemplate().CreateCard().Name, Tiers.B},
+            {new ZombieUnicorn().GetCardTemplate().CreateCard().Name, Tiers.S},
 
             //
             // Spells
@@ -280,13 +280,4 @@ namespace UnstableUnicornCore.Agent {
     public enum Tiers{
         S, AA, A, B, C, D, E, F
     }
-
-    // public static class CardStrength {
-    //     public static Tiers GetTier(Card card) {
-    //         return card switch {
-    //             AlluringNarwhal a => Tiers.AA,
-    //             _ => Tiers.F,
-    //         };
-    //     }
-    // }
 }

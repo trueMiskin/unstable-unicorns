@@ -130,7 +130,15 @@ namespace UnstableUnicornCore {
             return ret;
         }
         public bool CanBeSacrificed() { return _canBeSacrificed; }
-        public bool CanBeDestroyed() {
+
+        /// <summary>
+        /// Returns if card can be destroyed by some effect.
+        /// If the effect is null, it returns whether the card can be destroyed at all
+        /// </summary>
+        /// <param name="byEffect"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public bool CanBeDestroyed(AEffect? byEffect) {
             if (Location != CardLocation.OnTable)
                 throw new InvalidOperationException("Invalid calling method, this card is not on table!");
             if (Player == null)
@@ -138,7 +146,7 @@ namespace UnstableUnicornCore {
 
             bool ret = _canBeDestroyed;
             foreach (AContinuousEffect effect in Player.GameController.ContinuousEffects)
-                ret &= effect.IsCardDestroyable(this);
+                ret &= effect.IsCardDestroyable(this, byEffect);
             return ret;
         }
 

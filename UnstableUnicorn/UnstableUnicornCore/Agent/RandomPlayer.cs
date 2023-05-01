@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace UnstableUnicornCore {
+namespace UnstableUnicornCore.Agent {
     public class RandomPlayer : APlayer {
         protected override bool ActivateEffectCore(AEffect effect) {
             return GameController.Random.Next(2) == 1;
@@ -37,7 +37,7 @@ namespace UnstableUnicornCore {
         private List<Card> RandomSelectionFromCards(int number, List<Card> cardsWhichCanBeSelected) {
             HashSet<int> selectedCards = new();
 
-            while(selectedCards.Count != number) {
+            while (selectedCards.Count != number) {
                 selectedCards.Add(GameController.Random.Next(cardsWhichCanBeSelected.Count));
             }
 
@@ -69,7 +69,7 @@ namespace UnstableUnicornCore {
         }
 
         protected override Card? WhichCardToPlayCore() {
-            if (Hand.Count == 0 || Hand.All(card => card.CardType == ECardType.Instant || !card.CanBePlayed(this) ))
+            if (Hand.Count == 0 || Hand.All(card => card.CardType == ECardType.Instant || !card.CanBePlayed(this)))
                 return null;
 
             Card? selectedCard = null;

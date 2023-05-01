@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UnstableUnicornCore {
+namespace UnstableUnicornCore.Agent {
     public class DefaultConsolePlayer : APlayer {
         protected override bool ActivateEffectCore(AEffect effect) {
             Console.WriteLine("Do you want activate effect {0} of card {1}?", effect, effect.OwningCard.Name);
-            
+
             string? ans = "";
             while (ans == "") {
                 Console.Write("Activate? Y/N: ");
@@ -49,12 +49,12 @@ namespace UnstableUnicornCore {
                 }
 
                 if (number != 1)
-                    Console.Write("Selection {0}/{1}: ", i+1, number);
+                    Console.Write("Selection {0}/{1}: ", i + 1, number);
                 else
                     Console.Write("Selection: ");
 
                 string? answer = Console.ReadLine();
-                if (Int32.TryParse(answer, out int selectedNumber)) {
+                if (int.TryParse(answer, out int selectedNumber)) {
                     if (selectedNumber >= 1 && selectedNumber <= players.Count)
                         if (!selected[selectedNumber - 1])
                             selected[selectedNumber - 1] = true;
@@ -88,7 +88,7 @@ namespace UnstableUnicornCore {
             foreach (Card _ in cards)
                 selected.Add(false);
 
-            Predicate<Card> isCardPlayable = card => !checkIfCardCanBePlayed || (card.CardType != ECardType.Instant && card.CanBePlayed(this));
+            Predicate<Card> isCardPlayable = card => !checkIfCardCanBePlayed || card.CardType != ECardType.Instant && card.CanBePlayed(this);
             for (int i = 0; i < number; i++) {
                 Console.WriteLine("Available targets:");
                 for (int cIdx = 0; cIdx < cards.Count; cIdx++)
@@ -106,7 +106,7 @@ namespace UnstableUnicornCore {
                     Console.Write("Selection: ");
 
                 string? answer = Console.ReadLine();
-                if (Int32.TryParse(answer, out int selectedNumber)) {
+                if (int.TryParse(answer, out int selectedNumber)) {
                     if (selectionNothingAvailable && selectedNumber == cards.Count + 1)
                         return new List<Card>();
 
@@ -115,7 +115,7 @@ namespace UnstableUnicornCore {
                         if (!isCardPlayable(cards[selectedNumber - 1])) {
                             Console.WriteLine("This card can't be played.");
                             i--;
-                        }else if (!selected[selectedNumber - 1])
+                        } else if (!selected[selectedNumber - 1])
                             selected[selectedNumber - 1] = true;
                         else {
                             Console.WriteLine("This card is already selected!");
@@ -141,7 +141,7 @@ namespace UnstableUnicornCore {
 
         protected override List<APlayer> ChoosePlayersCore(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected) {
             return AskOnPlayerSelection(
-                String.Format("Which players should be selected for effect {0} of card {1}?", effect, effect.OwningCard.Name),
+                string.Format("Which players should be selected for effect {0} of card {1}?", effect, effect.OwningCard.Name),
                 number,
                 playersWhichCanBeSelected
             );
@@ -149,7 +149,7 @@ namespace UnstableUnicornCore {
 
         protected override Card? PlayInstantOnStackCore(List<Card> stack, List<Card> availableInstantCards) {
             var selection = AskOnCardSelection(
-                String.Format("Play instant card on stack? Current stack: {0}", string.Join(", ", stack.Select(card => card.Name))),
+                string.Format("Play instant card on stack? Current stack: {0}", string.Join(", ", stack.Select(card => card.Name))),
                 1,
                 availableInstantCards,
                 selectionNothingAvailable: true
@@ -165,7 +165,7 @@ namespace UnstableUnicornCore {
                 return this;
 
             return AskOnPlayerSelection(
-                String.Format("To which stable should be card {0} played?", card.Name),
+                string.Format("To which stable should be card {0} played?", card.Name),
                 1,
                 new List<APlayer>(GameController.Players)
             )[0];
@@ -173,7 +173,7 @@ namespace UnstableUnicornCore {
 
         protected override List<Card> WhichCardsToDestroyCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
-                String.Format("Which card(s) should be destroyed by effect of card {0}?", effect.OwningCard.Name),
+                string.Format("Which card(s) should be destroyed by effect of card {0}?", effect.OwningCard.Name),
                 number,
                 cardsWhichCanBeSelected
             );
@@ -182,7 +182,7 @@ namespace UnstableUnicornCore {
         protected override List<Card> WhichCardsToDiscardCore(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
                 effect == null ? "Which cards should be discarded (end of turn)?" :
-                String.Format("Which card(s) should be discarded by effect of card {0}?", effect.OwningCard.Name),
+                string.Format("Which card(s) should be discarded by effect of card {0}?", effect.OwningCard.Name),
                 number,
                 cardsWhichCanBeSelected
             );
@@ -190,7 +190,7 @@ namespace UnstableUnicornCore {
 
         protected override List<Card> WhichCardsToGetCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
-                String.Format("Which card(s) cards you want to get from effect of card {0}?", effect.OwningCard.Name),
+                string.Format("Which card(s) cards you want to get from effect of card {0}?", effect.OwningCard.Name),
                 number,
                 cardsWhichCanBeSelected
             );
@@ -198,7 +198,7 @@ namespace UnstableUnicornCore {
 
         protected override List<Card> WhichCardsToMoveCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
-                String.Format("Which card(s) cards to move by effect of card {0}?", effect.OwningCard.Name),
+                string.Format("Which card(s) cards to move by effect of card {0}?", effect.OwningCard.Name),
                 number,
                 cardsWhichCanBeSelected
             );
@@ -206,7 +206,7 @@ namespace UnstableUnicornCore {
 
         protected override List<Card> WhichCardsToReturnCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
-                String.Format("Which card(s) should be returned by effect of card {0}?", effect.OwningCard.Name),
+                string.Format("Which card(s) should be returned by effect of card {0}?", effect.OwningCard.Name),
                 number,
                 cardsWhichCanBeSelected
             );
@@ -214,7 +214,7 @@ namespace UnstableUnicornCore {
 
         protected override List<Card> WhichCardsToSacrificeCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
-                String.Format("Which card(s) should be sacrificed by effect of card {0}?", effect.OwningCard.Name),
+                string.Format("Which card(s) should be sacrificed by effect of card {0}?", effect.OwningCard.Name),
                 number,
                 cardsWhichCanBeSelected
             );
@@ -222,7 +222,7 @@ namespace UnstableUnicornCore {
 
         protected override List<Card> WhichCardsToSaveCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
-                String.Format("Which card(s) should be saved (from effect which are targeted) by effect of card {0}?", effect.OwningCard.Name),
+                string.Format("Which card(s) should be saved (from effect which are targeted) by effect of card {0}?", effect.OwningCard.Name),
                 number,
                 cardsWhichCanBeSelected
             );
@@ -230,7 +230,7 @@ namespace UnstableUnicornCore {
 
         protected override List<Card> WhichCardsToStealCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             return AskOnCardSelection(
-                String.Format("Which card(s) should be stolen by effect of card {0}?", effect.OwningCard.Name),
+                string.Format("Which card(s) should be stolen by effect of card {0}?", effect.OwningCard.Name),
                 number,
                 cardsWhichCanBeSelected
             );
@@ -238,7 +238,7 @@ namespace UnstableUnicornCore {
 
         protected override Card? WhichCardToPlayCore() {
             var selection = AskOnCardSelection(
-                String.Format("Which card should be played?"),
+                string.Format("Which card should be played?"),
                 1,
                 Hand,
                 selectionNothingAvailable: true,
@@ -246,14 +246,14 @@ namespace UnstableUnicornCore {
             );
             if (selection.Count == 0)
                 return null;
-            
+
             return selection[0];
         }
 
         protected override AEffect WhichEffectToSelectCore(List<AEffect> effectsVariants) {
             Console.WriteLine("Which effect to select?");
-                
-            while(true) {
+
+            while (true) {
                 Console.WriteLine("Available effects:");
                 for (int cIdx = 0; cIdx < effectsVariants.Count; cIdx++)
                     Console.WriteLine("{0} - effect {1}", cIdx + 1, effectsVariants[cIdx]);
@@ -261,9 +261,9 @@ namespace UnstableUnicornCore {
                 Console.Write("Selection: ");
 
                 string? answer = Console.ReadLine();
-                if (Int32.TryParse(answer, out int selectedNumber)) {
+                if (int.TryParse(answer, out int selectedNumber)) {
                     if (selectedNumber >= 1 && selectedNumber <= effectsVariants.Count)
-                        return effectsVariants[selectedNumber-1];
+                        return effectsVariants[selectedNumber - 1];
                     else
                         Console.WriteLine("Number not in available range!");
                 } else

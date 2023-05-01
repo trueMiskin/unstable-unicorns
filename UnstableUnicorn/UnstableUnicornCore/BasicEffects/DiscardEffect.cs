@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace UnstableUnicornCore.BasicEffects {
-    public sealed class DiscardEffect : AEffect {
+    public class DiscardEffect : AEffect {
         
         PlayerTargeting _playerTargeting;
 

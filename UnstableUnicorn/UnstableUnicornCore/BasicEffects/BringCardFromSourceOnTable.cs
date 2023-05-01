@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace UnstableUnicornCore.BasicEffects {
     public class BringCardFromSourceOnTable : AEffect {
@@ -19,16 +20,19 @@ namespace UnstableUnicornCore.BasicEffects {
             var cardsSource = cardsourceLocation switch {
                 CardLocation.InHand => OwningPlayer.Hand,
                 CardLocation.DiscardPile => gameController.DiscardPile,
+                CardLocation.Nursery => gameController.Nursery,
                 _ => throw new NotImplementedException()
             };
 
             var cards = cardsSource.FindAll(allowedCardsPredicate);
+            cards = RemoveCardsWhichAreTargeted(cards, gameController);
 
             CardCount = Math.Min(CardCount, cards.Count);
             // maybe a little bit wrong used this method for selection
             CardTargets = OwningPlayer.WhichCardsToGet(CardCount, this, cards);
 
             ValidatePlayerSelection(CardCount, CardTargets, cards);
+            CheckAndUpdateSelectionInActualLink(new List<Card>(), CardTargets, gameController);
         }
 
         public override void InvokeEffect(GameController gameController) {

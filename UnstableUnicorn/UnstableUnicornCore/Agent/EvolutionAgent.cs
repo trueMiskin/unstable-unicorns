@@ -247,7 +247,8 @@ namespace UnstableUnicornCore.Agent {
                 Reinsertion = reinsertion
             };
 
-            var executor = new ThreadExecutor(maxThreads: 8);
+            // var executor = new ThreadExecutor(maxThreads: 8);
+            var executor = new ParallelTaskExecutor();
             ga.TaskExecutor = executor;
 
             var stats = new StreamWriter($"eva_logs/stats-{file}");

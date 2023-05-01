@@ -39,7 +39,7 @@ namespace UnstableUnicornCore.BasicEffects {
             foreach (var card in savedCards)
                 effect.CardTargets.Remove(card);
 
-            gameController.AddEffectToActualChainLink(this);
+            gameController.AddEffectToCurrentChainLink(this);
 
             CheckAndUpdateSelectionInActualLink(savedCards, new List<Card> { OwningCard }, gameController);
         }

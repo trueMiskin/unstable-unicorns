@@ -313,7 +313,23 @@ namespace UnstableUnicornCore
         /// If you do then resolving will crash
         /// </summary>
         /// <param name="effect"></param>
-        public void AddEffectToActualChainLink(AEffect effect) => _actualChainLink.Add(effect);
+        public void AddEffectToCurrentChainLink(AEffect effect) => _actualChainLink.Add(effect);
+
+        /// <summary>
+        /// Instead method <see cref="AddEffectToCurrentChainLink(AEffect)"/> that effects are added to
+        /// the end of the chain link, this method adds effect right after the selected effect
+        /// </summary>
+        /// <param name="effectToAdd"></param>
+        /// <param name="addAfterEffect"></param>
+        /// <exception cref="InvalidOperationException"></exception>
+        public void AddEffectAfterSelectedEffectToCurrentChainLink(AEffect effectToAdd, AEffect addAfterEffect) {
+            int index = _actualChainLink.IndexOf(addAfterEffect);
+            if (index == -1)
+                throw new InvalidOperationException($"{nameof(addAfterEffect)} is not in current chain link");
+
+            _actualChainLink.Insert(index + 1, effectToAdd);
+        }
+
         public void AddNewEffectToChainLink(AEffect effect) => _nextChainLink.Add(effect);
 
         private int _chooseTargetIdx = -1, _changeTargetingIdx = 0, _changeCardLocation = 0;

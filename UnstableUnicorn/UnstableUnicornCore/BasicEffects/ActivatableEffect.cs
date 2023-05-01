@@ -15,13 +15,13 @@ namespace UnstableUnicornCore.BasicEffects {
 
             if (OwningPlayer.ActivateEffect(_effect)) {
                 // choosing targets of added effect will be called too
-                gameController.AddEffectToActualChainLink(_effect);
+                gameController.AddEffectAfterSelectedEffectToCurrentChainLink(_effect, this);
             }
         }
 
         public override void InvokeEffect(GameController gameController) {}
 
-        public override bool MeetsRequirementsToPlayInner(GameController gameController) => true;
+        public override bool MeetsRequirementsToPlayInner(GameController gameController) => _effect.MeetsRequirementsToPlayInner(gameController);
 
         public override void InvokeReactionEffect(GameController gameController, AEffect effect) {
             if (OwningPlayer.ActivateEffect(_effect))
