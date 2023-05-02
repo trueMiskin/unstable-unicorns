@@ -3,12 +3,11 @@
 ## Existing implementations
 
 There exists multiple implementations of the game in the Tabletop Simulator.
-These implementations are not suitable for this work because the game itself
-is not simulated. All effects are resolved by players. It is only a board game in digital form.
+These implementations are unsuitable for this work because the game is not simulated. All effects are resolved by players. It is only a board game in digital form.
 
 ## Used frameworks
 
-The game simulator was implemented in C# .NET 6. We used one of the C# features, Nullable reference types. This feature semantically changes that all reference objects are disallowed by default to store null values. Additionally warns about assigning a null value to a not-null value type. Programming with this feature is a little bit different, but I think it is a really good feature that prevents a lot of bugs. More info about this feature can be found [here](https://learn.microsoft.com/en-us/dotnet/csharp/nullable-references).
+The game simulator was implemented in C# .NET 6. We used one of the C# features, Nullable reference types. This feature semantically changes that all reference objects are disallowed by default to store null values. It additionally warns about assigning a null value to a not-null value type. Programming with this feature is a little bit different, but I think it is a really good feature that prevents a lot of bugs. More info about this feature can be found [here](https://learn.microsoft.com/en-us/dotnet/csharp/nullable-references).
 
 The game is implemented as a console application. For unit testing, we used the xUnit framework. We were the most familiar with it.
 
@@ -71,7 +70,7 @@ It is possible to add one or more effects to the card. We can add a one-time eff
 
 ## Creating a new effect
 
-When we want to create a new one-time effect, we inherit the `AEffect` base class. When we make a more specific effect, for example, the destroy effect, then we inherit one of the destroy effects that are already implemented. The reason is that some effects are activated on destroy effect and the checking is done if the effect inherits from this class.
+When we want to create a new one-time effect, we inherit the `AEffect` base class. When we make a more specific effect, for example, the destroy effect, then we inherit one of the destroy effects that are already implemented. The reason is that some effects are activated on destroy effect, and a check, if the effect inherits from this class, is done.
 
 The base class implements a helper function on validation selection, maintaining the cards that are already selected in the current chain link and removing the card from that list.
 
@@ -84,4 +83,4 @@ The trigger effect is only a composition of the trigger predicate, the list of e
 
 Creating a new agent is not complicated. We need to create a new class that inherits from the `APlayer` base class and implements all methods. Each method has a short description of when this method is used. There is one condition, the agent __should not cheat__. Making an agent that cheats is easy because it can look at other player cards -- all information is accessible through `GameController`. We can add some cards to the agent's hand by `GameController`. We can find out who other players are (for instance, for cooperation) and many other things.
 
-Additionally, the agent should not modify the list of available actions. The list can be a list of effects, cards or players. Do not modify it because effects do not make a copy of this list before the agent is called. It is not hard to fix this problem, but this solution was chosen primarily due to performance reasons (not to make tons of list copies). 
+Additionally, the agent should not modify the list of available actions. The list can be a list of effects, cards or players. Do not modify it because effects do not make a copy of this list before the agent is called. It is not hard to fix this problem, but this solution was chosen primarily due to performance reasons (not to make lots of list copies).

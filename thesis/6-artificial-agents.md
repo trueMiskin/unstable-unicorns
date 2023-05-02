@@ -16,7 +16,7 @@ Two methods are implemented a little bit differently. The first method is a deci
 
 The second method is a decision on which card to play. This method uses the tier list, but instead of playing the best card, it plays the worst card. The reason is that at the start of the game, other players will likely have some instant cards to disallow playing a good card.
 
-All values are working as a float because the evolutionary agent will reuse the method implementation.
+All values are implemented as a float because the evolutionary agent will reuse the method implementation.
 
 ## Monte Carlo Tree Search (MCTS) agent
 
@@ -24,7 +24,8 @@ The Monte Carlo Tree Search (MCTS) agent is an implementation of the MCTS algori
 
 The last problem was how to evaluate agents during the backpropagation step. I used the simple formula: the first player in the final game results (the best player) gets $n-1$ points where $n$ is the number of players. The second player gets $n-2$ points and so on.
 
-Now, we show the performance of the MCTS agents with the default strategy of rule-based agents and with different number of playouts. In the game, there were two MCTS agents and four random agents. The win of MCTS agents was counted if one of the MCTS agents won. Each of the MCTS agents played 100 games. The results are shown in the table below.
+
+Now, we show the performance of the MCTS agents that use the rule-based agents with different number of playouts as base playout strategy. In the game, there were two MCTS agents and four random agents. The win of MCTS agents was counted if one of the MCTS agents won. Each of the MCTS agents played 100 games. The results are shown in the table below.
 
 | Number of playouts | Win rate of MCTS agents |
 | ------------------ | ----------------------- |
@@ -51,7 +52,7 @@ I used the GeneticSharp library for the implementation of the evolutionary algor
 
 The GeneticSharp library does not evaluate the already evaluated individuals' fitness. In a typical case, this is good because it saves time but in our case, we want to evaluate the fitness of the individuals again and again. Some individuals can be lucky during the fitness evaluation and they get a good fitness. For instance, the individual can luckily win all games and then this individual will be copied to the next generation. If we evaluate all individuals no matter if they were evaluated before then the evolution will be slower but it will be more accurate for individual measurements. Theoretically, we will throw away the bad individuals and we will keep the good ones.
 
-Then there are big questions. The first one is how many games should be played by each individual during the fitness evaluation. This is an important question because the fitness function evaluation is the most time-consuming part of the algorithm and the more games are played the longer the algorithm will take. To find it out I run the benchmark with the different number of games and initial seeds. The results are shown in the table below.
+Then there are additional questions. The first one is how many games should be played by each individual during the fitness evaluation. This is an important question because the fitness function evaluation is the most time-consuming part of the algorithm and the more games are played the longer the algorithm will take. To find it out I run the benchmark with the different number of games and initial seeds. The results are shown in the table below.
 
 | Number of games | Initial seed | Win rate | Variance |
 | --------------- | ------------ | -------- | -------- |
@@ -84,10 +85,12 @@ Then there are big questions. The first one is how many games should be played b
 |                 | 5000         | 0.98     | 0.0196   |
 |                 | 9000         | 0.99     | 0.0098   |
 
+Table: Table shows the win rate and variance of the fitness evaluation with a different number of games and initial seeds.
+
 It shows that with the increasing number of games, the win rate is more accurate but around 200 games, the win rate accuracy is good enough. The win rate after 100,000 games is around 98.2%. Unfortunately, this number of games will take ages with more complex agents as the MCTS agents with a lot of playouts. For this reason, I choose only ten games for the fitness evaluation with MCTS agents.
 
 The second question, if it is better to have a smaller population and more generations or a larger population and fewer generations. The answer depends on the problem. I made tests with different population sizes. The results are shown in the figure below.
 
-![The figure shows the performance of the different population sizes. "ps" means the population size. The single line in the figure is the mean of the ten experiments. The lighter color shows the first and the third quartile. In all experiments, the evaluated individual played 200 games with five random agents.](img/population-size-and-max-generations.png){width=510px height=280px}
+![The performance of the different population sizes. "ps" means the population size. The single line in the figure is the mean of the ten experiments. The lighter color shows the first and the third quartile. In all experiments, the evaluated individual played 200 games with five random agents.](img/population-size-and-max-generations.png){width=510px height=280px}
 
 The figure shows that the bigger the population size and the fewer generations are better. The figure clearly shows that the population relatively quickly goes to the local optimum and then it does not change much.
