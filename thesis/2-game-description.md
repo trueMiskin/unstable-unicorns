@@ -74,7 +74,7 @@ The term chain link comes from the fact that the effects make a chain in resolut
 
 After the first chain link is resolved simultaneously and independently, some effects may be triggered as a reaction to the first chain link. All these triggered effects form the second chain link. This is repeated until the next chain link is empty. The card is resolved when the whole effect chain is resolved (all chain links are resolved).
 
-![This image shows how could look whole chain effect with individual chain links. This image was used from the official game rules.](img/chain-link.png){width=174px height=300px}
+![The whole chain effect with individual chain links. Source: the official game rules.](img/chain-link.png){width=174px height=300px}
 
 This approach to how the effects are resolved can be a little bit confusing because even people typically think in sequential order. Additionally, these have some consequences. For instance, when two effects can be activated at beginning of the turn, then you must decide which effects will be activated and resolve them simultaneously. You can not activate the first effect, see the result and then decide if you activate the second effect.
 
