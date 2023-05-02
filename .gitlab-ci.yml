@@ -13,7 +13,7 @@ latexmk:
   stage: build
   image: aergus/latex
   script: |
-    apt-get update && apt install -y --no-install-recommends make rsync pandoc && cd thesis; make;
+    apt-get update && apt install -y --no-install-recommends make rsync pandoc && cd thesis; make && make && make;
   artifacts:
     paths:
       - thesis/build/thesis.pdf

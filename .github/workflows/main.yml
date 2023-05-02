@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the thesis
-        run: apt-get update && apt install -y --no-install-recommends make rsync pandoc && cd thesis; make;
+        run: apt-get update && apt install -y --no-install-recommends make rsync pandoc && cd thesis; make && make && make;
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
