@@ -29,10 +29,10 @@ Now, we show the performance of the MCTS agents that use the rule-based agents w
 
 | Number of playouts | Win rate of MCTS agents |
 | ------------------ | ----------------------- |
-| 100                | 68 %                    |
+| 100                | 69 %                    |
 | 200                | 75 %                    |
-| 400                | 81 %                    |
-| 800                | 85 %                    |
+| 400                | 76 %                    |
+| 800                | 84 %                    |
 
 As the table shows, the MCTS agent does better with increasing number of playouts, which is an expected behavior.
 
@@ -57,37 +57,37 @@ Then there are additional questions. The first one is how many games should be p
 | Number of games | Initial seed | Win rate | Variance |
 | --------------- | ------------ | -------- | -------- |
 | 3               | 0            | 1        | 0        |
-|                 | 2000         | 1        | 0        |
-|                 | 5000         | 0.6667   | 0.2222   |
+|                 | 4000         | 1        | 0        |
+|                 | 6000         | 1        | 0        |
 |                 | 9000         | 0.6667   | 0.2222   |
 | 5               | 0            | 1        | 0        |
-|                 | 2000         | 1        | 0        |
-|                 | 5000         | 0.8      | 0.16     |
+|                 | 4000         | 1        | 0        |
+|                 | 6000         | 1        | 0        |
 |                 | 9000         | 0.8      | 0.16     |
-| 10              | 0            | 1        | 0        |
-|                 | 2000         | 0.9      | 0.09     |
-|                 | 5000         | 0.8      | 0.16     |
+| 10              | 0            | 0.9      | 0.09     |
+|                 | 4000         | 1        | 0        |
+|                 | 6000         | 1        | 0        |
 |                 | 9000         | 0.9      | 0.09     |
-| 20              | 0            | 1        | 0        |
-|                 | 2000         | 0.95     | 0.0475   |
-|                 | 5000         | 0.9      | 0.09     |
-|                 | 9000         | 0.9      | 0.09     |
-| 100             | 0            | 1        | 0        |
-|                 | 2000         | 0.98     | 0.0196   |
-|                 | 5000         | 0.96     | 0,0384   |
-|                 | 9000         | 0.98     | 0.0196   |
-| 200             | 0            | 0.985    | 0.0148   |
-|                 | 2000         | 0.985    | 0.0148   |
-|                 | 5000         | 0.975    | 0.0244   |
+| 20              | 0            | 0.95     | 0.0475   |
+|                 | 4000         | 1        | 0        |
+|                 | 6000         | 1        | 0        |
+|                 | 9000         | 0.95     | 0.0475   |
+| 100             | 0            | 0.99     | 0.0099   |
+|                 | 4000         | 0.98     | 0.0196   |
+|                 | 6000         | 0.99     | 0.0099   |
 |                 | 9000         | 0.99     | 0.0099   |
-| 500             | 0            | 0.988    | 0.0116   |
-|                 | 2000         | 0.98     | 0.0196   |
-|                 | 5000         | 0.98     | 0.0196   |
-|                 | 9000         | 0.99     | 0.0098   |
+| 200             | 0            | 0.985    | 0.0148   |
+|                 | 4000         | 0.965    | 0.0338   |
+|                 | 6000         | 0.975    | 0.0244   |
+|                 | 9000         | 0.99     | 0.0099   |
+| 500             | 0            | 0.972    | 0.0272   |
+|                 | 4000         | 0.98     | 0.0196   |
+|                 | 6000         | 0.978    | 0.0215   |
+|                 | 9000         | 0.98     | 0.0196   |
 
 Table: Table shows the win rate and variance of the fitness evaluation with a different number of games and initial seeds.
 
-It shows that with the increasing number of games, the win rate is more accurate but around 200 games, the win rate accuracy is good enough. The win rate after 100,000 games is around 98.2%. Unfortunately, this number of games will take ages with more complex agents as the MCTS agents with a lot of playouts. For this reason, I choose only ten games for the fitness evaluation with MCTS agents.
+It shows that with the increasing number of games, the win rate is more accurate but around 100 games, the win rate accuracy is good enough. The win rate after 100,000 games is around 98.3%. Unfortunately, this number of games will take ages with more complex agents as the MCTS agents with a lot of playouts. For this reason, I choose only ten games for the fitness evaluation with MCTS agents.
 
 The second question, if it is better to have a smaller population and more generations or a larger population and fewer generations. The answer depends on the problem. I made tests with different population sizes. The results are shown in the figure below.
 
