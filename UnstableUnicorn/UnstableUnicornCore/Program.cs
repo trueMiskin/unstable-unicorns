@@ -282,12 +282,32 @@ namespace UnstableUnicornCore {
                     players.Add(evolutionAgent);
                     return (players, evolutionAgent);
                 };
-                string computerNum = pcName;
-                EvolutionAgent.RunEvolution($"random-ps={populationSize}-mg={maxGenerations}-ng={numGames}-{computerNum}", createPlayers, populationSize, maxGenerations, numGames);
+                EvolutionAgent.RunEvolution($"random-ps={populationSize}-mg={maxGenerations}-ng={numGames}-{pcName}", createPlayers, populationSize, maxGenerations, numGames);
             }, pcNameArgument, populationSize, maxGenerations, numGames_random);
+
+            var evoRuleBasedCommand = new Command("rule_based", "Evolution where 5 agents are rule-based agents.");
+            evoRuleBasedCommand.AddArgument(pcNameArgument);
+            evoRuleBasedCommand.AddOption(populationSize);
+            evoRuleBasedCommand.AddOption(maxGenerations);
+            evoRuleBasedCommand.AddOption(numGames_random);
+
+            evoRuleBasedCommand.SetHandler((pcName, populationSize, maxGenerations, numGames) => {
+                CreatePlayers createPlayers = (cardStrength) => {
+                    List<APlayer> players = new();
+                    for (int x = 0; x < 5; x++) {
+                        players.Add(new RuleBasedAgent());
+                    }
+                    var evolutionAgent = new EvolutionAgent(cardStrength);
+                    players.Add(evolutionAgent);
+                    return (players, evolutionAgent);
+                };
+                EvolutionAgent.RunEvolution($"rule_based-ps={populationSize}-mg={maxGenerations}-ng={numGames}-{pcName}", createPlayers, populationSize, maxGenerations, numGames);
+            }, pcNameArgument, populationSize, maxGenerations, numGames_random);
+
 
             evolutionCommand.AddCommand(evoMctsCommand);
             evolutionCommand.AddCommand(evoRandomCommand);
+            evolutionCommand.AddCommand(evoRuleBasedCommand);
 
             var rootCommand = new RootCommand("Unstable Unicorns CLI");
             rootCommand.AddCommand(gameCommand);
