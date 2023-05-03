@@ -2,6 +2,7 @@
     public enum EGameState {
         NotStarted,
         Running,
+        Ending,
         Ended
     }
 }
