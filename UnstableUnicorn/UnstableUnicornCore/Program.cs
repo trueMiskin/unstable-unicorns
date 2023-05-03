@@ -178,7 +178,7 @@ namespace UnstableUnicornCore {
         }
 
         public static void varianceBenchmark(){
-            var initSeeds = new int[]{0, 2_000, 5_000, 9_000, 14_000, 20_000, 40_000, 80_000, 160_000, 320_000};
+            var initSeeds = new int[]{0, 4_000, 6_000, 9_000, 13_000, 32_000, 48_000, 96_000, 160_000, 320_000};
             var numGames = new int[]{1, 2, 3, 5, 10, 20, 50, 100, 200, 500, 1000};
 
             foreach (var num in numGames) {
