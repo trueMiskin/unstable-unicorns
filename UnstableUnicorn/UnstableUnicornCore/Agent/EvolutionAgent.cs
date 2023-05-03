@@ -16,7 +16,7 @@ namespace UnstableUnicornCore.Agent {
         /// <returns>The all players and the evolution agent instance based on cardStrength</returns>
         public delegate (List<APlayer>, EvolutionAgent) CreatePlayers(Dictionary<string, double> cardStrength);
 
-        CreatePlayers createPlayers;
+        internal CreatePlayers createPlayers;
 
         /// <summary>
         /// Init game seed for fitness evaluation
@@ -85,10 +85,15 @@ namespace UnstableUnicornCore.Agent {
     // }
 
     public class FloatingPointChromosome : ChromosomeBase {
-        int _length;
         public FloatingPointChromosome(int length) : base(length) {
-            _length = length;
             CreateGenes();
+        }
+
+        public FloatingPointChromosome(int length, EvolutionAgent agent) : base(length){
+            var weights = agent.GetWeights();
+            for (int i = 0; i < Length; i++) {
+                ReplaceGene(i, new Gene(weights[i]));
+            }
         }
 
         public override Gene GenerateGene(int geneIndex) {
@@ -96,7 +101,7 @@ namespace UnstableUnicornCore.Agent {
         }
 
         public override IChromosome CreateNew() {
-            return new FloatingPointChromosome(_length);
+            return new FloatingPointChromosome(Length);
         }
     }
 
@@ -182,6 +187,22 @@ namespace UnstableUnicornCore.Agent {
         }
     }
 
+    public class DefinedInitPopulation : Population {
+        List<IChromosome> _initialPopulation;
+        public DefinedInitPopulation(int minSize, int maxSize, IChromosome adamChromosome, List<IChromosome> initialPopulation) : base(minSize, maxSize, adamChromosome) {
+            _initialPopulation = initialPopulation;
+        }
+
+        public override void CreateInitialGeneration() {
+            Generations = new List<Generation>();
+            GenerationsNumber = 0;
+
+            var chromosomes = new List<IChromosome>(_initialPopulation);
+            
+            CreateNewGeneration(chromosomes);
+        }
+    }
+
     public class EvolutionAgent : RuleBasedAgent {
 
         Dictionary<string, double> _evaCardStrength;
@@ -195,12 +216,44 @@ namespace UnstableUnicornCore.Agent {
 
         public EvolutionAgent(Dictionary<string, double> cardStrength) => _evaCardStrength = cardStrength;
 
+        private static List<double> parseWeights(string line) => line.Split(';').ToList().ConvertAll(str => double.Parse(str));
         private void loadBestIndividual(string file) {
             List<double> weights;
-            using (var reader = new StreamReader(file))
-                weights = reader.ReadLine().Split(';').ToList().ConvertAll(str => double.Parse(str));
+            using (var reader = new StreamReader(file)) {
+                string? line = reader.ReadLine();
+                if (line == null)
+                    throw new InvalidOperationException("File does not contains any line");
+
+                weights = parseWeights(line);
+            }
 
             _evaCardStrength = GetCardStrength(weights);
+        }
+
+        public static List<EvolutionAgent> LoadIndividuals(string file) {
+            List<EvolutionAgent> agents = new();
+
+            using (var reader = new StreamReader(file)) {
+                string? line;
+                while((line = reader.ReadLine()) != null){
+                    List<double> weights = parseWeights(line);
+                    agents.Add(new EvolutionAgent(GetCardStrength(weights)));
+                }
+            }
+
+            return agents;
+        }
+
+        public EvolutionAgent CopyNew() => new EvolutionAgent(new Dictionary<string, double>(_evaCardStrength));
+
+        public List<double> GetWeights() {
+            var keys = _evaCardStrength.Keys.ToList();
+            keys.Sort();
+            var weights = new List<double>();
+            for (int i = 0; i < keys.Count; i++) {
+                weights.Add(_evaCardStrength[keys[i]]);
+            }
+            return weights;
         }
 
         public static Dictionary<string, double> GetCardStrength(List<double> weights) {
@@ -233,14 +286,25 @@ namespace UnstableUnicornCore.Agent {
                                         MyProblemFitness.CreatePlayers createPlayers,
                                         int populationSize = 24,
                                         int maxGenerations = 10,
-                                        int numberGames = 10) {
+                                        int numberGames = 10,
+                                        bool makeFitnessFunctionsFromLastGeneration = false,
+                                        List<EvolutionAgent>? firstPopulation = null) {
             var selection = new TournamentSelection();
 
             var crossover = new ArithmeticCrossover();
             var mutation = new UniformMutation(allGenesMutable: true);
             var fitness = new MyProblemFitness(createPlayers, numberGames);
             var chromosome = new FloatingPointChromosome(CardStrength.Keys.Count);
-            var population = new Population(populationSize, populationSize, chromosome);
+            Population population;
+            if (firstPopulation == null)
+                population = new Population(populationSize, populationSize, chromosome);
+            else {
+                if (firstPopulation.Count != populationSize)
+                    throw new InvalidOperationException($"List {nameof(firstPopulation)} has different length from {nameof(populationSize)}={populationSize}");
+                var initPopulation = firstPopulation.Select(agent => new FloatingPointChromosome(chromosome.Length, agent));
+                population = new DefinedInitPopulation(populationSize, populationSize, chromosome, initPopulation.Cast<IChromosome>().ToList());
+            }
+
             var reinsertion = new CopyElitistReinsertion();
 
             var ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation){
@@ -266,6 +330,21 @@ namespace UnstableUnicornCore.Agent {
                 Console.WriteLine(statText);
                 stats.WriteLine(statText);
                 stats.Flush();
+
+                // after each generation is set new opponents in the fitness functions
+                if (makeFitnessFunctionsFromLastGeneration)
+                    ((MyProblemFitness)ga.Fitness).createPlayers = (cardStrength) => {
+                        List<APlayer> players = new();
+                        var chomosomes = ga.Population.CurrentGeneration.Chromosomes.Take(5);
+                        foreach (var chromosome in chomosomes) {
+                            List<double> weights = chromosome.GetGenes().ToList().ConvertAll(g => (double)g.Value);
+                            var _cardStrength = GetCardStrength(weights);
+                            players.Add(new EvolutionAgent(_cardStrength));
+                        }
+                        var evolutionAgent = new EvolutionAgent(cardStrength);
+                        players.Add(evolutionAgent);
+                        return (players, evolutionAgent);
+                    };
             };
 
             ga.Termination = new GenerationNumberTermination(maxGenerations);

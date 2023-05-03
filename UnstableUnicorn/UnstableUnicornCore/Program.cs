@@ -304,10 +304,75 @@ namespace UnstableUnicornCore {
                 EvolutionAgent.RunEvolution($"rule_based-ps={populationSize}-mg={maxGenerations}-ng={numGames}-{pcName}", createPlayers, populationSize, maxGenerations, numGames);
             }, pcNameArgument, populationSize, maxGenerations, numGames_random);
 
+            var evoBestLastGenCommand = new Command("best_last_gen", "Evolution where 5 agents are the best agents from the last generation.");
+            var directoryOption = new Option<DirectoryInfo?>("--load", "Set the directory from which the program should load the weights of individuals. From the directory, it will be selected best <population_size> individuals.");
+            evoBestLastGenCommand.AddArgument(pcNameArgument);
+            evoBestLastGenCommand.AddOption(populationSize);
+            evoBestLastGenCommand.AddOption(maxGenerations);
+            evoBestLastGenCommand.AddOption(numGames_random);
+            evoBestLastGenCommand.AddOption(directoryOption);
+
+            evoBestLastGenCommand.SetHandler((pcName, populationSize, maxGenerations, numGames, directory) => {
+                List<EvolutionAgent>? firstGen = null;
+                if (directory != null) {
+                    List<(EvolutionAgent agent, string description, int wonGames)> loadedIndividuals = new();
+                    foreach (FileInfo fi in directory.GetFiles()) {
+                        int lineNum = 1;
+                        foreach (var agent in EvolutionAgent.LoadIndividuals(fi.FullName)) {
+                            loadedIndividuals.Add((agent, $"{fi.Name}:{lineNum++}", 0));
+                        }
+                    }
+
+                    for (int individualIdx = 0; individualIdx < loadedIndividuals.Count; individualIdx++) {
+                        var individual = loadedIndividuals[individualIdx];
+                        int wonGames = 0;
+                        for (int gameIdx = 0; gameIdx < 1000; gameIdx++) {
+                            List<APlayer> players = new();
+                            players.Add(individual.agent.CopyNew());
+                            for (int x = 0; x < 5; x++) {
+                                players.Add(new RuleBasedAgent());
+                            }
+                            var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, gameIdx, VerbosityLevel.None);
+                            game.SimulateGame();
+
+                            if (game.GameResults.First().Player.GetType() == typeof(EvolutionAgent))
+                                wonGames += 1;
+                        }
+                        individual.wonGames = wonGames;
+                        loadedIndividuals[individualIdx] = individual;
+                    }
+
+                    var selectedIndividual = loadedIndividuals.OrderByDescending(individual => individual.wonGames).Take(populationSize);
+
+                    if (selectedIndividual.Count() != populationSize)
+                        throw new InvalidOperationException("Not enough individuals in the directory. The number of individuals is lower than the population size.");
+
+                    Console.WriteLine("Selected individuals:");
+                    foreach (var agent in selectedIndividual)
+                        Console.WriteLine($"Agent won {agent.wonGames} games from file {agent.description}");
+
+                    firstGen = selectedIndividual.Select(individual => individual.agent).ToList();
+                }
+
+                // zero generation agents will be evaluated by rule-based agents
+                CreatePlayers createPlayers = (cardStrength) => {
+                    List<APlayer> players = new();
+                    for (int x = 0; x < 5; x++) {
+                        players.Add(new RuleBasedAgent());
+                    }
+                    var evolutionAgent = new EvolutionAgent(cardStrength);
+                    players.Add(evolutionAgent);
+                    return (players, evolutionAgent);
+                };
+                EvolutionAgent.RunEvolution($"best_last_gen-ps={populationSize}-mg={maxGenerations}-ng={numGames}-{pcName}", createPlayers, populationSize, maxGenerations, numGames,
+                    makeFitnessFunctionsFromLastGeneration: true, firstPopulation: firstGen);
+            }, pcNameArgument, populationSize, maxGenerations, numGames_random, directoryOption);
+
 
             evolutionCommand.AddCommand(evoMctsCommand);
             evolutionCommand.AddCommand(evoRandomCommand);
             evolutionCommand.AddCommand(evoRuleBasedCommand);
+            evolutionCommand.AddCommand(evoBestLastGenCommand);
 
             var rootCommand = new RootCommand("Unstable Unicorns CLI");
             rootCommand.AddCommand(gameCommand);
