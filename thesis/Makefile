@@ -7,7 +7,7 @@ PANDOCOPTS=--top-level-division=chapter --lua-filter citation.lua #--bibliograph
 BUILD_DIR := ./build
 CHAPTERS=1-introduction 2-game-description 3-related-work \
 	4-game-modification 5-game-implementation 6-artificial-agents \
-	7-comparing-ai-agents 8-conclusion 9-future-work
+	7-comparing-ai-agents 8-conclusion
 
 %.tex: %.md build_directory
 	pandoc $(PANDOCOPTS) -f markdown -t latex -o "$(BUILD_DIR)/$@" $<
