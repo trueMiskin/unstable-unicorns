@@ -456,6 +456,10 @@ namespace UnstableUnicornCore
         }
 
         public void CheckIfSomeoneWinGame() {
+            if (State == EGameState.Ending){
+                State = EGameState.Ended;
+                return;
+            }
             foreach (var player in Players) {
                 int value = player.Stable.Sum(card => card.UnicornValue);
                 if (value >= 6) {
@@ -467,15 +471,18 @@ namespace UnstableUnicornCore
 
         public void PlayerDrawCard(APlayer player) {
             if (Pile.Count == 0) {
+                // Game end
                 DebugPrint("Pile empty -> ending game");
-
-                State = EGameState.Ended;
+                State = EGameState.Ending;
                 return;
             }
 
             Card topCard = Pile[^1];
             Pile.RemoveAt(Pile.Count - 1);
             topCard.MoveCard(this, player, CardLocation.InHand);
+
+            if (Pile.Count == 0)
+                State = EGameState.Ending;
         }
 
         private void PlayerDrawCards(APlayer player, int numberCards) {
@@ -511,7 +518,9 @@ namespace UnstableUnicornCore
 
                 if (!SkipToEndTurnPhase)
                     PlayerDrawCards(player, 1 + DrawExtraCards);
-                
+
+                CheckIfSomeoneWinGame();
+
                 if (Verbosity == VerbosityLevel.All)
                     foreach (var p in Players)
                         _turnLog!.PlayerCardsAfterBot.Add(new PlayerCards(p));
@@ -534,6 +543,9 @@ namespace UnstableUnicornCore
                 ResolveChainLink(_turnLog?.EndOfTurn);
 
                 _endTurnResolved = true;
+
+                if (State == EGameState.Ended)
+                    return;
             }
 
             if (player.Hand.Count > 7) {

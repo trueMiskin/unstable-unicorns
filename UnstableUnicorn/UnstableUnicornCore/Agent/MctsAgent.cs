@@ -104,6 +104,8 @@ namespace UnstableUnicornCore.Agent {
         }
 
         public List<int> Action(List<List<int>> actions) {
+            if (_controller.State == EGameState.Ended)
+                throw new Exception("Game is ended");
             var mapper = new Dictionary<APlayer, APlayer>();
             foreach (var p in _controller.Players)
                 mapper.Add(p, new EmptyAgent());
