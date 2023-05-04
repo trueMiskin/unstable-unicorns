@@ -207,6 +207,8 @@ namespace UnstableUnicornCore {
             }
         }
 
+        const string RandomOption = "random";
+        const string RuleBasedOption = "rule_based";
         public static void Main(string[] args) {
             var gameCommand = new Command("game", "Run game");
             gameCommand.SetHandler(() => handleGameInteractively());
@@ -231,7 +233,7 @@ namespace UnstableUnicornCore {
 
             var evoMctsCommand = new Command("mcts", "Evolution where 5 agents are mcts agents.");
             var defaultPolicy = new Argument<string>("default-policy", "Default policy for MCTS agents.")
-                .FromAmong("random", "rule_based");
+                .FromAmong(RandomOption, RuleBasedOption);
             var playoutsNum = new Option<int>("--playouts-num", "The number of playouts for MCTS agents.");
             playoutsNum.AddAlias("--pn");
             playoutsNum.SetDefaultValue(100);
@@ -249,10 +251,10 @@ namespace UnstableUnicornCore {
                     List<APlayer> players = new();
                     for (int x = 0; x < 5; x++) {
                         switch(defaultPolicy){
-                            case "random":
+                            case RandomOption:
                                 players.Add(new MctsAgent(playoutsNum, () => new RandomPlayer()));
                                 break;
-                            case "rule_based":
+                            case RuleBasedOption:
                                 players.Add(new MctsAgent(playoutsNum, () => new RuleBasedAgent()));
                                 break;
                             default:
@@ -325,20 +327,7 @@ namespace UnstableUnicornCore {
 
                     for (int individualIdx = 0; individualIdx < loadedIndividuals.Count; individualIdx++) {
                         var individual = loadedIndividuals[individualIdx];
-                        int wonGames = 0;
-                        for (int gameIdx = 0; gameIdx < 1000; gameIdx++) {
-                            List<APlayer> players = new();
-                            players.Add(individual.agent.CopyNew());
-                            for (int x = 0; x < 5; x++) {
-                                players.Add(new RuleBasedAgent());
-                            }
-                            var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, gameIdx, VerbosityLevel.None);
-                            game.SimulateGame();
-
-                            if (game.GameResults.First().Player.GetType() == typeof(EvolutionAgent))
-                                wonGames += 1;
-                        }
-                        individual.wonGames = wonGames;
+                        individual.wonGames = evaluateEvolutionaryAgent(individual.agent);
                         loadedIndividuals[individualIdx] = individual;
                     }
 
@@ -374,11 +363,42 @@ namespace UnstableUnicornCore {
             evolutionCommand.AddCommand(evoRuleBasedCommand);
             evolutionCommand.AddCommand(evoBestLastGenCommand);
 
+            var evoEvaluateCommand = new Command("evo-evaluate", "Evaluate evolution agents with selected opponents.");
+            var opponentArgument = new Argument<string>("opponent", "Selected opponents.")
+                .FromAmong(RandomOption, RuleBasedOption);
+            var directoryEvoEvaluateArgument = new Argument<DirectoryInfo>("directory", "Which directory should be evaluated?");
+            var numberPlayerOption = new Option<int>(new[] { "--num-players", "--np" }, "How many evolutionary agents will be in the game?");
+            numberPlayerOption.SetDefaultValue(2);
+
+            evoEvaluateCommand.AddArgument(opponentArgument);
+            evoEvaluateCommand.AddArgument(directoryEvoEvaluateArgument);
+            evoEvaluateCommand.AddOption(numberPlayerOption);
+
+            evoEvaluateCommand.SetHandler((opponentType, directory, numPlayer) => {
+                List<(EvolutionAgent agent, string description, int wonGames)> loadedIndividuals = new();
+                foreach (FileInfo fi in directory.GetFiles()) {
+                    int lineNum = 1;
+                    foreach (var agent in EvolutionAgent.LoadIndividuals(fi.FullName)) {
+                        loadedIndividuals.Add((agent, $"{fi.Name}:{lineNum++}", 0));
+                    }
+                }
+
+                for (int individualIdx = 0; individualIdx < loadedIndividuals.Count; individualIdx++) {
+                    var individual = loadedIndividuals[individualIdx];
+                    individual.wonGames = evaluateEvolutionaryAgent(individual.agent, numPlayer, opponentType);
+                    loadedIndividuals[individualIdx] = individual;
+                }
+
+                foreach (var agent in loadedIndividuals.OrderByDescending(individual => individual.wonGames))
+                    Console.WriteLine($"Agent won {agent.wonGames} games from file {agent.description}");
+            }, opponentArgument, directoryEvoEvaluateArgument, numberPlayerOption);
+
             var rootCommand = new RootCommand("Unstable Unicorns CLI");
             rootCommand.AddCommand(gameCommand);
             rootCommand.AddCommand(varianceBenchmarkCommand);
             rootCommand.AddCommand(mctsAgentTestsCommand);
             rootCommand.AddCommand(evolutionCommand);
+            rootCommand.AddCommand(evoEvaluateCommand);
 
             rootCommand.Invoke(args);
             /*
@@ -458,6 +478,29 @@ namespace UnstableUnicornCore {
             }
 
             /**/
+        }
+
+        private static int evaluateEvolutionaryAgent(EvolutionAgent agent, int numberAgents = 1, string opponentType = RuleBasedOption) {
+            int wonGames = 0;
+            for (int gameIdx = 0; gameIdx < 1000; gameIdx++) {
+                List<APlayer> players = new();
+                for (int i = 0; i < numberAgents; i++)
+                    players.Add(agent.CopyNew());
+                for (int x = 0; x < 6 - numberAgents; x++) {
+                    APlayer newPlayer = opponentType switch {
+                        RuleBasedOption => new RuleBasedAgent(),
+                        RandomOption => new RandomPlayer(),
+                        _ => throw new NotImplementedException(),
+                    };
+                    players.Add(newPlayer);
+                }
+                var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, gameIdx, VerbosityLevel.None);
+                game.SimulateGame();
+
+                if (game.GameResults.First().Player.GetType() == typeof(EvolutionAgent))
+                    wonGames += 1;
+            }
+            return wonGames;
         }
 
         private static void mctsAgentTests(){
