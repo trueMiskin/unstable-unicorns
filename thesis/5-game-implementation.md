@@ -13,6 +13,8 @@ The game is implemented as a console application. For unit testing, we used the 
 
 For the evolutionary algorithm, we used the GenericSharp library. We did not find other usable libraries in C#.
 
+Finally, for the command line parser, we used the System.CommandLine library. It is a new library for parsing command-line arguments. We are using the preview version but it works well. Other libraries have problem with subcommands or parameter restrictions on values. Additionally, the usage is very similar to `argparse` library in Python.
+
 ## Core game implementation
 
 The main problem that the simulator must solve is the resolution of effects. Most of the game is about a card being played and the card has these effects. In the game, there are three types of effects: one-time effects, triggered effects and continuous effects. The one-time effects are quite simple. They are added to the effect chain link and are resolved at right time. The trigger effects have a condition and when the condition is met, the effect is added to the effect chain link. From the implementation point of view, the trigger effects can be easily implemented as a subscriber to some event, the trigger condition and the one-time effect that can be added to the effect chain link. The continuous effects are the most complicated because they are always active. Some component must remember the continuous effects and change the behavior of the game according to the continuous effects.
