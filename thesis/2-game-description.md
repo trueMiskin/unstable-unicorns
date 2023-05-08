@@ -10,7 +10,7 @@ And finally, we will talk about impossible actions.
 
 ## Terminology
 
-Terminology of places (card **sources**) where cards can be stored:
+Terminology of places (card **sources**) where cards can be stored are:
 
 - **Stable** - The area where the player plays Unicorn cards, Upgrades cards
 and Downgrades cards.
@@ -27,11 +27,10 @@ The cards can have various keywords, and most of them are used in this thesis. M
 - **Discard** - Send a card from **your** hand to the discard pile.
 - **Pull** - The player gets a random card from the source and puts it into his hand.
 - **Choose** - The player chooses a card from the source and puts it into his hand.
-- **Search** - The effect is similar to choose card effect. The player chooses a
-card from the source, this card is **revealed** to all players and put into his hand.
+- **Search** - The effect is similar to choose card effect. The player selects a card from the source. This card is **revealed** to all players and put into his hand.
 - **Draw** - Pull a card from the deck (Draw a card from the top of the pile).
-- **Play** - When the card is being played, any other player can react to the card by instant card.
-- **Bring** - The brought card to the stable can not be Neigh'd (is not possible to disallow put card to the stable) but any other instant card can be played. In the base game, there are only "Neigh" and "Super Neigh" cards so no card can be played.
+- **Play** - It refers to playing a card from your hand during the Action Phase or playing an Instant card. When the card is being played, any other player can react to the card by instant card.
+- **Bring** - Move a card to the stable. The brought card cannot be Neigh'd (it is impossible to disallow putting the card to the stable).
 
 Each card has one of the following types:
 
@@ -41,10 +40,10 @@ Each card has one of the following types:
     - **Magic unicorn** card - The unicorn that has some effect.
 - **Upgrade** card - The card grants some positive effects. The upgrade card can be played into **any** stable.
 - **Downgrade** card - The card grants some negative effects. The downgrade card can be played into **any** stable.
-- **Magic** card - The card with a one-time effect (simply spell), it takes effect immediately when it is played and then is discarded.
+- **Magic** card - The card with a one-time effect (spell). It takes effect immediately when it is played and then is discarded.
 - **Instant** card - The card that can be played at any time when any other player plays a card (unless the card says otherwise). If the instant card is played, then you can react to that card by playing the instant card (even though you already played the card this turn). Any number of instant cards can be chained during a single turn.
 
-Some effects target one or more players but sometimes can be unclear if the statement includes you or not. Therefore, there is precise wording in the effect description. The following terminology for player targeting is used:
+Some effects target one or more players, but sometimes it can be unclear whether the statement includes you. Therefore, there is precise wording in the effect description. The following terminology for player targeting is used:
 
 - **Any player** - Refers to any player in the game, __including__ you.
 - **Any other player** - Refers to any player in the game, __excluding__ you.
@@ -54,19 +53,19 @@ Some effects target one or more players but sometimes can be unclear if the stat
 
 ## Types of effects
 
-There are three different types of effects in the game: one-time effect, continuous effect and trigger effect. The one-time effect has a disposable immediate impact on the game. For example, Steal a unicorn card.
-The continuous effect is active as long as the card is in your stable. For instance, All your unicorns are pandas. This effect can be beneficial because all effects which target unicorns can not target your pandas but you can not win, because you have no unicorns in your stable!
-The trigger effect is activated when some event occurs. For example, if this card is in your stable at beginning of your turn, you may draw an extra card. The meaning of an extra card is that you may draw a card in the draw phase if you have drawn a card. If some effect disallows you to draw a card or even skip the draw phase, you can not draw an extra card.
+The game has three types of effects: one-time effect, continuous effect, and trigger effect. The one-time effect has an immediate disposable impact on the game. For example, _Steal a unicorn card_.
+The continuous effect is active as long as the card is in your stable. For instance, _All your unicorns are pandas_ (Pandamonium). This effect can be beneficial because all effects that target unicorns cannot target the player's pandas, but the player cannot win because the player has no unicorns in his stable!
+The trigger effect is activated when some event occurs. For example, _If this card is in your Stable at the beginning of your turn, you may draw an extra card._ (Extra Tail). An extra card means that the player may draw a card in the draw phase if the player has drawn a card. If some effect disallows the player to draw a card or even skip the draw phase, the player cannot draw an extra card.
 
-For some effects like "draw an extra card", it is good to consult more detailed rules that can be found on the official wiki. Sometimes there are described some special cases.
+For some effects like __draw an extra card__, it is good to consult more detailed rules on the official wiki. Sometimes there are described some special cases.
 
-Effects can be combined in different ways. The first combination is simple "and". Perform the first and the second effect simultaneously. The second combination "then",
-the first effect must be resolved, then the second effect.
-The last combination is conditional "if you do". The effect after "if you do" is performed only if the player performed the first effect. For example, If this card is in your stable at the beginning of your turn, you may sacrifice a card. If you do, destroy a card.
+Effects can be combined in different ways. The first combination is simple "and". Perform the first and the second effect simultaneously. The second combination is "then".
+The first effect must be resolved, then the second effect.
+The last combination is conditional "if you do". The effect after "if you do" is performed only if the player performed the first effect. For example, _If this card is in your stable at the beginning of your turn, you may sacrifice a card. If you do, destroy a card._ (Glitter bomb).
 
 ## Resolving of cards effects
 
-In this section, I will describe the core of the game mechanics - how the effects of the cards are resolved.
+In this section, we will describe the core of the game mechanics -- how the effects of the cards are resolved.
 
 At the same time, one or more effects must be resolved. Typically more effects must be resolved at the beginning of the turn or the end of the turn. Effects that must be resolved at the same time must be resolved simultaneously and independently. These effects are in the first chain link.
 
@@ -76,15 +75,15 @@ After the first chain link is resolved simultaneously and independently, some ef
 
 ![The whole chain effect with individual chain links. Source: the official game rules.](img/chain-link.png){width=174px height=300px}
 
-This approach to how the effects are resolved can be a little bit confusing because even people typically think in sequential order. Additionally, these have some consequences. For instance, when two effects can be activated at beginning of the turn, then you must decide which effects will be activated and resolve them simultaneously. You can not activate the first effect, see the result and then decide if you activate the second effect.
+This approach to how the effects are resolved can be a little bit confusing because even people typically think in sequential order. Additionally, these have some consequences. For instance, when two effects can be activated at the beginning of the turn, then the player must decide which effects will be activated and resolve them simultaneously. The player cannot activate the first effect, see the result, and then decides to activate the second effect.
 
 ## Impossible actions
 
 Effects can be mandatory or optional. Mandatory effects must be resolved. All **magic** cards have mandatory effects. **Unicorn** cards can have mandatory or optional effects. Optional effects use the "may" in the effect description.
 
-In general, players should not play cards with mandatory effects that can not be resolved during unloading the card/when a player says he wants to play a given card. For instance, you play a card with the effect discard a card but you have no other cards in your hand. But it is fine if you have only a "Neigh" card in your hand and you play this card during the reaction phase. In this case, you do not discard any card (your hand is empty) and you do not violate the rules.
+In general, players should not play cards with mandatory effects that cannot be resolved during unloading the card or when a player says he wants to play a given card. For instance, the player plays a card with the effect discard a card, but the player has no other cards in his hand. But it is fine if the player has only a "Neigh" card in his hand and the player plays this card during the reaction phase. In this case, the player does not discard any card (his hand is empty) and does not violate the rules.
 
-Sometimes another player plays effect or some card in your stable says that you must do some impossible action. In this case, this effect is ignored. There are some examples of this situation:
+Sometimes another player plays an effect, or some card in the player stable says that some player must do some impossible action. In this case, this effect is ignored. There are some examples of this situation:
 
-- **Discard** a card from your hand when you have not any card in your hand.
-- **Sacrifice** a card from your stable when you have not any card in your stable or you have a card in your stable but it can not be sacrificed.
+- **Discard** a card from the player's hand when the player has no card in his hand.
+- **Sacrifice** a card from the player's stable when the player has no card in his stable or the player has a card in his stable, but cannot be sacrificed.
