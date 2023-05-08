@@ -31,48 +31,46 @@ at most hundreds of turns.
 
 ## Artificial intelligence in similar games
 
-A very popular and similar game is Magic: The Gathering. Magic: The Gathering is a
+A very popular and similar game is Magic: The Gathering[@mtg]. Magic: The Gathering is a
 collectible card game where players buy booster packs, build their decks and play
 against each other. The game rules are not too hard but the game complexity
 grows with the different effects of cards and the combinations of cards.
 After years of existence, there are a lot of decks that break the game balance
 (for instance infinite combo decks[^infinite]). Every year, the game developers
-release new sets of cards and it will be impossible to balance the game.
+release new sets of cards, and it is impossible to balance the game.
 Therefore, there exists a lot of formats that allow using only
 selected sets of cards.
 Sometimes, some cards are too strong and are banned for the format.
 The game has a lot of competitive tournaments for big prizes.
 
-[^infinite]: https://tappedout.net/mtg-decks/selesnya-infinite-elf-tokens/
+[^infinite]: [https://tappedout.net/mtg-decks/selesnya-infinite-elf-tokens/](https://tappedout.net/mtg-decks/selesnya-infinite-elf-tokens/)
 
-In [-@2009mctsmtg] Monte Carlo Tree Search was applied to use to play the game [@2009mctsmtg].
+In [-@2009mctsmtg], Monte Carlo Tree Search was applied to use to play the game [@2009mctsmtg].
 Results showed that the algorithm can beat the strong rule-based agent that
-was designed by the expert player of MtG.
+was designed by an expert player of Magic: The Gathering.
 
-Another known card game is Poker. Poker is a game for multiple players
-where each player knows his two cards and the cards on the table. The
+Another well-known card game is Poker. Poker is a game for multiple players
+where each player knows their two cards and the cards on the table. The
 goal is to have the best combination of cards. This game is based on evaluating the probability of the opponent's card strength combination and
-the probability of your card strength combination. Another aspect
+the probability of the player's card strength combination. Another aspect
 of the game is psychological. The players can bluff and bet to confuse
 the opponent. Some people can think that the game is just gambling and
 the game is based on luck. However, a strategy was developed that wins the
 game on average [@moravvcik2017deepstack] (not all games can be won).
 This is a proof that the game is not just gambling.
 
-The last game which has slightly different properties of the environment is
-Go game. Go is a game for 2 players, turn-based, deterministic with perfect
+The last game with slightly different environmental properties is Go game. Go is a game for two players, turn-based, deterministic with perfect
 information. The game is challenging because of the huge search space.
 In [-@silver2016mastering], the DeepMind team developed an algorithm[@silver2016mastering]
-based on Monte Carlo Tree Search with deep neural networks which become
+based on Monte Carlo Tree Search with deep neural networks, which became
 very successful in Go. The algorithm was able to beat the
 best human players.
 
 ## Evolutionary algorithms
 
-Evolutionary algorithms are nature-inspired algorithms. The idea is
+Evolutionary algorithms[@eiben2015introduction] are nature-inspired algorithms. The idea is
 to mimic Darwin's theory of evolution. The individuals compete to reproduce
-their genes for the next generation. The basic structure of the algorithm
-is the following:
+their genes for the next generation.
 
 \begin{algorithm}
 \begin{algorithmic}
@@ -92,8 +90,8 @@ is the following:
 \label{alg:w}
 \end{algorithm}
 
-Before we start with describing the algorithm, we must define what is
-the individual. The individual is the solution to the problem.
+The whole algorithm is based on individuals in the population.
+The individual is the solution to the problem.
 In this section, the individual is a bit string. Other representations
 of the individual will be used later.
 
@@ -103,20 +101,25 @@ very carefully, otherwise, we can get stuck in a local optimum.
 
 The next step is to evaluate the fitness of each individual. The fitness function evaluates how good is the individual as a solution to the problem. The fitness function depends on the problem and the computing of the fitness function should be as quick as possible. Most of the time, the bottleneck of the algorithm is the fitness function.
 
-The next step is selecting the parents. The selection can be done in many ways. The most common approaches are roulette wheel selection and tournament selection. In the roulette wheel, selection each individual is assigned an arc on the wheel. The arc is proportional to the fitness of the individual in the population. Then we are just spinning the wheel and selecting the individual. In the tournament selection, we select randomly $k$ individuals and the best individual is selected as a parent. Both approaches have their advantages and disadvantages. The roulette wheel can have stronger selection pressure when the fitnesses are more different but when the fitnesses are similar, the roulette wheel performs as random selection. The tournament has the same selection pressure during the whole evolution. Another benefit is that the tournament selection can be easily switched on minimization instead maximization of the problem.
+The next step is selecting the parents. The selection can be done in many ways. The most common approaches are roulette wheel selection and tournament selection. In the roulette wheel, selection each individual is assigned an arc on the wheel. The arc is proportional to the fitness of the individual in the population. Then we are just spinning the wheel and selecting the individual. The probability of the individual $x$ is:
+$$
+\frac{f(x)}{\sum_i{f(i)}}
+$$
+where sum iterates over whole population and $f$ is fitness function.
+In the tournament selection, we select randomly $k$ individuals and the best individual is selected as a parent. Both approaches have their advantages and disadvantages. The roulette wheel can have stronger selection pressure when the fitnesses are more different but when the fitnesses are similar, the roulette wheel performs as random selection. The tournament has the same selection pressure during the whole evolution. Another benefit is that the tournament selection can be easily switched to minimization instead maximization of the problem.
 
-Another step is crossover. The crossover combines the genes of the parents to create a new individual. The crossover can be done in many ways too. The most common crossovers are one-point crossover and uniform crossover. The one-point crossover combines 2 parents and produces 2 offspring. The crossover randomly selects a point and the first offspring gets the genes from the first parent up to the point and the genes from the second parent after the point. The second offspring gets the other part of the genes. The uniform crossover randomly chooses for every gene from which parent it will be taken.
+Another step is crossover. The crossover combines the genes of the parents to create a new individual. The crossover can be done in many ways too. The most common crossovers are one-point crossover and uniform crossover. The one-point crossover combines two parents and produces two offspring. The crossover randomly selects a point and the first offspring gets the genes from the first parent up to the point and the genes from the second parent after the point. The second offspring gets the other part of the genes. The uniform crossover randomly chooses for every gene from which parent it will be taken.
 
 The last step is mutation. The mutation randomly changes offspring's genes. The mutation is mostly for the exploration of the search space and escaping from local optima. The most common mutation is bit-flip and uniform mutation. The bit-flip mutation randomly decides whether the gene will be flipped. The uniform mutation is mostly same as bit-flip. The only difference is that the uniform mutation randomly generates values from the allowed subset or interval of the gene.
 
 Then offspring are evaluated and the new population replaces the old population.
-This process is repeated until we reach the stopping criterion (or patience runs out).
+This process is repeated until we reach the stopping criterion. For instance: the maximum number of generations reached, the best individual has lower fitness than some constant, or the fitnesses did not improve after some number of generations.
 
 ## Monte Carlo Tree Search
 
-Monte Carlo Tree Search is a search technique that combines a tree search algorithm and machine learning principles (the algorithm tries to exploit information that has so far). It solves the problem of exploration and exploitation. The algorithm expands a node that is most promising (best-first search)[@chaslot2010monte].
+Monte Carlo Tree Search[@chaslot2010monte] is a search technique that combines a tree search algorithm and machine learning principles (the algorithm tries to exploit information that it detained so far). It solves the problem of exploration and exploitation. The algorithm expands a node that is most promising (best-first search).
 
-The algorithm itself is quite simple and has 4 main steps: Selection, Expansion, Simulation and Backpropagation.
+The algorithm itself is quite simple and has four main steps: Selection, Expansion, Simulation and Backpropagation.
 
 - Selection: The algorithm starts from the root node and traverses the tree until it reaches a leaf node. A leaf node is a node that has a child node that is not expanded yet. The selection of the next child node (successor) is done by UCT formula (Upper Confidence Bound applied to Trees) which is based on the UCB1 formula.
 The UCT formula is following:
