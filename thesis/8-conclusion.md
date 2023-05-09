@@ -1,6 +1,6 @@
 # Conclusion
 
-In this work, we have analyzed the Unstable Unicorns game. This includes game rules, game mechanics and find out successful AI agents in similar games. We have developed a game simulator that can be easily extended with new effects, cards and deck. We have implemented and tested several AI agents. We have developed a successful rule-based agent, which was further improved by an evolutionary algorithm. The huge advantage of the evolutionary agent is run time. The MCTS agent probably can be the same or better than the evolutionary agent with a higher number of playouts, but the run time is much higher for better comparison. Combining the win rate and run time, the evolutionary agent is an absolute winner.
+In this work, we have analyzed the Unstable Unicorns game. This includes game rules, game mechanics and description of successful AI agents in similar games. We have developed a game simulator that can be easily extended with new effects, cards and deck. We have implemented and tested several AI agents. We have developed a successful rule-based agent, which was further improved by an evolutionary algorithm. The huge advantage of the evolutionary agent is run time. The MCTS agent probably can be the same or better than the evolutionary agent with a higher number of playouts, but the run time is much higher for better comparison. Combining the win rate and run time, the evolutionary agent is an absolute winner.
 
 ## Future work
 
