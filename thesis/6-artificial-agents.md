@@ -1,6 +1,6 @@
 # Artificial agents
 
-In this thesis, we implemented four types of artificial agents for the game Unstable Unicorns. We will start with standard agent types such as random or rule-based. The random agent is a very nice baseline for other agents and comparison. It is very helpful for catching bugs during the development of the game simulator.
+In this thesis, we implemented four types of artificial agents for the game Unstable Unicorns. We will start with standard agent types such as random or rule-based. The random agent is a very nice baseline for other agents and comparison. It is also very helpful for catching bugs during the development of the game simulator.
 
 ## Random agent
 
@@ -10,11 +10,26 @@ As the name suggests, the random agent plays random actions from the set of poss
 
 The rule-based agent is a bit more complicated than the random agent. The reason is that there are a lot of different actions that we must implement. Which card should be selected to discard, and which one to destroy? Should we play a card, or should we activate an effect?
 
-We developed a rule-based agent based on a card tier list. Nearly every card game has a tier list of cards to measure a card's power. A tier list on the Reddit website [@tierlist]. We interpret values in the S tier as zero, in the A+ tier as one and so no. Action selection is done by sorting cards by this tier list with additional changes. For example, when we need to choose a card to sacrifice then we want one of the downgrade cards first. This is easily done by changing the value of the card retrieved from the tier list. In the implementation, we used subtraction by 1000. On the other hand, we do not want to sacrifice upgrade cards, so we add 1000 to the card's value. A lot of functions are implemented similarly.
+We developed a rule-based agent based on a card tier list. Nearly every card game has a tier list of cards to measure a card's power. The used tier list can be found on the Reddit website[@tierlist]. We interpret values in the S tier as zero, in the A+ tier as one and so no. Action selection is done by sorting cards by this tier list with additional changes.
 
-Two methods are implemented a little bit differently. The first method is a decision if we should use the optional effect of the card. This method always returns true because there are no bad optional effects. Some optional effects are not good to activate every time, but the decision of when the effect is bad or good is not so trivial.
+For **sacrifice** effect, we want to select one of the downgrade cards first. This is easily done by changing the value of the card retrieved from the tier list. In the implementation, we used subtraction by 1000. On the other hand, we do not want to sacrifice upgrade cards, so we add 1000 to the card's value.
 
-The second method is a decision on which card to play. This method uses the tier list, but instead of playing the best card, it plays the worst card. The reason is that at the start of the game, other players will likely have some instant cards to disallow playing a good card.
+When we need to select targets for **destroy** or **return** effect, we use the tier list and set our cards to lower priority by adding a value 100. However, we subtract 1000 for our downgrade cards (we did not want downgrade cards). On the other hand, for the opponent's downgrade cards, we add 1000.
+
+For **discard** effect, the card selection is based only on the tier list. We choose cards with the lowest tier. On the other hand, for **choose**, **pull**, **sacrifice**, save (the effect which saves some unicorn like Black knight unicorn card) and **steal** effects, the card order is reversed.
+
+When we decide if we should use the optional effect of the card, the method always returns true because there are no bad optional effects. Some optional effects are not good to activate every time, but the decision of when the effect is bad or good is not so trivial.
+
+For the decision of which effect should be activated (the effects can have variants), we randomly select one.
+When we move cards between the stables, random selection is also used.
+
+When we decide which card should be played, we use the tier list, but instead of playing the best card, it plays the worst card. The reason is that at the start of the game, other players will likely have some instant cards to disallow playing a good card.
+
+For choosing card location of agent cards, we play all cards except downgrades to our stable. The downgrade card will be played to the opponent's stable with the most unicorns.
+
+When we deciding when we play an instant card, then we do not "Neigh" our cards. Otherwise, if the card on the bottom of the stack is tier A+ or better, we play an instant card.
+
+Finally, when choosing the player for the effect, we select our agent if we can. Then we order the players by the number of unicorns in stable and select players with the most unicorns. 
 
 All values are implemented as a float because the evolutionary agent will reuse the method implementation.
 
@@ -24,8 +39,7 @@ The Monte Carlo Tree Search (MCTS) agent is an implementation of the MCTS algori
 
 The last problem was how to evaluate agents during the backpropagation step. I used the simple formula: the first player in the final game results (the best player) gets $n-1$ points where $n$ is the number of players. The second player gets $n-2$ points and so on.
 
-
-Now, we show the performance of the MCTS agents that use the rule-based agents with different number of playouts as base playout strategy. In the game, there were two MCTS agents and four random agents. The win of MCTS agents was counted if one of the MCTS agents won. Each of the MCTS agents played 100 games. The results are shown in the table below.
+Now, we show the performance of the MCTS agents that use the rule-based agents as base playout strategy with different number of playouts. In the game, there were two MCTS agents and four random agents. The win of MCTS agents was counted if one of the MCTS agents won. Each of the MCTS agents played 100 games. The results are shown in the table below.
 
 | Number of playouts | Win rate of MCTS agents |
 | ------------------ | ----------------------- |
@@ -89,7 +103,7 @@ Table: Table shows the win rate and variance of the fitness evaluation with a di
 
 It shows that with the increasing number of games, the win rate is more accurate but around 100 games, the win rate accuracy is good enough. The win rate after 100,000 games is around 98.3%. Unfortunately, this number of games will take ages with more complex agents as the MCTS agents with a lot of playouts. For this reason, I choose only ten games for the fitness evaluation with MCTS agents.
 
-The second question, if it is better to have a smaller population and more generations or a larger population and fewer generations. The answer depends on the problem. I made tests with different population sizes. The results are shown in the figure below.
+The second question is if it is better to have a smaller population and more generations or a larger population and fewer generations. The answer depends on the problem. I made tests with different population sizes. The results are shown in the figure below.
 
 ![The performance of the different population sizes. "ps" means the population size. The single line in the figure is the mean of the ten experiments. The lighter color shows the first and the third quartile. In all experiments, the evaluated individual played 200 games with five random agents.](img/population-size-and-max-generations.png){width=510px height=280px}
 
