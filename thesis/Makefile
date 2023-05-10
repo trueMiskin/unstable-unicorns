@@ -12,7 +12,7 @@ CHAPTERS=1-introduction 2-game-description 3-related-work \
 %.tex: %.md build_directory
 	pandoc $(PANDOCOPTS) -f markdown -t latex -o "$(BUILD_DIR)/$@" $<
 
-all: $(addsuffix .tex, $(CHAPTERS)) appendix-usage.tex build_directory
+all: $(addsuffix .tex, $(CHAPTERS)) appendix-usage.tex appendix-attachment.tex build_directory
 	for x in $(CHAPTERS); do echo "\input{$$x}"; done > $(BUILD_DIR)/content.tex
 	rsync -av ./latex_template/* $(BUILD_DIR)
 	rsync -av refs.bib $(BUILD_DIR)
