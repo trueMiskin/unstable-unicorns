@@ -2,7 +2,7 @@
 
 ## Existing implementations
 
-There exists multiple implementations of the game in the Tabletop Simulator.
+There are multiple implementations of the game in the Tabletop Simulator.
 These implementations are unsuitable for this work because the game is not simulated. All effects are resolved by players. It is only a board game in digital form.
 
 ## Implementation requirements
@@ -47,12 +47,12 @@ The effects have these methods, which are used later in this chapter:
 
 The resolution of one chain link is divided into seven steps:
 
-1. Choosing targets of the effect
-2. Triggering the effects that may change the targets of the effects. For example, _If 1 of your Unicorn cards would be destroyed, you may SACRIFICE this card instead._ (Black Knight Unicorn)
-3. Triggering the effects that may change the card location. For example, _If this card would be sacrificed, destroyed, or returned to your hand, return it to the Nursery instead._ (Baby Unicorn)
-4. Triggering the effects on the event `PreCardLeftStable`. It is all effects that must be resolved before the "owning" card left the stable. The term "owning" means that the effect is written on the card that is leaving the stable. For instance, _If this card is sacrificed or destroyed, you may DESTROY a Unicorn card._ (Stabby The Unicorn)
+1. Choosing targets of the effect. During this step, the `ChooseTargets` method is called on every effect.
+2. Triggering the effects that may change the targets of the effects. For example, _If 1 of your Unicorn cards would be destroyed, you may SACRIFICE this card instead._ (Black Knight Unicorn). During this step, the `InvokeReactionEffect` method is called on every triggered effect (this is done in `TriggerEffect` class).
+3. Triggering the effects that may change the card location. For example, _If this card would be sacrificed, destroyed, or returned to your hand, return it to the Nursery instead._ (Baby Unicorn). During this step, same as in the previous step, the `InvokeReactionEffect` method is called on every triggered effect.
+4. Triggering the effects on the event `PreCardLeftStable`. It is all effects that must be resolved before the "owning" card left the stable. The term "owning" means that the effect is written on the card that is leaving the stable. For instance, _If this card is sacrificed or destroyed, you may DESTROY a Unicorn card._ (Stabby The Unicorn). Triggered effects are normally added to the next chain link but can be set to be resolved in the current chain link. However, the `InvokeReactionEffect` **is not** called on the triggered effect.
 5. Unregistering all the effects belonging to the card that are targets of some effect in the chain link and they are on the table -- unicorn in stable, upgrade, or downgrade. Cards in hand have no effect on the game, therefore, their effects did not need to be unregistered.
-6. Performing the effects in the chain link.
+6. Performing the effects in the chain link. During this step, the `InvokeEffect` method is called on every effect.
 7. Registering all the effects of the cards that were targets of some effect and they are on the table.
 
 The first three steps are not very interesting, but the steps must be in this order because some effect can theoretically save a card from destroy effect like Black Knight Unicorn, but then this card can go back to the hand of the stable owner. The second reason is that it makes sense first to find out that the card is still a target of the effect and afterward to find out where the card should be located after the effect.
@@ -65,7 +65,7 @@ The rest of the steps are quite straightforward. Step 5 unregister the effects o
 
 ## Resolving instant cards
 
-Whenever a card is played other players can react to this card by playing instant cards. In the normal game, the order of the instant cards in the stack is determined by who played quicker the card. In the simulator, we cannot use this because the `GameController` asks each player if they want to play an instant card. Then it has a list of reactions of players that want to react and we cannot say this player played the card quicker than the other player. Therefore, we pick randomly the player reaction and this player was the "quickest". Afterward, we ask all players if they want to react to the reaction on the card on the top of the stack. This is repeated until there are no cards on the stack.
+Whenever a card is played, other players can react to this card by playing instant cards. In the normal game, the order of the instant cards in the stack is determined by who played quicker the card. In the simulator, we cannot use this because the `GameController` asks each player if they want to play an instant card. Then it has a list of reactions of players that want to react and we cannot say this player played the card quicker than the other player. Therefore, we pick randomly the player's reaction and this player was the "quickest". Afterward, we ask all players if they want to react to the reaction on the card on the top of the stack. This is repeated until there are no cards on the stack.
 
 ## State machine
 
@@ -88,6 +88,8 @@ Creating a new card is quite simple. Create a new class that inherits from `Card
 
 It is possible to add one or more effects to the card. We can add a one-time effect by the `Cast` method. Other method names in the `CardTemplateSource` class are self-explanatory. The methods can be called multiple times to add more effects of the same type. The methods accept effect factories (`FactoryEffect` or `ContinuousFactoryEffect`) because the effect on the card can be resolved multiple times during one game. The easiest way to solve this problem is to create a new effect whenever the effect must be added to the effect chain link or whenever a new continuous effect is registered.
 
+All implemented cards are in the `BaseSet` directory. Good examples of implemented classes are `Glitter Tornado`, `BabyUnicorn` and `QueenBeeUnicorn` cards, which are simple examples of how to use one-time,  trigger and continuous effects.
+
 ## Creating a new effect
 
 When we want to create a new one-time effect, we inherit the `AEffect` base class. When we make a more specific effect, for example, the destroy effect, then we inherit one of the destroy effects that are already implemented. The reason is that some effects are activated on destroy effect, and a check, if the effect inherits from this class, is done.
@@ -99,8 +101,14 @@ Some effects can give us (as a player) additional information, for instance, whi
 The continuous effects must inherit the `AContinuousEffect` base class. The continuous effect implementation is much simpler than the one-time effect. Only override the method which you want to implement.
 The trigger effect is only a composition of the trigger predicate, the list of events to listen to, and the effect factory for the one-time effect.
 
+All implemented one-time effects are in the `BasicEffects` directory. Good examples of implemented classes are `BringCardFromSourceOnTable`, which is a pretty simple effect, and a more complicated effect is `DiscardEffect`.
+
+All implemented continuous effects are in the `BasicContinuousEffects` directory. An example of implemented class can be `PlayerCantPlayUpgrades`.
+
 ## Creating a new agent
 
 Creating a new agent is not complicated. We need to create a new class that inherits from the `APlayer` base class and implements all methods. Each method has a short description of when this method is used. There is one condition, the agent __should not cheat__. Making an agent that cheats is easy because it can look at other player cards -- all information is accessible through `GameController`. We can add some cards to the agent's hand by `GameController`. We can find out who other players are (for instance, for cooperation) and many other things.
 
 Additionally, the agent should not modify the list of available actions. The list can be a list of effects, cards or players. Do not modify it because effects do not make a copy of this list before the agent is called. It is not hard to fix this problem, but this solution was chosen primarily due to performance reasons (not to make lots of list copies).
+
+All implemented agents are in the `Agent` directory. Good examples of implemented classes are `RandomPlayer` and `RuleBasedAgent`.
