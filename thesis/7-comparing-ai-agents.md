@@ -11,10 +11,10 @@ First, we will compare the rule-based agent with the MCTS agents with a differen
 
 Table: Win rate of agents. MCTS 100 means MCTS agent with 100 playouts.
 
-Interestingly, the rule-based agent does so well. It seems to be a good opponent for testing how well the different evolutionary agents perform in the game.
+Interestingly, the rule-based agent does quite well. It seems to be a good opponent for testing how well the different evolutionary agents perform in the game.
 
 Next, we will train the different evolutionary agents with different parameters.
-From the previous chapter, we know it is better to have a bigger population size and a smaller number of generations. We will use the population size 20 and 200 generations if the type of agent is not MCTS. For the MCTS agents, we use only 100 generations. The number of generations should be enough, accordingly to the results from the previous chapter. The first parameter in evolution is the agent opponent type used during the fitness evaluation. The second parameter is the number of games during the fitness evaluation. This number is set to 100 for all agents except MCTS. For MCTS agents, we use ten games because the MCTS agent is much slower in evolution.
+From the previous chapter, we know it is better to have a bigger population size and a smaller number of generations. We will use the population size 20 and 200 generations if the type of agent is not MCTS. For the MCTS agents, we use only 100 generations. The number of generations should be enough, according to the results from the previous chapter. The first parameter in evolution is the agent opponent type used during the fitness evaluation. The second parameter is the number of games during the fitness evaluation. This number is set to 100 for all agents except MCTS. For MCTS agents, we use ten games because the MCTS agent is much slower in evolution.
 We will make these evolutions with these agent types:
 
 - five random agents vs. one evolutionary agent
