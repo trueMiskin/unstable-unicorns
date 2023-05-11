@@ -164,9 +164,7 @@ namespace UnstableUnicornCore {
         private static void handleGameInteractively() {
             var deck = findAllDecks();
 
-            // TODO: change win condition for less players: 3-5 -> 7 unicorns
-            // for 6-8 players win condition is to have 6 unicorns in stable
-            int numberOfPlayers = selectNumber("Choose number of players", 6, 8);
+            int numberOfPlayers = selectNumber("Choose number of players", 3, 8);
             int seed = new Random().Next();
 
             bool onlyBots = !yesNoQuestion("Do you want control on of the player (not bot only game)?");
@@ -183,6 +181,11 @@ namespace UnstableUnicornCore {
             var game = CreateGame(selectDecks(deck), players, seed, VerbosityLevel.None);
 
             game.SimulateGame();
+
+            Console.WriteLine($"Game ended after {game.TurnNumber} turns");
+            foreach (var result in game.GameResults)
+                Console.WriteLine($"Player id: {result.PlayerId}, value: {result.NumUnicorns}, len: {result.SumUnicornNames}");
+
         }
 
         private static void varianceBenchmark(){

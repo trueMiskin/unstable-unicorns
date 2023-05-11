@@ -58,7 +58,6 @@ namespace UnstableUnicornCore.BasicEffects {
                     validtargets.Add(card);
             }
 
-            // TODO: does this effect need to call RemoveCardsWhichAreTargeted?
             return validtargets;
         }
 

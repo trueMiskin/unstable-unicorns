@@ -239,7 +239,6 @@ namespace UnstableUnicornCore
                                 var player = Players[_playersIterIdx];
                                 var cardToPlayOnStack = player.PlayInstantOnStack(Stack);
 
-                                // TODO: move CanPlayInstantCards to player class
                                 if (cardToPlayOnStack == null || !cardToPlayOnStack.CanPlayInstantCards())
                                     continue;
                                 if (cardToPlayOnStack.CardType != ECardType.Instant || !player.Hand.Contains(cardToPlayOnStack))
@@ -480,7 +479,7 @@ namespace UnstableUnicornCore
             }
             foreach (var player in Players) {
                 int value = player.Stable.Sum(card => card.UnicornValue);
-                if (value >= 6) {
+                if ((Players.Count <= 5 && value >= 7) || (Players.Count > 5 && value >= 6)) {
                     State = EGameState.Ended;
                     return;
                 }

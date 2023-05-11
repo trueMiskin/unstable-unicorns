@@ -105,7 +105,6 @@ namespace UnstableUnicornCore {
 
                     triggeredEffect.InvokeReactionEffect(gameController, effectWhichTriggerEffect);
                 } else {
-                    // TODO: add info about effect to effectToTrigger
                     if (executeEffectInActualChainLink)
                         gameController.AddEffectToCurrentChainLink(triggeredEffect);
                     else
