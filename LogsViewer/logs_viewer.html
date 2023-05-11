@@ -14,72 +14,13 @@
             <input type="file" name="log-file" id="log-file" />
             <button type="submit">Submit</button>
         </form>
-        <h2 class="text-center">Turn number <span id="turn">XX</span>/<span id="game-length">YY</span>, Player on turn <span id="player-id">ZZ</span></h2>
+        <h2 id="header" class="text-center"></h2>
         <div id="game-result" class="container">
             <div id="game-summary" class="row">
-                <div class="row-name">Game Summary</div>
-                <div class="col">
-                    <div>Player <span class="id">ID</span> (<span class="place">X</span>. place)</div>
-                    <div>Player type: <span class="type">TYPE</span></div>
-                    <div>Number unicorns: <span class="num-unicorns">Y</span></div>
-                    <div>Sum unicorns name: <span class="sum-names">Z</span></div>
-                    <div>Average response: <span class="avg-response">QQQ</span> ms</div>
-                </div>
             </div>
         </div>
         <div id="viewer" class="container">
-            <div class="bot row">
-                <div class="row-name">Beginning of turn</div>
-                <div class="col">
-                    <div class="effect">
-                        <span>
-                            <span class="owning-card">Card name</span>;
-                            <span class="effect-name">Effect Name</span>
-                        </span>
-                        <ul class="effect-targets">
-                            <li>Target 1</li>
-                            <li>Target 2</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="players-cards row">
-                <div class="row-name">Player cards</div>
-                <div class="col">
-                    <div class="player">Player number: <span class="player-number">XX</span></div>
-                    <b>Hand</b>
-                    <ul class="hand">
-                        <li>First card</li>
-                        <li>Second card</li>
-                    </ul>
-                    <b>Stable</b>
-                    <ul class="stable"></ul>
-                    <b>Upgrades</b>
-                    <ul class="upgrades"></ul>
-                    <b>Downgrades</b>
-                    <ul class="downgrades"></ul>
-                </div>
-                <div class="col">
-                    <h4>Hand</h4>
-                    <h4>Stable</h4>
-                    <h4>Upgrades</h4>
-                    <h4>Downgrades</h4>
-                </div>
-            </div>
-            <div class="cards-playing row">
-                <div class="row-name">Card playing</div>
-                <div class="col">
-                    <div>Neco</div>
-                    <div style="position: relative; left: 20px;">Neco</div>
-                </div>
-                <div class="col">
-                    <div>Neco</div>
-                    <div style="position: relative; left: 20px;">Neco</div>
-                </div>
-            </div>
-            <div class="end-turn row">
-                <div class="row-name">End turn</div>
-            </div>
+            <h1>To view the log, select the log file and click on the Submit button</h1>
         </div>
 
         <template id="empty-viewer">

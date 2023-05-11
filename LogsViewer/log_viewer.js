@@ -20,6 +20,7 @@ function loadLog(){
         console.log(logContent);
 
         turnIdx = 0;
+        $('#header').html('Turn number <span id="turn">XX</span>/<span id="game-length">YY</span>, Player on turn <span id="player-id">ZZ</span>');
         loadGameResult( $('#game-summary'), logContent['Summary']['GameResult']);
         showLog();
     };
