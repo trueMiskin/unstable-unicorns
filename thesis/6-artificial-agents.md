@@ -68,6 +68,9 @@ The GeneticSharp library does not evaluate the already evaluated individuals' fi
 
 Then there are additional questions. The first one is how many games should be played by each individual during the fitness evaluation. This is an important question because the fitness function evaluation is the most time-consuming part of the algorithm and the more games are played the longer the algorithm will take. To find it out I ran the benchmark with the different number of games and initial seeds. In the games, there were three random agents and three rule-based agents. The results are shown in the table below.
 
+\vfill
+\pagebreak
+
 | Number of games | Initial seed | Win rate | Variance |
 | --------------- | ------------ | -------- | -------- |
 | 3               | 0            | 1        | 0        |
