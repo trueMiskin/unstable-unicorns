@@ -41,7 +41,7 @@ namespace UnstableUnicornCore {
 
         public TriggerEffect(Card owningCard, TriggerPredicate triggerPredicate, List<ETriggerSource> triggers,
                              Card.FactoryEffectForTriggerEffects factoryEffect, bool oneTimeUseEffect = false, bool executeEffectInActualChainLink = false) {
-            OwningCard = owningCard;
+            this._owningCard = owningCard;
             this.triggerPredicate = triggerPredicate;
             this.triggers = triggers;
             this.factoryEffect = factoryEffect;
@@ -49,6 +49,10 @@ namespace UnstableUnicornCore {
             this.executeEffectInActualChainLink = executeEffectInActualChainLink;
         }
 
+        /// <summary>
+        /// Subscribe/register trigger effect on one or more events
+        /// </summary>
+        /// <param name="gameController"></param>
         public void SubscribeToEvent(GameController gameController) {
             foreach (var trigger in triggers)
                 gameController.SubscribeEvent(trigger, this);
@@ -57,6 +61,10 @@ namespace UnstableUnicornCore {
                 OwningCard.AddOneTimeTriggerEffect(this);
         }
 
+        /// <summary>
+        /// Unsubscribe/unregister trigger effect
+        /// </summary>
+        /// <param name="gameController"></param>
         public void UnsubscribeToEvent(GameController gameController) {
             foreach (var trigger in triggers)
                 gameController.UnsubscribeEvent(trigger, this);
@@ -65,11 +73,19 @@ namespace UnstableUnicornCore {
                 OwningCard.RemoveOneTimeTriggerEffect(this);
         }
 
+        /// <summary>
+        /// Notify trigger effect that some event happened
+        /// </summary>
+        /// <param name="triggerSource"></param>
+        /// <param name="cardWhichTriggerEffect"></param>
+        /// <param name="effectWhichTriggerEffect"></param>
+        /// <param name="gameController"></param>
+        /// <exception cref="InvalidOperationException"></exception>
         public void InvokeEffect(ETriggerSource triggerSource, Card? cardWhichTriggerEffect,
                                  AEffect? effectWhichTriggerEffect, GameController gameController) {
             // if effect, which cause trigger, is blocking triggering of unicorns cards
             if (effectWhichTriggerEffect != null &&
-                effectWhichTriggerEffect.IsBlockTriggeringUnicornCards(OwningCard, OwningCard.CardType))
+                effectWhichTriggerEffect.IsBlockedTriggeringUnicornCards(OwningCard, OwningCard.CardType))
                 return;
 
             if (!OwningCard.CanBeActivatedTriggerEffect(OwningCard.CardType))
@@ -118,6 +134,9 @@ namespace UnstableUnicornCore {
         }
     }
 
+    /// <summary>
+    /// Helper class that implements most frequent trigger predicates
+    /// </summary>
     public static class TriggerPredicates {
         private static readonly Type destroyEffectType = typeof(DestroyEffect);
         private static readonly Type sacrificeEffectType = typeof(SacrificeEffect);

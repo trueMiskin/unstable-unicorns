@@ -56,11 +56,21 @@ namespace UnstableUnicornCore {
         public static string CardCannotBePlayed = "This card cannot be played. Requirements are not met.";
 
         private int _cardIndex = -1;
+
+        /// <summary>
+        /// Return persistent card index in the game (even if the game state is copied)
+        /// </summary>
+        /// <param name="controller"></param>
+        /// <returns></returns>
         public int CardIndex(GameController controller) {
             if (_cardIndex == -1)
                 _cardIndex = controller._allCards.IndexOf(this);
             return _cardIndex;
         }
+
+        /// <summary>
+        /// Name of the card
+        /// </summary>
         public string Name { get; init; }
 
         private int _extraUnicornValue;
@@ -107,19 +117,26 @@ namespace UnstableUnicornCore {
             this.Location = CardLocation.Pile;
         }
 
+        /// <summary>
+        /// Can be instant card played?
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">When an invalid game state happens</exception>
         public bool CanPlayInstantCards() {
-            // if (Location != CardLocation.InHand)
-            //     throw new InvalidOperationException(CardNotInHand);
             if (Player == null)
                 throw new InvalidOperationException(CardInHandPlayerNull);
-            // if (_cardType != ECardType.Instant)
-            //     throw new InvalidOperationException("Card is not instant card.");
 
             bool ret = true;
             foreach (var effect in Player.GameController.ContinuousEffects)
                 ret &= effect.CanBePlayedInstantCards(Player);
             return ret;
         }
+
+        /// <summary>
+        /// Can be card neigh?
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">When an invalid game state happens.</exception>
         public bool CanBeNeigh() {
             if (Player == null)
                 throw new InvalidOperationException($"{nameof(Player)} should be not null.");
@@ -129,10 +146,15 @@ namespace UnstableUnicornCore {
                 ret &= effect.IsCardNeighable(this);
             return ret;
         }
+
+        /// <summary>
+        /// Can be card sacrified?
+        /// </summary>
+        /// <returns></returns>
         public bool CanBeSacrificed() { return _canBeSacrificed; }
 
         /// <summary>
-        /// Returns if card can be destroyed by some effect.
+        /// Returns if a card can be destroyed by some effect.
         /// If the effect is null, it returns whether the card can be destroyed at all
         /// </summary>
         /// <param name="byEffect"></param>
@@ -202,6 +224,9 @@ namespace UnstableUnicornCore {
         /// </summary>
         public APlayer? Player { get; set; }
 
+        /// <summary>
+        /// Returns current card type 
+        /// </summary>
         public ECardType CardType {
             get {
                 if (Location != CardLocation.OnTable)
@@ -263,10 +288,18 @@ namespace UnstableUnicornCore {
             this.continuousEffects.Clear();
         }
 
+        /// <summary>
+        /// Add a one-time activatable trigger effect on a card.
+        /// </summary>
+        /// <param name="triggerEffect"></param>
         public void AddOneTimeTriggerEffect(TriggerEffect triggerEffect) {
             _oneTimeTriggerEffects.Add(triggerEffect);
         }
 
+        /// <summary>
+        /// Remove a one-time activatable trigger effect on a card.
+        /// </summary>
+        /// <param name="triggerEffect"></param>
         public void RemoveOneTimeTriggerEffect(TriggerEffect triggerEffect) {
             _oneTimeTriggerEffects.Remove(triggerEffect);
         }

@@ -7,12 +7,20 @@ using UnstableUnicornCore.BasicEffects;
 
 namespace UnstableUnicornCore
 {
+    /// <summary>
+    /// Implementation of the game simulator
+    /// </summary>
     public class GameController {
         public List<TurnLog> GameLog = new();
         private TurnLog? _turnLog;
         public VerbosityLevel Verbosity { get; private set; }
         public EGameState State { get; internal set; } = EGameState.NotStarted;
         private List<GameResult>? _gameResults;
+
+        /// <summary>
+        /// Return game results (game summary)
+        /// </summary>
+        /// <exception cref="InvalidOperationException">When then game is not finished</exception>
         public List<GameResult> GameResults {
             get {
                 if (State != EGameState.Ended)
@@ -105,6 +113,9 @@ namespace UnstableUnicornCore
             Console.WriteLine(text);
         }
 
+        /// <summary>
+        /// Run the game simulation. If the game is finished, nothing happens.
+        /// </summary>
         public void SimulateGame() {
             if (State == EGameState.NotStarted) {
                 // set up game
@@ -300,6 +311,9 @@ namespace UnstableUnicornCore
             _publishedOnEndTurn = _endTurnResolved = false;
         }
 
+        /// <summary>
+        /// If a player takes an extra turn
+        /// </summary>
         public void ThisPlayerTakeExtraTurn() => _willTakeExtraTurn = true;
 
         /// <summary>
@@ -326,6 +340,10 @@ namespace UnstableUnicornCore
             _actualChainLink.Insert(index + 1, effectToAdd);
         }
 
+        /// <summary>
+        /// Add effect to next chain link
+        /// </summary>
+        /// <param name="effect"></param>
         public void AddNewEffectToChainLink(AEffect effect) => _nextChainLink.Add(effect);
 
         private int _chooseTargetIdx = -1, _changeTargetingIdx = 0, _changeCardLocation = 0;
@@ -451,6 +469,10 @@ namespace UnstableUnicornCore
             CheckIfSomeoneWinGame();
         }
 
+        /// <summary>
+        /// Check the game win condition. If any player meets the win condition,
+        /// the game state is set to <see cref="EGameState.Ended"/>
+        /// </summary>
         public void CheckIfSomeoneWinGame() {
             if (State == EGameState.Ending){
                 State = EGameState.Ended;
@@ -465,6 +487,10 @@ namespace UnstableUnicornCore
             }
         }
 
+        /// <summary>
+        /// The given player will draw a card from the pile
+        /// </summary>
+        /// <param name="player"></param>
         public void PlayerDrawCard(APlayer player) {
             if (Pile.Count == 0) {
                 // Game end
@@ -486,6 +512,10 @@ namespace UnstableUnicornCore
                 PlayerDrawCard(player);
         }
 
+        /// <summary>
+        /// Move one baby unicorn from the nursery to the given player stable
+        /// </summary>
+        /// <param name="player"></param>
         public void PlayerGetBabyUnicornOnTable(APlayer player) {
             // when no baby unicorn in Nursery -> player got nothing
             if (Nursery.Count == 0)
@@ -496,6 +526,11 @@ namespace UnstableUnicornCore
             babyUnicron.RegisterAllEffects();
         }
 
+        /// <summary>
+        /// Move a specified number of baby unicorns from the nursery to the given player stable
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="numberUnicorns"></param>
         public void PlayerGetBabyUnicornsOnTable(APlayer player, int numberUnicorns) {
             for (int i = 0; i < numberUnicorns; i++)
                 PlayerGetBabyUnicornOnTable(player);
@@ -555,6 +590,12 @@ namespace UnstableUnicornCore
         }
 
         private int _triggerListIdx = 0;
+        /// <summary>
+        /// Notify all trigger effects that a given event occurred.
+        /// </summary>
+        /// <param name="_event"></param>
+        /// <param name="card"></param>
+        /// <param name="effect"></param>
         public void PublishEvent(ETriggerSource _event, Card? card = null, AEffect? effect = null) {
             if (!EventsPool.TryGetValue(_event, out List<TriggerEffect>? triggerList))
                 return;
@@ -570,10 +611,22 @@ namespace UnstableUnicornCore
             triggersToRemove.Clear();
         }
 
+        /// <summary>
+        /// Register a continuous effect
+        /// </summary>
+        /// <param name="effect"></param>
         public void AddContinuousEffect(AContinuousEffect effect) => ContinuousEffects.Add(effect);
 
+        /// <summary>
+        /// Unregister a continuous effect
+        /// </summary>
+        /// <param name="effect"></param>
         public void RemoveContinuousEffect(AContinuousEffect effect) => ContinuousEffects.Remove(effect);
 
+        /// <summary>
+        /// Register a trigger effect to a specified event
+        /// </summary>
+        /// <param name="effect"></param>
         public void SubscribeEvent(ETriggerSource _event, TriggerEffect effect) {
             if (!EventsPool.TryGetValue(_event, out List<TriggerEffect>? triggerList)) {
                 triggerList = new List<TriggerEffect> { };
@@ -586,6 +639,10 @@ namespace UnstableUnicornCore
             triggerList.Add(effect);
         }
 
+        /// <summary>
+        /// Unregister a trigger effect from a specified event
+        /// </summary>
+        /// <param name="effect"></param>
         public void UnsubscribeEvent(ETriggerSource _event, TriggerEffect effect) {
             if (!EventsPool.TryGetValue(_event, out List<TriggerEffect>? triggerList))
                 return; // Effect was not event registered, nothing to unregister -> OK state
@@ -593,9 +650,19 @@ namespace UnstableUnicornCore
                 return; // Effect was not found, nothing to unregister -> OK state
         }
 
+        /// <summary>
+        /// Unregister a trigger effect after publishing ends. Some effects can be triggered
+        /// and then should be immediately unregistered, but the publishing of the event is not
+        /// ended, and we cannot remove this effect from the list.
+        /// </summary>
+        /// <param name="effect"></param>
         public void UnsubscribeEventAfterEndOfPublishing(TriggerEffect triggerEffect)
             => triggersToRemove.Add(triggerEffect);
 
+        /// <summary>
+        /// Get all cards on the table (all unicorns, upgrades, and downgrades of all players)
+        /// </summary>
+        /// <returns></returns>
         public List<Card> GetCardsOnTable() {
             List<Card> cards = new();
             foreach(var player in Players) {
@@ -606,6 +673,9 @@ namespace UnstableUnicornCore
             return cards;
         }
 
+        /// <summary>
+        /// Shuffle a draw pile
+        /// </summary>
         public void ShuffleDeck() => Pile = Pile.Shuffle(Random);
 
         /// <summary>

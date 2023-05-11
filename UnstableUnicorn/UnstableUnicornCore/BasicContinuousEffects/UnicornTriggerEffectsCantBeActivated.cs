@@ -6,10 +6,10 @@
             if (card.Player != OwningPlayer)
                 return true;
 
-            return !IsBlockTriggeringUnicornCards(card, cardType);
+            return !IsBlockedTriggeringUnicornCards(card, cardType);
         }
 
-        public static bool IsBlockTriggeringUnicornCards(Card card, ECardType cardType) {
+        public static bool IsBlockedTriggeringUnicornCards(Card card, ECardType cardType) {
             if (!ECardTypeUtils.UnicornTarget.Contains(cardType))
                 return false;
 

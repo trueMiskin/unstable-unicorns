@@ -39,12 +39,12 @@ namespace UnstableUnicornCore {
         /// </summary>
         public APlayer? TargetOwner { get; protected set; }
 
-        protected bool _blockTriggeringUnicornCardsEnabled = false;
-        public bool IsBlockTriggeringUnicornCards(Card card, ECardType cardType) {
-            if (!_blockTriggeringUnicornCardsEnabled)
+        protected bool _blockedTriggeringUnicornCardsEnabled = false;
+        public bool IsBlockedTriggeringUnicornCards(Card card, ECardType cardType) {
+            if (!_blockedTriggeringUnicornCardsEnabled)
                 return false;
 
-            return UnicornTriggerEffectsCantBeActivated.IsBlockTriggeringUnicornCards(card, cardType);
+            return UnicornTriggerEffectsCantBeActivated.IsBlockedTriggeringUnicornCards(card, cardType);
         }
 
         public AEffect(Card owningCard, int cardCount) {
@@ -70,7 +70,8 @@ namespace UnstableUnicornCore {
         /// <summary>
         /// Check if card meets criteria to play
         /// 
-        /// This method should be overrided only by if effect.
+        /// This method should be overridden if the effect requirements are mandatory
+        /// (must be checked before playing)
         /// Else this requirement will be required on every time when you want play
         /// card with this effect even if effect by itself have no condition.
         /// </summary>
@@ -79,11 +80,17 @@ namespace UnstableUnicornCore {
         public virtual bool MeetsRequirementsToPlay(GameController gameController) => true;
 
         /// <summary>
-        /// Requirement which will be checked in conditional effect.
+        /// The requirement will be checked in conditional effect.
+        /// The effect typically is not mandatory, but in conditional effect, this effect is required.
         /// </summary>
         /// <param name="gameController"></param>
         /// <returns></returns>
         public abstract bool MeetsRequirementsToPlayInner(GameController gameController);
+
+        /// <summary>
+        /// Implementation of the actual effect
+        /// </summary>
+        /// <param name="gameController"></param>
         public abstract void InvokeEffect(GameController gameController);
 
         /// <summary>

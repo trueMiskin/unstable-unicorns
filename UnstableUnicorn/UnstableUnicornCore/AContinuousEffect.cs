@@ -67,9 +67,26 @@ namespace UnstableUnicornCore {
         /// <returns></returns>
         public virtual bool CanBeActivatedTriggerEffect(Card card, ECardType cardType) => true;
 
+        /// <summary>
+        /// Can given player play an instant card?
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
         public virtual bool CanBePlayedInstantCards(APlayer player) => true;
 
+        /// <summary>
+        /// If continuous effect allow neigh a card.
+        /// </summary>
+        /// <param name="card"></param>
+        /// <returns></returns>
         public virtual bool IsCardNeighable(Card card) => true;
+
+        /// <summary>
+        /// This method transforms the card type on another card type
+        /// </summary>
+        /// <param name="actualCardType"></param>
+        /// <param name="playerOwner"></param>
+        /// <returns></returns>
         public virtual ECardType GetCardType(ECardType actualCardType, APlayer playerOwner) => actualCardType;
 
         /// <summary>

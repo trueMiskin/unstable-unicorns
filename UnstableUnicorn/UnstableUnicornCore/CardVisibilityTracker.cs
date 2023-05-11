@@ -128,8 +128,19 @@ namespace UnstableUnicornCore {
         /// <param name="player"></param>
         public void RemovePlayerSeePile(APlayer player) => playersSeePile.Remove(player);
 
+        /// <summary>
+        /// Does the given player see a draw pile? This information is needed when we copy (clone) the game state.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
         public bool IsPlayerSeePile(APlayer player) => playersSeePile.Contains(player);
 
+        /// <summary>
+        /// Make a deep copy of a CardVisibilityTracker
+        /// </summary>
+        /// <param name="cardMapper"></param>
+        /// <param name="playerMapper"></param>
+        /// <returns></returns>
         public CardVisibilityTracker Clone(Dictionary<Card, Card> cardMapper, Dictionary<APlayer, APlayer> playerMapper) {
             var newCardVisibility = new CardVisibilityTracker(playerMapper.Values.ToList());
             

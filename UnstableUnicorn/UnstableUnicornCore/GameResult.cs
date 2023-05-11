@@ -1,6 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
 namespace UnstableUnicornCore {
+    /// <summary>
+    /// Data struct for storing game results that can be serialized in JSON
+    /// </summary>
     public struct GameResult {
         public int PlayerId { get; init; }
         [JsonIgnore]

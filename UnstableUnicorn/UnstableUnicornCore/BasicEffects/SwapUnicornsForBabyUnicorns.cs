@@ -5,7 +5,7 @@ namespace UnstableUnicornCore.BasicEffects {
     /// <summary>
     /// Swap all unicorns for baby unicorns, but this effect
     /// blocking triggering of unicorns effect except baby unicorns
-    /// <see cref="AEffect.IsBlockTriggeringUnicornCards(Card, ECardType)"/>
+    /// <see cref="AEffect.IsBlockedTriggeringUnicornCards(Card, ECardType)"/>
     /// 
     /// This effect extends destroy effect, because original cards are in discard pile
     /// </summary>
@@ -13,7 +13,7 @@ namespace UnstableUnicornCore.BasicEffects {
         MoveBabyUnicornsToStable thenEffect;
         int numberCardsToSwap = 0;
         public SwapUnicornsForBabyUnicorns(Card owningCard) : base(owningCard, Int32.MaxValue, ECardTypeUtils.UnicornTarget) {
-            _blockTriggeringUnicornCardsEnabled = true;
+            _blockedTriggeringUnicornCardsEnabled = true;
 
             TargetLocation = CardLocation.DiscardPile;
 
