@@ -7,11 +7,7 @@ using UnstableUnicornCore.BasicEffects;
 
 namespace UnstableUnicornCore
 {
-    public interface IGameController {
-        void SimulateGame();
-    }
-
-    public class GameController : IGameController, IPublisher {
+    public class GameController {
         public List<TurnLog> GameLog = new();
         private TurnLog? _turnLog;
         public VerbosityLevel Verbosity { get; private set; }
