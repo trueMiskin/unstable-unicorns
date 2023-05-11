@@ -18,8 +18,8 @@ FitObjPair = namedtuple('FitObjPair', ['fitness', 'objective'])
 #   upper - upper boundary of shaded area
 #   legend_name - name in the plot legend
 def plot_experiment(evals, lower, mean, upper, legend_name=''):
-    plt.plot(evals, mean, label=legend_name)
-    plt.fill_between(evals, lower, upper, alpha=0.25)
+    plt.plot(evals, mean.rolling(10).mean(), label=legend_name)
+    # plt.fill_between(evals, lower, upper, alpha=0.25)
 
 # reads the run logs and computes experiment statisticts (those used for plots)
 # Arguments:
@@ -61,8 +61,12 @@ def read_run_file(filename):
             # Generation 1, best fitness 608, min 444, avg. 529, max 608 fitness
             line_segments = line.split()
             g, x, m, n = line_segments[1][:-1], line_segments[10], line_segments[8][:-1], line_segments[6][:-1]
-            #evals.append(int(g) * pop_size)
-            evals.append(int(g))
+            if int(g) > 200:
+                break
+            evals.append(int(g) * pop_size)
+            n = n.replace(",", ".")
+            x = x.replace(",", ".")
+            m = m.replace(",", ".")
             stats.append(GenStats(min=float(n), max=float(x), mean=float(m)))
 
     return evals, stats
@@ -80,7 +84,7 @@ def plot_experiments(prefix, exp_ids, rename_dict=None):
         evals, lower, mean, upper = get_plot_data(prefix, e)
         plot_experiment(evals, lower, mean, upper, rename_dict.get(e, e))
     plt.legend()
-    plt.xlabel('Generations')
+    plt.xlabel('Fitness evaluations')
     plt.ylabel('Fitness value')
 
 
@@ -90,6 +94,6 @@ if __name__ == '__main__':
     parser.add_argument('exp_ids', type=str, nargs='+', help='list of experiments to plot, a file name prefix can be specified')
 
     args = parser.parse_args()
-    plt.figure(figsize=(12,8))
+    plt.figure(figsize=(6,4))
     plot_experiments(args.directory, args.exp_ids)
     plt.show()
