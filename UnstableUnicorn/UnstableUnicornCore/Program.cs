@@ -13,7 +13,7 @@ using static UnstableUnicornCore.Agent.MyProblemFitness;
 namespace UnstableUnicornCore {
 
     public class Program {
-        public static List<Card> CreateCardFromGenerator(IEnumerable<(CardTemplateSource card, int count)> enumerator) {
+        private static List<Card> CreateCardFromGenerator(IEnumerable<(CardTemplateSource card, int count)> enumerator) {
             List<Card> output = new();
             foreach (var (cardTmpSrc, value) in enumerator) {
                 for (int i = 0; i < value; i++)
@@ -22,6 +22,14 @@ namespace UnstableUnicornCore {
             return output;
         }
 
+        /// <summary>
+        /// Create game from list of decks and list of players with given seed and verbosity level
+        /// </summary>
+        /// <param name="decks"></param>
+        /// <param name="playes"></param>
+        /// <param name="gameSeed"></param>
+        /// <param name="verbosity"></param>
+        /// <returns></returns>
         public static GameController CreateGame(List<Deck> decks, List<APlayer> playes, int gameSeed, VerbosityLevel verbosity) {
             List<Card> nursery = new();
             List<Card> pile = new();
@@ -35,7 +43,7 @@ namespace UnstableUnicornCore {
             return new GameController(pile, nursery, playes, gameSeed, verbosity);
         }
 
-        public static List<Deck> findAllDecks() {
+        private static List<Deck> findAllDecks() {
             // load dll in plugin directory
             string directory = "plugin-decks";
             try {
@@ -70,7 +78,7 @@ namespace UnstableUnicornCore {
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <returns></returns>
-        public static int selectNumber(string msg, int from, int to) {
+        private static int selectNumber(string msg, int from, int to) {
             while (true) {
                 Console.WriteLine(msg);
                 Console.WriteLine("Choose number from {0} to {1} (inclusive)", from, to);
@@ -88,7 +96,7 @@ namespace UnstableUnicornCore {
             }
         }
 
-        public static bool yesNoQuestion(string msg) {
+        private static bool yesNoQuestion(string msg) {
             string? ans = "";
             while (ans == "") {
                 Console.WriteLine(msg);
@@ -114,7 +122,7 @@ namespace UnstableUnicornCore {
             return ans == "y";
         }
 
-        public static List<Deck> selectDecks(List<Deck> decks) {
+        private static List<Deck> selectDecks(List<Deck> decks) {
             List<bool> selected = new();
             foreach (Deck _ in decks)
                 selected.Add(false);
@@ -153,7 +161,7 @@ namespace UnstableUnicornCore {
             return ans;
         }
 
-        public static void handleGameInteractively() {
+        private static void handleGameInteractively() {
             var deck = findAllDecks();
 
             // TODO: change win condition for less players: 3-5 -> 7 unicorns
@@ -177,7 +185,7 @@ namespace UnstableUnicornCore {
             game.SimulateGame();
         }
 
-        public static void varianceBenchmark(){
+        private static void varianceBenchmark(){
             var initSeeds = new int[]{0, 4_000, 6_000, 9_000, 13_000, 32_000, 48_000, 96_000, 160_000, 320_000};
             var numGames = new int[]{1, 2, 3, 5, 10, 20, 50, 100, 200, 500, 1000};
 
@@ -401,83 +409,6 @@ namespace UnstableUnicornCore {
             rootCommand.AddCommand(evoEvaluateCommand);
 
             rootCommand.Invoke(args);
-            /*
-            handleGameInteractively();
-
-            // For bot testing
-            // 347516
-            // 2938278
-            // 8704718
-            // 23818264
-            /*//*
-            for (int id = 12428753; ; id++) {
-                Console.WriteLine($"---------> Starting game {id + 1} <---------");
-                List<APlayer> players = new();
-                for (int x = 0; x < 6; x++) {
-                    players.Add(new RandomPlayer());
-                }
-
-                var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id, VerbosityLevel.None);
-
-                game.SimulateGame();
-            }
-
-            string test_name = "test_rule_based_agent";
-            int maxTurns = 100_000;
-
-            Regex regex = new Regex("/random.*");
-            var matches = Directory.EnumerateFiles("eva_logs").Where(f => regex.IsMatch(f));
-            foreach (var match in matches) {
-                var fileName = Path.GetFileName(match);
-                System.Console.WriteLine("Testing: " + fileName);
-
-                int ruleBasedAgentWins = 0, mctsAgentWins = 0, evolutionAgentWins = 0;
-                for (int id = 0; id < maxTurns; id++) {
-                    // Console.WriteLine($"---------> Starting game {id + 1} <---------");
-                    List<APlayer> players = new();
-                    for (int x = 0; x < 4; x++) {
-                        players.Add(new RandomPlayer());
-                        // players.Add(new RuleBasedAgent());
-                        // players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
-                    }
-                    for (int x = 0; x < 2; x++) {
-                        players.Add(new RuleBasedAgent());
-                        //players.Add(new MctsAgent(200, () => new RuleBasedAgent()));
-                        // players.Add(new EvolutionAgent(match));
-                    }
-
-                    Stopwatch stopWatch = Stopwatch.StartNew();
-                    var game = CreateGame(new List<Deck> { new SecondPrintDeck() }, players, id, VerbosityLevel.All);
-
-                    game.SimulateGame();
-                    stopWatch.Stop();
-                    // Console.WriteLine($"Game ended after {stopWatch.ElapsedMilliseconds} ms");
-
-                    // Console.WriteLine($"Game ended after {game.TurnNumber} turns");
-                    // foreach (var result in game.GameResults)
-                    //     Console.WriteLine($"Player id: {result.PlayerId}, value: {result.NumUnicorns}, len: {result.SumUnicornNames}");
-
-                    if (game.GameResults.First().Player.GetType() == typeof(RuleBasedAgent))
-                        ruleBasedAgentWins++;
-                    if (game.GameResults.First().Player is MctsAgent)
-                        mctsAgentWins++;
-                    if (game.GameResults.First().Player is EvolutionAgent)
-                        evolutionAgentWins++;
-
-                    var toLog = new GameRecord(gameSeed: id, gameLength: game.TurnNumber, game.GameResults, game.GameLog);
-
-                    using var stream = File.Create(test_name + "-seed=" + id + ".json");
-
-                    JsonSerializer.Serialize(stream, toLog, new JsonSerializerOptions {
-                        WriteIndented= true,
-                    });
-                }
-                Console.WriteLine($"RuleBasedAgent won {ruleBasedAgentWins} times from {maxTurns} games.");
-                Console.WriteLine($"MctsAgent won {mctsAgentWins} times from {maxTurns} games.");
-                Console.WriteLine($"EvolutionAgent won {evolutionAgentWins} times from {maxTurns} games.");
-            }
-
-            /**/
         }
 
         private static int evaluateEvolutionaryAgent(EvolutionAgent agent, int numberAgents = 1, string opponentType = RuleBasedOption) {
@@ -510,7 +441,7 @@ namespace UnstableUnicornCore {
                 if (!Directory.Exists(folderName)) {
                     Directory.CreateDirectory(folderName);
                 }
-                int mctsAgentWins = 0, evolutionAgentWins = 0;
+                int mctsAgentWins = 0;
                 for (int id = 0; id < maxTurns; id++) {
                     List<APlayer> players = new();
                     for (int x = 0; x < 4; x++) {
@@ -529,8 +460,6 @@ namespace UnstableUnicornCore {
 
                     if (game.GameResults.First().Player is MctsAgent)
                         mctsAgentWins++;
-                    if (game.GameResults.First().Player is EvolutionAgent)
-                        evolutionAgentWins++;
 
                     var toLog = new GameRecord(gameSeed: id, gameLength: game.TurnNumber, game.GameResults, game.GameLog);
 
@@ -541,7 +470,6 @@ namespace UnstableUnicornCore {
                     });
                 }
                 Console.WriteLine($"MctsAgent won {mctsAgentWins} times from {maxTurns} games.");
-                Console.WriteLine($"EvolutionAgent won {evolutionAgentWins} times from {maxTurns} games.");
             }
         }
     }
