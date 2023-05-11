@@ -104,7 +104,7 @@ Then there are additional questions. The first one is how many games should be p
 |                 | 6000         | 0.978    | 0.0215   |
 |                 | 9000         | 0.98     | 0.0196   |
 
-Table: Table shows the win rate and variance of the fitness evaluation with a different number of games and initial seeds.
+Table: The win rate and variance of the fitness evaluation with a different number of games and initial seeds.
 
 It shows that with the increasing number of games, the win rate is more accurate but around 100 games, the win rate accuracy is good enough. The win rate after 100,000 games is around 98.3%. Unfortunately, this number of games will take ages with more complex agents as the MCTS agents with a lot of playouts. For this reason, I choose only ten games for the fitness evaluation with MCTS agents.
 
