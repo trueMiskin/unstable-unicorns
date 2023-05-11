@@ -14,8 +14,9 @@ namespace UnstableUnicornCore.BasicEffects {
         }
 
         public override void ChooseTargets(GameController gameController) {
-            foreach (var effect in _effects)
-                gameController.AddEffectAfterSelectedEffectToCurrentChainLink(effect, this);
+            for (int i = _effects.Count - 1; i >= 0; i--) {
+                gameController.AddEffectAfterSelectedEffectToCurrentChainLink(_effects[i], this);
+            }
         }
 
         public override void InvokeEffect(GameController gameController) {}
