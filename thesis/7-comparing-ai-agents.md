@@ -24,34 +24,41 @@ We will make these evolutions with these agent types:
 - five best agents from the previous generation (for evaluation of initial population will be used rule-based agent) vs. one evolutionary agent
 
 All these evolution runs will be repeated ten times.
-For comparison, we will evaluate individuals from the last generation. We will not compare individuals by their fitnesses because it highly depends on the opponents (a random agent is a much easier opponent). For that reason, each individual will play 1000 games against the rule-based and random agent. In each game, there will be two same evolutionary individuals, and the rest will be random or rule-based agents. The reference value for two rule-based agents and four random agents is 90.9%. We will show for each agent type the best individual performing well against rule-based and random agents. The results are shown in the tables below.
+For comparison, we will evaluate individuals from the last generation. We will not compare individuals by their fitnesses because it highly depends on the opponents (a random agent is a much easier opponent). For that reason, each individual will play 1000 games against the rule-based and random agent. In each game, there will be two same evolutionary individuals, and the rest will be random or rule-based agents. The reference value for two rule-based agents and four random agents is 90.9%.
+The win rate in this test will be the mean of the best individuals in the population for each agent type. The results are shown in the table below.
 
-| Agent type              | Win rate vs. rule-based agent |
-|-------------------------|-------------------------------|
-| evo_rule_based          | 94.8 %                        |
-| evo_random              | 94.7 %                        |
-| evo_best_last_gen       | 94.2 %                        |
-| evo_mcts_random         | 94.1 %                        |
-| evo_mcts_rule_based     | 93.9 %                        |
+| Agent type              | Win rate vs. random agent | Best individual win rate |
+|-------------------------|---------------------------|--------------------------|
+| evo_rule_based          | 93.73 %                   | 94.8 %                   |
+| evo_random              | 93.59 %                   | 94.7 %                   |
+| evo_best_last_gen       | 93.23 %                   | 94.2 %                   |
+| evo_mcts_rule_based     | 92.87 %                   | 93.9 %                   |
+| evo_mcts_random         | 92.33 %                   | 94.1 %                   |
+
+Table: Win rate of the agents. The second column shows the mean of the best individual for a given agent type. The third column shows the best-performing individual.
 
 \vfill
 \pagebreak
 
-| Agent type              | Win rate vs. random agent |
-|-------------------------|---------------------------|
-| evo_best_last_gen       | 46.0 %                    |
-| evo_rule_based          | 42.8 %                    |
-| evo_mcts_random         | 38.0 %                    |
-| evo_random              | 36.8 %                    |
-| evo_mcts_rule_based     | 35.2 %                    |
+| Agent type              | Win rate vs. rule-based agent | Best individual win rate |
+|-------------------------|-------------------------------|--------------------------|
+| evo_rule_based          | 40.62 %                       | 42.8 %                   |
+| evo_best_last_gen       | 38.84 %                       | 46.0 %                   |
+| evo_random              | 34.14 %                       | 36.8 %                   |
+| evo_mcts_rule_based     | 32.81 %                       | 35.2 %                   |
+| evo_mcts_random         | 30.18 %                       | 38.0 %                   |
 
-In the tables, the first column is the type of agent used in evolution. The second column shows the best-performing individual against the random agent and rule-based agent.
+Table: Win rate of the agents. The second column shows the mean of the best individual for a given agent type. The third column shows the best-performing individual.
 
-From the tables above, we can see that the evolutionary agents are better than the rule-based agent. From the first table, we can see that the evolutionary agents are 3% better. This is no huge improvement, but the second table shows the improvement much better. The best evolutionary agent got a 46% win rate, and there were two individuals against four rule-based agents in the game. If the agents are equally strong, the win rate will be around 33%.
+In the tables, the first column is the type of agent used in evolution. The second column shows the mean of the best individual for a given agent type against the random agent and rule-based agent. The third column shows the best-performing individual against the random agent and rule-based agent.
+
+From the tables above, we can see that the evolutionary agents are better than the rule-based agent. From the first table, we can see that the evolutionary agents are 2.7% better on average. This is no huge improvement, but the second table shows the improvement much better. The best evolutionary agent got a 40.62% win rate, and there were two individuals against four rule-based agents in the game. If the agents are equally strong, the win rate will be around 33%. The best individual got even a 46% win rate against rule-based agents.
 
 The final evolution takes the best 100 agents from previous experiments and sets them as an initial population. We will use only the last type of evolution with the five best agents from the previous generation. The population size is 100, and the number of generations is 200.
 
-Results against random agents are improved on 95.7% (1% better). The first ten individuals have a win rate between 95%-95.7%. Results against rule-based agents are improved on 46.8% (~1% better). The spread between the first ten individuals is not high: 45.6%-46.8%.
+Results against random agents: the mean win rate of best individuals is 95.05%, which is 1.3% better. The best individual got 95.7%.
+
+Results against rule-based: the mean win rate of best individuals is 45.3%, which is 4.4% better. The best individual got 46.8%.
 
 ## Conclusion
 
