@@ -48,6 +48,8 @@ Now, we show the performance of the MCTS agents that use the rule-based agents a
 | 400                | 76 %                    |
 | 800                | 84 %                    |
 
+Table: Win rate of MCTS agents with a different number of playouts.
+
 As the table shows, the MCTS agent does better with increasing number of playouts, which is an expected behavior.
 
 ## Evolutionary agent
