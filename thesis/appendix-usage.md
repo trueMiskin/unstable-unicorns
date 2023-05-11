@@ -10,7 +10,7 @@ are some optional arguments. The application has a help command.
 - `variance-benchmark` - run the variance benchmark shown in chapter 5
 - `mcts-agent-tests` - run the MCTS agent tests shown in chapter 5
     - all games (in json format) are stored in the `mcts_agent_tests` directory
-- `evolution` or `evo` - run the evolution. This command has a lot of subcommands. All commands are described help of this command. The evolution stores results in the `eva_logs` directory. **This directory is not created automatically.** For every run, it will be stored three files in the directory:
+- `evolution` or `evo` - run the evolution. This command has a lot of subcommands. All commands are described help of this command. The evolution stores results in the `eva_logs` directory. **This directory is not created automatically.** For every run, three files will be stored in the directory:
     - file starting with `stats` - contains statistics about the evolution
     - file starting with `last` - contains the last population
     - file that contains the best agent
