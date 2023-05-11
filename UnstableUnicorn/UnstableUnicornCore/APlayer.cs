@@ -21,6 +21,9 @@ namespace UnstableUnicornCore {
         }
 
         private int playerIndex = -1;
+        /// <summary>
+        /// Returns the permanent player index in the game
+        /// </summary>
         public int PlayerIndex {
             get {
                 if (playerIndex == -1)
@@ -32,6 +35,10 @@ namespace UnstableUnicornCore {
         Stopwatch stopwatch = new Stopwatch();
         private long thinkTimeInMilis = 0;
         private int numberCalls = 0;
+
+        /// <summary>
+        /// Return avarage response time in ms
+        /// </summary>
         public long AvarageResponse => thinkTimeInMilis / numberCalls;
 
         private void StopwatchStart() => stopwatch.Restart();
@@ -104,6 +111,13 @@ namespace UnstableUnicornCore {
         }
         protected abstract Card? PlayInstantOnStackCore(List<Card> stack, List<Card> availableInstantCards);
 
+        /// <summary>
+        /// When you need to decide which card should be sacrificed, then this method will be called
+        /// </summary>
+        /// <param name="number">Number cards to select</param>
+        /// <param name="effect">The effect that needs the targets</param>
+        /// <param name="cardsWhichCanBeSelected">List of available cards to select</param>
+        /// <returns></returns>
         public List<Card> WhichCardsToSacrifice(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             StopwatchStart();
 
@@ -118,6 +132,13 @@ namespace UnstableUnicornCore {
         }
         protected abstract List<Card> WhichCardsToSacrificeCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
+        /// <summary>
+        /// When you need to decide which card should be destroyed, then this method will be called
+        /// </summary>
+        /// <param name="number">Number cards to select</param>
+        /// <param name="effect">The effect that needs the targets</param>
+        /// <param name="cardsWhichCanBeSelected">List of available cards to select</param>
+        /// <returns></returns>
         public List<Card> WhichCardsToDestroy(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             StopwatchStart();
 
@@ -132,6 +153,13 @@ namespace UnstableUnicornCore {
         }
         protected abstract List<Card> WhichCardsToDestroyCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
+        /// <summary>
+        /// When you need to decide which card should be returned to owner's hand, then this method will be called
+        /// </summary>
+        /// <param name="number">Number cards to select</param>
+        /// <param name="effect">The effect that needs the targets</param>
+        /// <param name="cardsWhichCanBeSelected">List of available cards to select</param>
+        /// <returns></returns>
         public List<Card> WhichCardsToReturn(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             StopwatchStart();
 
@@ -146,6 +174,13 @@ namespace UnstableUnicornCore {
         }
         protected abstract List<Card> WhichCardsToReturnCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
+        /// <summary>
+        /// When you need to decide which card should be stolen, then this method will be called
+        /// </summary>
+        /// <param name="number">Number cards to select</param>
+        /// <param name="effect">The effect that needs the targets</param>
+        /// <param name="cardsWhichCanBeSelected">List of available cards to select</param>
+        /// <returns></returns>
         public List<Card> WhichCardsToSteal(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             StopwatchStart();
 
@@ -164,9 +199,9 @@ namespace UnstableUnicornCore {
         /// Which card should be discarded, effect could be null when this method is called from <see cref="GameController"/>
         /// when you have more cards on hand on end of your turn
         /// </summary>
-        /// <param name="number"></param>
-        /// <param name="effect"></param>
-        /// <param name="cardsWhichCanBeSelected"></param>
+        /// <param name="number">Number cards to select</param>
+        /// <param name="effect">The effect that needs the targets</param>
+        /// <param name="cardsWhichCanBeSelected">List of available cards to select</param>
         /// <returns></returns>
         public List<Card> WhichCardsToDiscard(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected) {
             StopwatchStart();
@@ -182,6 +217,15 @@ namespace UnstableUnicornCore {
         }
         protected abstract List<Card> WhichCardsToDiscardCore(int number, AEffect? effect, List<Card> cardsWhichCanBeSelected);
 
+        /// <summary>
+        /// When you need to decide which card should be saved, then this method will be called.
+        /// 
+        /// The method is called, for example, by <see cref="BaseSet.BlackKnightUnicorn"/> card
+        /// </summary>
+        /// <param name="number">Number cards to select</param>
+        /// <param name="effect">The effect that needs the targets</param>
+        /// <param name="cardsWhichCanBeSelected">List of available cards to select</param>
+        /// <returns></returns>
         public List<Card> WhichCardsToSave(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             StopwatchStart();
 
@@ -192,12 +236,27 @@ namespace UnstableUnicornCore {
         }
         protected abstract List<Card> WhichCardsToSaveCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
+        /// <summary>
+        /// When you need to decide when you need choose a player, then this method will be called
+        /// </summary>
+        /// <param name="number">Number players to select</param>
+        /// <param name="effect">The effect that needs the targets</param>
+        /// <param name="canChooseMyself"></param>
+        /// <returns></returns>
         public List<APlayer> ChoosePlayers(int number, bool canChooseMyself, AEffect effect) {
             var players = new List<APlayer>(GameController.Players);
             if (!canChooseMyself)
                 players.Remove(this);
             return ChoosePlayers(number, effect, players);
         }
+
+        /// <summary>
+        /// When you need to decide when you need choose a player, then this method will be called.
+        /// </summary>
+        /// <param name="number">Number players to select</param>
+        /// <param name="effect">The effect that needs the targets</param>
+        /// <param name="playersWhichCanBeSelected">List of available players to select</param>
+        /// <returns></returns>
         public List<APlayer> ChoosePlayers(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected) {
             StopwatchStart();
 
@@ -208,6 +267,15 @@ namespace UnstableUnicornCore {
         }
         protected abstract List<APlayer> ChoosePlayersCore(int number, AEffect effect, List<APlayer> playersWhichCanBeSelected);
 
+        /// <summary>
+        /// When you need to decide which card should you get, then this method will be called.
+        /// 
+        /// The method is called, for example, by the <see cref="BasicEffects.BringCardFromSourceOnTable"/> effect
+        /// </summary>
+        /// <param name="number">Number cards to select</param>
+        /// <param name="effect">The effect that needs the targets</param>
+        /// <param name="cardsWhichCanBeSelected">List of available cards to select</param>
+        /// <returns></returns>
         public List<Card> WhichCardsToGet(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             StopwatchStart();
 
@@ -222,6 +290,15 @@ namespace UnstableUnicornCore {
         }
         protected abstract List<Card> WhichCardsToGetCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
+        /// <summary>
+        /// When you need to decide which card should be moved, then this method will be called
+        /// 
+        /// The method is called, for example, by the <see cref="BasicEffects.MoveCardBetweenStables"/> effect
+        /// </summary>
+        /// <param name="number">Number cards to select</param>
+        /// <param name="effect">The effect that needs the targets</param>
+        /// <param name="cardsWhichCanBeSelected">List of available cards to select</param>
+        /// <returns></returns>
         public List<Card> WhichCardsToMove(int number, AEffect effect, List<Card> cardsWhichCanBeSelected) {
             StopwatchStart();
 
@@ -232,6 +309,11 @@ namespace UnstableUnicornCore {
         }
         protected abstract List<Card> WhichCardsToMoveCore(int number, AEffect effect, List<Card> cardsWhichCanBeSelected);
 
+        /// <summary>
+        /// When you need to decide which effect should be activated, then this method will be called
+        /// </summary>
+        /// <param name="effectsVariants">List of effects that can be activated</param>
+        /// <returns></returns>
         public AEffect WhichEffectToSelect(List<AEffect> effectsVariants) {
             StopwatchStart();
 
@@ -242,6 +324,11 @@ namespace UnstableUnicornCore {
         }
         protected abstract AEffect WhichEffectToSelectCore(List<AEffect> effectsVariants);
 
+        /// <summary>
+        /// When you need to decide if the effect should be activated, then this method will be called
+        /// </summary>
+        /// <param name="effect">The effect object that can be activated</param>
+        /// <returns></returns>
         public bool ActivateEffect(AEffect effect) {
             StopwatchStart();
 
